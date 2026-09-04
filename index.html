@@ -297,6 +297,17 @@
   .quick-arrow{ font-size:18px; color:var(--text-faint); flex-shrink:0; transition:transform .15s ease, color .15s ease; }
   .quick-card:hover .quick-arrow{ color:var(--red-vivid); transform:translateX(3px); }
 
+  .learn-item{ border-bottom:1px solid var(--line-soft); }
+  .learn-item:last-child{ border-bottom:none; }
+  .learn-head{ width:100%; display:flex; align-items:center; gap:12px; padding:14px 8px; background:transparent; border:none; text-align:left; cursor:pointer; font-family:inherit; }
+  .learn-num{ width:26px; height:26px; border-radius:50%; background:var(--red-soft); color:var(--red-dark); font-weight:700; font-size:12.5px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .learn-title{ flex:1; font-size:14px; font-weight:600; color:var(--text); }
+  .learn-chevron{ color:var(--text-faint); transition:transform .2s ease; font-size:14px; }
+  .learn-item.open .learn-chevron{ transform:rotate(180deg); }
+  .learn-body{ max-height:0; overflow:hidden; transition:max-height .25s ease; padding:0 8px 0 46px; }
+  .learn-item.open .learn-body{ max-height:200px; padding-bottom:14px; }
+  .learn-body p{ font-size:13.5px; color:var(--text-dim); line-height:1.6; }
+
   .list-item{ display:flex; align-items:flex-start; gap:11px; padding:11px 0; border-bottom:1px solid var(--line-soft); }
   .solicitud-row{ display:flex; align-items:center; justify-content:space-between; gap:14px; padding:13px 2px; border-bottom:1px solid var(--line-soft); flex-wrap:wrap; }
   .solicitud-row:last-child{ border-bottom:none; }
@@ -511,6 +522,14 @@
         <div class="brand-sub">Sistema para DJs</div>
       </div>
 
+      <div class="nav-group basico-only">
+        <div class="nav-title">Panel</div>
+        <div class="nav-item active" data-view="inicio" onclick="showView('inicio')">
+          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/></svg></span>
+          Bienvenida
+        </div>
+      </div>
+
       <div class="nav-group admin-only" id="navGroupPanel">
         <div class="nav-title">Panel</div>
         <div class="nav-item active" data-view="bienvenida" onclick="showView('bienvenida')">
@@ -557,7 +576,7 @@
       </div>
 
       <div class="sidebar-footer">
-        <div class="sidebar-footer-version">World DJ Pool · v1.1</div>
+        <div class="sidebar-footer-version">World DJ Pool · v1.2</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -648,6 +667,96 @@
               <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.3 3-5 7-5s7 1.7 7 5"/><circle cx="17" cy="8" r="2.6"/><path d="M17.5 13c2.5.3 4.5 1.8 4.5 4"/></svg></div>
               <div class="quick-info"><div class="quick-label">Usuarios</div><div class="quick-count" id="quickCountUsuarios">0 solicitudes pendientes</div></div>
               <div class="quick-arrow">→</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== BIENVENIDA BÁSICO/PRO ===== -->
+        <section class="view" id="view-inicio">
+          <div class="view-head">
+            <div>
+              <h2>Hola, <span id="welcomeNameBasico">DJ</span></h2>
+              <div class="view-sub">Así funciona World DJ Pool.</div>
+            </div>
+          </div>
+
+          <div class="module" style="padding:20px 22px; margin-bottom:22px;">
+            <h3 style="font-size:15.5px; font-family:'Inter'; font-weight:600; margin-bottom:8px;">¿Qué puedes hacer aquí?</h3>
+            <p style="font-size:13.5px; color:var(--text-dim); line-height:1.6;">
+              Este es el catálogo del grupo: enlaces a páginas de descarga, samples, packs mensuales, FX y drops que sube el Administrador. Tu cuenta solo puede ver y descargar — no puedes agregar ni eliminar nada. Explora cada sección desde el menú de la izquierda o con las tarjetas de abajo.
+            </p>
+          </div>
+
+          <div class="view-sub" style="margin:0 0 14px; font-weight:600; color:var(--text);">Ir directo a...</div>
+          <div class="quick-grid" style="margin-bottom:26px;">
+            <div class="quick-card" onclick="showView('enlaces')">
+              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M10 13a5 5 0 007 0l2-2a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-2 2a5 5 0 007 7l1-1"/></svg></div>
+              <div class="quick-info"><div class="quick-label">Enlaces</div><div class="quick-count">Páginas de descarga</div></div>
+              <div class="quick-arrow">→</div>
+            </div>
+            <div class="quick-card" onclick="showView('samples')">
+              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M3 12h2l2-7 3 14 3-11 2 4h5"/></svg></div>
+              <div class="quick-info"><div class="quick-label">Samples</div><div class="quick-count" id="qcSamplesB">0 recursos</div></div>
+              <div class="quick-arrow">→</div>
+            </div>
+            <div class="quick-card" onclick="showView('packs')">
+              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></div>
+              <div class="quick-info"><div class="quick-label">Packs mensuales</div><div class="quick-count" id="qcPacksB">0 recursos</div></div>
+              <div class="quick-arrow">→</div>
+            </div>
+            <div class="quick-card" onclick="showView('fx')">
+              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/></svg></div>
+              <div class="quick-info"><div class="quick-label">FX</div><div class="quick-count" id="qcFxB">0 recursos</div></div>
+              <div class="quick-arrow">→</div>
+            </div>
+            <div class="quick-card" onclick="showView('drops')">
+              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg></div>
+              <div class="quick-info"><div class="quick-label">Drops</div><div class="quick-count" id="qcDropsB">0 recursos</div></div>
+              <div class="quick-arrow">→</div>
+            </div>
+          </div>
+
+          <div class="view-sub" style="margin:0 0 14px; font-weight:600; color:var(--text);">Modo aprendizaje: cómo descargar</div>
+          <div class="module" style="padding:4px 10px;">
+            <div class="learn-item open">
+              <button class="learn-head" type="button" onclick="toggleLearn(this)">
+                <span class="learn-num">1</span>
+                <span class="learn-title">El administrador sube el contenido</span>
+                <span class="learn-chevron">⌄</span>
+              </button>
+              <div class="learn-body"><p>Enlaces, samples, packs mensuales, FX y drops se publican desde el panel de Administrador. Tú los ves apenas se suben.</p></div>
+            </div>
+            <div class="learn-item">
+              <button class="learn-head" type="button" onclick="toggleLearn(this)">
+                <span class="learn-num">2</span>
+                <span class="learn-title">Algunos enlaces tienen cuenta regresiva</span>
+                <span class="learn-chevron">⌄</span>
+              </button>
+              <div class="learn-body"><p>Si un enlace todavía no está disponible, verás un contador en vivo con el tiempo que falta. No se puede abrir hasta que llegue a cero.</p></div>
+            </div>
+            <div class="learn-item">
+              <button class="learn-head" type="button" onclick="toggleLearn(this)">
+                <span class="learn-num">3</span>
+                <span class="learn-title">Sigue @djjulto en Instagram (una sola vez)</span>
+                <span class="learn-chevron">⌄</span>
+              </button>
+              <div class="learn-body"><p>La primera vez que intentes abrir cualquier enlace, el sistema te va a pedir seguir nuestra cuenta de Instagram. Es un paso único: una vez confirmado, no se repite.</p></div>
+            </div>
+            <div class="learn-item">
+              <button class="learn-head" type="button" onclick="toggleLearn(this)">
+                <span class="learn-num">4</span>
+                <span class="learn-title">Abre el enlace cuando esté disponible</span>
+                <span class="learn-chevron">⌄</span>
+              </button>
+              <div class="learn-body"><p>Con el enlace activo, presiona "Abrir enlace". Se abre en una pestaña nueva de tu navegador.</p></div>
+            </div>
+            <div class="learn-item">
+              <button class="learn-head" type="button" onclick="toggleLearn(this)">
+                <span class="learn-num">5</span>
+                <span class="learn-title">Cada enlace es de un solo uso</span>
+                <span class="learn-chevron">⌄</span>
+              </button>
+              <div class="learn-body"><p>Una vez que lo abras, el sistema no te dejará volver a abrirlo — descarga lo que necesites apenas entres.</p></div>
             </div>
           </div>
         </section>
@@ -815,6 +924,25 @@
       <button class="btn btn-ghost" type="button" onclick="cerrarConexion()">Cancelar</button>
     </div>
     <p id="connEstadoTexto" style="font-size:12.5px; color:var(--text-dim); margin-top:14px;"></p>
+  </div>
+</div>
+
+<!-- ============ MODAL: SEGUIR INSTAGRAM (requisito para abrir enlaces) ============ -->
+<div class="modal-bg hidden" id="instaModalBg">
+  <div class="module modal">
+    <button class="icon-btn modal-close" onclick="cerrarModalInstagram()">✕</button>
+    <h3>Un paso antes de continuar</h3>
+    <p class="hint">Para descargar enlaces del grupo, primero debes seguir nuestra cuenta de Instagram. Es un paso único: no hace falta repetirlo cada vez.</p>
+    <div style="display:flex; align-items:center; gap:12px; background:var(--panel-raised); border:1px solid var(--line); border-radius:10px; padding:13px 15px; margin-bottom:18px;">
+      <div style="width:38px; height:38px; border-radius:10px; background:var(--red-vivid); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="#FFFFFF" stroke="none"/></svg>
+      </div>
+      <div><div style="font-weight:700; font-size:14.5px;">@djjulto</div><div style="font-size:12px; color:var(--text-dim);">Instagram</div></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="button" onclick="irAInstagram()">Abrir Instagram</button>
+      <button class="btn btn-ghost" type="button" onclick="confirmarSeguirInstagram()">Ya la sigo, continuar</button>
+    </div>
   </div>
 </div>
 
@@ -1015,6 +1143,8 @@ function cerrarSesion(){
   if(simTimer){ clearInterval(simTimer); simTimer = null; }
   if(enlacesTicker){ clearInterval(enlacesTicker); enlacesTicker = null; }
   enlacesVistos = null;
+  instagramConfirmado = false;
+  pendingEnlaceId = null;
   ocultarAvisoEnlaces();
   document.getElementById('app-screen').style.display='none';
   document.getElementById('auth-screen').style.display='flex';
@@ -1032,11 +1162,12 @@ async function enterApp(){
   document.getElementById('app-screen').style.display='block';
   const u = STATE.currentUser;
   document.getElementById('welcomeName').textContent = u.usuario;
+  document.getElementById('welcomeNameBasico').textContent = u.usuario;
   document.getElementById('userNameTop').textContent = u.usuario;
   document.getElementById('userRoleTop').textContent = u.rol;
   document.getElementById('userInitial').textContent = u.usuario.charAt(0).toUpperCase();
   applyRoleUI();
-  showView(isAdmin() ? 'bienvenida' : 'enlaces');
+  showView(isAdmin() ? 'bienvenida' : 'inicio');
   toast('Sesión iniciada como '+u.usuario+'.');
 
   if(isAdmin()) await verificarConexion();
@@ -1106,7 +1237,7 @@ function showView(name){
   document.getElementById('view-'+name).classList.add('active');
   document.getElementById('view-'+name).classList.add('fade-in');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.view===name));
-  const titles = {bienvenida:'Bienvenida', enlaces:'Enlaces', samples:'Samples', packs:'Packs mensuales', fx:'FX', drops:'Drops', usuarios:'Usuarios', actividad:'Actividad'};
+  const titles = {bienvenida:'Bienvenida', inicio:'Bienvenida', enlaces:'Enlaces', samples:'Samples', packs:'Packs mensuales', fx:'FX', drops:'Drops', usuarios:'Usuarios', actividad:'Actividad'};
   document.getElementById('viewTitle').textContent = titles[name];
   if(name==='enlaces') ocultarAvisoEnlaces();
 }
@@ -1165,6 +1296,7 @@ function isAdmin(){ return !!(STATE.currentUser && STATE.currentUser.rol==='Admi
 function applyRoleUI(){
   const admin = isAdmin();
   document.querySelectorAll('.admin-only').forEach(el=> el.style.display = admin ? '' : 'none');
+  document.querySelectorAll('.basico-only').forEach(el=> el.style.display = admin ? 'none' : '');
 }
 
 function escapeHtml(str){
@@ -1268,6 +1400,7 @@ async function renderEnlacesBasico(){
     return;
   }
   enlacesBasicoCache = resp.items || [];
+  instagramConfirmado = !!resp.siguioInstagram;
   document.getElementById('count-enlaces').textContent = enlacesBasicoCache.length + ' enlaces';
   pintarEnlacesBasico();
 }
@@ -1301,9 +1434,27 @@ function cardEnlaceBasico(it){
   </div>`;
 }
 
+let instagramConfirmado = false;
+let pendingEnlaceId = null;
+
 async function abrirEnlaceBasico(id){
+  if(!instagramConfirmado){
+    pendingEnlaceId = id;
+    abrirModalInstagram();
+    return;
+  }
+  await ejecutarAperturaEnlace(id);
+}
+
+async function ejecutarAperturaEnlace(id){
   const resp = await api('abrir_enlace', {token: STATE.currentUser.token, enlaceId:id});
   if(!resp.ok){
+    if(resp.requiereInstagram){
+      instagramConfirmado = false;
+      pendingEnlaceId = id;
+      abrirModalInstagram();
+      return;
+    }
     toast(resp.error || 'No se pudo abrir el enlace.', true);
     if(String(resp.error||'').includes('Ya abriste')){
       const it = enlacesBasicoCache.find(x=>String(x.id)===String(id));
@@ -1317,6 +1468,28 @@ async function abrirEnlaceBasico(id){
   if(it) it.yaAbierto = true;
   pintarEnlacesBasico();
   toast('Enlace abierto. Recuerda que es de un solo uso.');
+}
+
+function abrirModalInstagram(){ document.getElementById('instaModalBg').classList.remove('hidden'); }
+function cerrarModalInstagram(){ document.getElementById('instaModalBg').classList.add('hidden'); pendingEnlaceId = null; }
+function irAInstagram(){ window.open('https://www.instagram.com/djjulto/', '_blank', 'noopener'); }
+
+async function confirmarSeguirInstagram(){
+  const resp = await api('confirmar_instagram', {token: STATE.currentUser.token});
+  if(!resp.ok){ toast(resp.error || 'No se pudo confirmar. Intenta de nuevo.', true); return; }
+  instagramConfirmado = true;
+  document.getElementById('instaModalBg').classList.add('hidden');
+  toast('¡Gracias por seguir a @djjulto! Ya puedes descargar.');
+  if(pendingEnlaceId!==null){
+    const id = pendingEnlaceId;
+    pendingEnlaceId = null;
+    await ejecutarAperturaEnlace(id);
+  }
+}
+
+function toggleLearn(btn){
+  const item = btn.closest('.learn-item');
+  item.classList.toggle('open');
 }
 
 /* ---------------- aviso de enlaces nuevos (para Básico/Pro) ---------------- */
@@ -1343,6 +1516,7 @@ async function revisarEnlacesNuevos(){
   if(!API_URL || isAdmin() || !STATE.currentUser) return;
   const resp = await api('listar_enlaces_basico', {token: STATE.currentUser.token});
   if(!resp.ok || !resp.items) return;
+  instagramConfirmado = !!resp.siguioInstagram;
 
   const vistaActiva = document.getElementById('view-enlaces').classList.contains('active');
 
@@ -1411,6 +1585,11 @@ function renderStats(){
   qc('quickCountDrops', singular(STATE.drops.length, 'recurso'));
   const pendientes = STATE.users.filter(u=>u.estado==='Pendiente').length;
   qc('quickCountUsuarios', pendientes===0 ? 'Sin solicitudes pendientes' : pendientes===1 ? '1 solicitud pendiente' : pendientes+' solicitudes pendientes');
+
+  qc('qcSamplesB', singular(STATE.samples.length, 'recurso'));
+  qc('qcPacksB', singular(STATE.packs.length, 'recurso'));
+  qc('qcFxB', singular(STATE.fx.length, 'recurso'));
+  qc('qcDropsB', singular(STATE.drops.length, 'recurso'));
 }
 
 function renderUsuarios(){
