@@ -136,6 +136,15 @@
     display:flex; align-items:center; justify-content:center; position:relative;
     width:280px; height:280px;
   }
+  .vinyl-drop-wrap{
+    animation:vinylDropIn 1s cubic-bezier(.34,1.25,.64,1) both;
+  }
+  @keyframes vinylDropIn{
+    0%{ transform:translateY(-150px) rotate(-18deg); opacity:0; }
+    62%{ transform:translateY(6px) rotate(2deg); opacity:1; }
+    80%{ transform:translateY(-4px) rotate(-1deg); }
+    100%{ transform:translateY(0) rotate(0deg); }
+  }
   .vinyl{
     width:230px; height:230px; border-radius:50%;
     background:
@@ -157,12 +166,14 @@
   .vinyl-hole{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:10px; height:10px; border-radius:50%; background:#0D1017; }
   .tonearm{
     position:absolute; top:-6px; right:18px; width:150px; height:14px; transform-origin:100% 20%;
-    transform:rotate(-28deg); transition:transform .5s cubic-bezier(.2,.8,.2,1);
+    animation:tonearmDrop .55s ease-out 1.05s both;
+    transition:transform .4s cubic-bezier(.2,.8,.2,1);
   }
+  @keyframes tonearmDrop{ from{ transform:rotate(-40deg); } to{ transform:rotate(-14deg); } }
   .tonearm .arm{ position:absolute; right:0; top:5px; width:130px; height:4px; background:linear-gradient(90deg,#8C8C90,#D8D8DA); border-radius:3px; }
   .tonearm .pivot{ position:absolute; right:-6px; top:-6px; width:16px; height:16px; border-radius:50%; background:#FFFFFF; border:2px solid #BFBFC3; }
   .tonearm .head{ position:absolute; left:0; top:-1px; width:14px; height:8px; background:#BFBFC3; border-radius:2px; }
-  .vinyl-stage:hover .tonearm{ transform:rotate(-14deg); }
+  .vinyl-stage:hover .tonearm{ transform:rotate(-40deg); }
 
   .auth-copy{ margin-top:34px; text-align:center; max-width:280px; }
   .auth-copy h1{ font-size:26px; line-height:1.15; color:var(--text); }
@@ -403,6 +414,14 @@
 
   .catalog-toolbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; flex-wrap:wrap; }
   .count-chip{ font-size:12.5px; color:var(--text-dim); background:var(--panel-raised); border:1px solid var(--line); padding:4px 10px; border-radius:20px; }
+  .refresh-btn{
+    display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:var(--text-dim);
+    background:transparent; border:1px solid var(--line); padding:5px 13px; border-radius:20px;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .refresh-btn:hover{ color:var(--text); border-color:#C6CDDB; background:var(--panel-raised); }
+  .refresh-btn.spinning .refresh-icon{ animation:refreshSpin .7s linear infinite; }
+  @keyframes refreshSpin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
 
   .add-form{ margin-bottom:20px; padding:20px; }
   .form-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px 16px; }
@@ -485,9 +504,11 @@
     <div class="auth-visual">
       <div class="rack-brand">WORLD DJ POOL</div>
       <div class="vinyl-stage">
-        <div class="vinyl">
-          <div class="vinyl-label"><span>WDP</span></div>
-          <div class="vinyl-hole"></div>
+        <div class="vinyl-drop-wrap">
+          <div class="vinyl">
+            <div class="vinyl-label"><span>WDP</span></div>
+            <div class="vinyl-hole"></div>
+          </div>
         </div>
         <div class="tonearm"><div class="pivot"></div><div class="arm"></div><div class="head"></div></div>
       </div>
@@ -501,13 +522,27 @@
 
       <!-- STEP 0: choose -->
       <div id="pane-landing">
-        <div class="auth-tabs">
-          <button class="auth-tab active" id="tabAcceso" onclick="setAuthTab('acceso')">Solicitar acceso</button>
-          <button class="auth-tab" id="tabLogin" onclick="setAuthTab('login')">Iniciar sesión</button>
+        <!-- login (visible por defecto) -->
+        <div id="paneLogin">
+          <h2 style="font-size:21px; margin-bottom:4px;">Bienvenido de vuelta</h2>
+          <p style="font-size:13px; color:var(--text-dim); margin-bottom:20px;">Ingresa con tu usuario y contraseña.</p>
+          <form id="formLogin" onsubmit="return handleLogin(event)">
+            <div class="field-row">
+              <label class="field-label">Usuario o correo</label>
+              <input class="field" type="text" id="loginUsuario" placeholder="dj_marco" required>
+            </div>
+            <div class="field-row">
+              <label class="field-label">Contraseña</label>
+              <input class="field" type="password" id="loginPass" placeholder="Tu contraseña" required>
+              <div class="field-error" id="errLogin">Usuario o contraseña incorrectos.</div>
+            </div>
+            <button class="btn btn-primary" style="width:100%; justify-content:center;" type="submit">Iniciar sesión</button>
+          </form>
+          <button class="btn btn-ghost" style="width:100%; justify-content:center; margin-top:12px;" type="button" onclick="setAuthTab('acceso')">¿No tienes cuenta? Solicitar acceso</button>
         </div>
 
-        <!-- solicitud de acceso -->
-        <div id="paneAcceso">
+        <!-- solicitud de acceso (se revela al presionar el botón de arriba) -->
+        <div id="paneAcceso" class="hidden">
           <div class="stepper">
             <div class="step active" id="stp1"><div class="step-dot">1</div><div class="step-label">Solicitud</div></div>
             <div class="step-line"></div>
@@ -543,24 +578,7 @@
             </div>
             <button class="btn btn-primary" style="width:100%; justify-content:center;" type="submit">Crear cuenta y enviar código</button>
           </form>
-        </div>
-
-        <!-- login -->
-        <div id="paneLogin" class="hidden">
-          <h2 style="font-size:21px; margin-bottom:4px;">Bienvenido de vuelta</h2>
-          <p style="font-size:13px; color:var(--text-dim); margin-bottom:20px;">Ingresa con tu usuario y contraseña.</p>
-          <form id="formLogin" onsubmit="return handleLogin(event)">
-            <div class="field-row">
-              <label class="field-label">Usuario o correo</label>
-              <input class="field" type="text" id="loginUsuario" placeholder="dj_marco" required>
-            </div>
-            <div class="field-row">
-              <label class="field-label">Contraseña</label>
-              <input class="field" type="password" id="loginPass" placeholder="Tu contraseña" required>
-              <div class="field-error" id="errLogin">Usuario o contraseña incorrectos.</div>
-            </div>
-            <button class="btn btn-primary" style="width:100%; justify-content:center;" type="submit">Iniciar sesión</button>
-          </form>
+          <button class="btn btn-ghost" style="width:100%; justify-content:center; margin-top:12px;" type="button" onclick="setAuthTab('login')">¿Ya tienes cuenta? Iniciar sesión</button>
         </div>
       </div>
 
@@ -723,7 +741,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v1.7</div>
+        <div class="sidebar-footer-version">World DJ Pool · v1.9</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -910,7 +928,7 @@
             </div>
             <div class="form-actions"><button class="btn btn-primary" type="submit">Guardar enlace</button><button class="btn btn-ghost" type="button" onclick="toggleForm('enlaces')">Cancelar</button></div>
           </form>
-          <div class="catalog-toolbar"><span class="count-chip" id="count-enlaces">0 enlaces</span></div>
+          <div class="catalog-toolbar"><span class="count-chip" id="count-enlaces">0 enlaces</span><button class="refresh-btn" onclick="refrescarEnlaces(this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button></div>
           <div class="cat-grid" id="grid-enlaces"></div>
         </section>
 
@@ -932,7 +950,7 @@
             </div>
             <div class="form-actions"><button class="btn btn-primary" type="submit">Guardar sample</button><button class="btn btn-ghost" type="button" onclick="toggleForm('samples')">Cancelar</button></div>
           </form>
-          <div class="catalog-toolbar"><span class="count-chip" id="count-samples">0 samples</span></div>
+          <div class="catalog-toolbar"><span class="count-chip" id="count-samples">0 samples</span><button class="refresh-btn" onclick="refrescarCatalogo('samples', this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button></div>
           <div class="cat-grid" id="grid-samples"></div>
         </section>
 
@@ -952,7 +970,7 @@
             </div>
             <div class="form-actions"><button class="btn btn-primary" type="submit">Guardar pack</button><button class="btn btn-ghost" type="button" onclick="toggleForm('packs')">Cancelar</button></div>
           </form>
-          <div class="catalog-toolbar"><span class="count-chip" id="count-packs">0 packs</span></div>
+          <div class="catalog-toolbar"><span class="count-chip" id="count-packs">0 packs</span><button class="refresh-btn" onclick="refrescarCatalogo('packs', this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button></div>
           <div class="cat-grid" id="grid-packs"></div>
         </section>
 
@@ -974,7 +992,7 @@
             </div>
             <div class="form-actions"><button class="btn btn-primary" type="submit">Guardar FX</button><button class="btn btn-ghost" type="button" onclick="toggleForm('fx')">Cancelar</button></div>
           </form>
-          <div class="catalog-toolbar"><span class="count-chip" id="count-fx">0 FX</span></div>
+          <div class="catalog-toolbar"><span class="count-chip" id="count-fx">0 FX</span><button class="refresh-btn" onclick="refrescarCatalogo('fx', this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button></div>
           <div class="cat-grid" id="grid-fx"></div>
         </section>
 
@@ -994,7 +1012,7 @@
             </div>
             <div class="form-actions"><button class="btn btn-primary" type="submit">Guardar drop</button><button class="btn btn-ghost" type="button" onclick="toggleForm('drops')">Cancelar</button></div>
           </form>
-          <div class="catalog-toolbar"><span class="count-chip" id="count-drops">0 drops</span></div>
+          <div class="catalog-toolbar"><span class="count-chip" id="count-drops">0 drops</span><button class="refresh-btn" onclick="refrescarCatalogo('drops', this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button></div>
           <div class="cat-grid" id="grid-drops"></div>
         </section>
 
@@ -1002,11 +1020,15 @@
         <section class="view" id="view-usuarios">
           <div class="view-head">
             <div><h2>Usuarios</h2><div class="view-sub">Cuentas del grupo y su nivel de acceso.</div></div>
+            <button class="refresh-btn" onclick="refrescarUsuarios(this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button>
           </div>
 
           <div class="module" style="padding:18px 20px; margin-bottom:16px;" id="panelSolicitudes">
-            <h3 style="font-size:15px; font-family:'Inter'; font-weight:600; margin-bottom:4px;">Solicitudes pendientes</h3>
-            <div class="view-sub" style="margin-bottom:12px;">Decide quién entra al grupo. Mientras no aceptes una solicitud, esa persona no puede iniciar sesión.</div>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:4px;">
+              <h3 style="font-size:15px; font-family:'Inter'; font-weight:600;">Solicitudes pendientes</h3>
+              <button class="refresh-btn" onclick="refrescarUsuarios(this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Refrescar</button>
+            </div>
+            <div class="view-sub" style="margin-bottom:12px;">Decide quién entra al grupo. Mientras no aceptes una solicitud, esa persona no puede iniciar sesión. Se actualiza solo cada 10 segundos, o refresca ahora mismo.</div>
             <div id="listaSolicitudes"></div>
           </div>
 
@@ -1184,8 +1206,6 @@ async function api(accion, payload){
    AUTENTICACIÓN
    ============================================================ */
 function setAuthTab(tab){
-  document.getElementById('tabAcceso').classList.toggle('active', tab==='acceso');
-  document.getElementById('tabLogin').classList.toggle('active', tab==='login');
   document.getElementById('paneAcceso').classList.toggle('hidden', tab!=='acceso');
   document.getElementById('paneLogin').classList.toggle('hidden', tab!=='login');
 }
@@ -1320,7 +1340,7 @@ function cerrarSesion(){
   document.getElementById('pane-landing').classList.remove('hidden');
   document.getElementById('pane-verificacion').classList.add('hidden');
   document.getElementById('pane-exito').classList.add('hidden');
-  setAuthTab('acceso');
+  setAuthTab('login');
 }
 
 /* ============================================================
@@ -1436,6 +1456,55 @@ async function cargarDatosIniciales(){
   }
 
   await Promise.all(tareas);
+}
+
+/* ---------------- refresco manual (botones "Actualizar") ---------------- */
+async function refrescarCatalogo(key, btn){
+  if(btn) btn.classList.add('spinning');
+  const resp = await api('listar_'+key, {});
+  if(resp.ok && resp.items){
+    STATE[key] = resp.items.map(it=>normalizarItem(it,key));
+    renderCatalog(key);
+    renderStats();
+    toast('Actualizado.');
+  }else{
+    toast(resp.error || 'No se pudo actualizar.', true);
+  }
+  if(btn) setTimeout(()=>btn.classList.remove('spinning'), 400);
+}
+
+async function refrescarEnlaces(btn){
+  if(btn) btn.classList.add('spinning');
+  if(esBasico()){
+    await renderEnlacesBasico();
+  }else{
+    const resp = await api('listar_enlaces', {});
+    if(resp.ok && resp.items){
+      STATE.enlaces = resp.items.map(it=>normalizarItem(it,'enlaces'));
+      renderCatalog('enlaces');
+      renderStats();
+    }else{
+      toast(resp.error || 'No se pudo actualizar.', true);
+    }
+  }
+  toast('Actualizado.');
+  if(btn) setTimeout(()=>btn.classList.remove('spinning'), 400);
+}
+
+async function refrescarUsuarios(btn){
+  if(btn) btn.classList.add('spinning');
+  const resp = await api('listar_usuarios', {token: STATE.currentUser.token});
+  if(resp.ok && resp.items){
+    STATE.users = resp.items.map(u=>({
+      id:u.ID, usuario:u.Usuario, correo:u.Correo, whatsapp:u.WhatsApp, rol:u.Rol, estado:u.Estado, fecha: formatFechaSegura(u.FechaRegistro)
+    }));
+    renderUsuarios();
+    renderStats();
+    toast('Usuarios actualizados.');
+  }else{
+    toast(resp.error || 'No se pudo actualizar.', true);
+  }
+  if(btn) setTimeout(()=>btn.classList.remove('spinning'), 400);
 }
 
 function showView(name){
@@ -2080,6 +2149,14 @@ function startActivitySimulation(){
     if(resp.ok && resp.items){
       STATE.actividad = resp.items;
       renderActivity();
+      renderStats();
+    }
+    const respUsuarios = await api('listar_usuarios', {token: STATE.currentUser.token});
+    if(respUsuarios.ok && respUsuarios.items){
+      STATE.users = respUsuarios.items.map(u=>({
+        id:u.ID, usuario:u.Usuario, correo:u.Correo, whatsapp:u.WhatsApp, rol:u.Rol, estado:u.Estado, fecha: formatFechaSegura(u.FechaRegistro)
+      }));
+      renderUsuarios();
       renderStats();
     }
   }, REFRESCO_MS);
