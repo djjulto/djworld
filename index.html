@@ -297,16 +297,33 @@
   .quick-arrow{ font-size:18px; color:var(--text-faint); flex-shrink:0; transition:transform .15s ease, color .15s ease; }
   .quick-card:hover .quick-arrow{ color:var(--red-vivid); transform:translateX(3px); }
 
-  .learn-item{ border-bottom:1px solid var(--line-soft); }
-  .learn-item:last-child{ border-bottom:none; }
-  .learn-head{ width:100%; display:flex; align-items:center; gap:12px; padding:14px 8px; background:transparent; border:none; text-align:left; cursor:pointer; font-family:inherit; }
-  .learn-num{ width:26px; height:26px; border-radius:50%; background:var(--red-soft); color:var(--red-dark); font-weight:700; font-size:12.5px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .learn-title{ flex:1; font-size:14px; font-weight:600; color:var(--text); }
-  .learn-chevron{ color:var(--text-faint); transition:transform .2s ease; font-size:14px; }
-  .learn-item.open .learn-chevron{ transform:rotate(180deg); }
-  .learn-body{ max-height:0; overflow:hidden; transition:max-height .25s ease; padding:0 8px 0 46px; }
-  .learn-item.open .learn-body{ max-height:200px; padding-bottom:14px; }
-  .learn-body p{ font-size:13.5px; color:var(--text-dim); line-height:1.6; }
+  .inicio-vinyl-decor{
+    position:absolute; top:-100px; right:-120px; width:420px; height:420px; z-index:0;
+    opacity:.12; filter:blur(3px); pointer-events:none;
+  }
+
+  .wizard-card{ padding:30px 24px; display:flex; flex-direction:column; align-items:center; text-align:center; }
+  .wizard-dots{ display:flex; gap:7px; margin-bottom:24px; }
+  .wizard-dot{ width:7px; height:7px; border-radius:50%; background:var(--line); transition:background .2s ease, transform .2s ease; }
+  .wizard-dot.active{ background:var(--red-vivid); transform:scale(1.35); }
+  .wizard-stage{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; max-width:340px; min-height:190px; }
+  .wizard-icon-wrap{ width:92px; height:92px; border-radius:50%; background:var(--red-soft); display:flex; align-items:center; justify-content:center; margin-bottom:20px; }
+  .wizard-title{ font-size:16px; font-weight:700; color:var(--text); margin-bottom:8px; }
+  .wizard-caption{ font-size:13px; color:var(--text-dim); line-height:1.6; }
+  .wizard-nav{ display:flex; gap:10px; margin-top:24px; }
+  .wizard-fade{ animation: wizardFadeIn .35s ease both; }
+  @keyframes wizardFadeIn{ from{opacity:0; transform:translateX(16px);} to{opacity:1; transform:translateX(0);} }
+
+  @keyframes wizBob{ 0%,100%{transform:translateY(3px);} 50%{transform:translateY(-4px);} }
+  @keyframes wizSpinCW{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+  @keyframes wizPulseScale{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.14);} }
+  @keyframes wizNudge{ 0%,100%{transform:translate(0,0);} 50%{transform:translate(2px,-3px);} }
+  @keyframes wizTilt{ 0%,100%{transform:rotate(0deg);} 50%{transform:rotate(-6deg);} }
+  .wiz-anim-up{ animation:wizBob 1.5s ease-in-out infinite; }
+  .wiz-anim-spin{ transform-origin:12px 12px; animation:wizSpinCW 3.5s linear infinite; }
+  .wiz-anim-pulse{ animation:wizPulseScale 1.2s ease-in-out infinite; }
+  .wiz-anim-nudge{ animation:wizNudge 1.3s ease-in-out infinite; }
+  .wiz-anim-tilt{ transform-origin:12px 11px; animation:wizTilt 1.6s ease-in-out infinite; }
 
   .list-item{ display:flex; align-items:flex-start; gap:11px; padding:11px 0; border-bottom:1px solid var(--line-soft); }
   .solicitud-row{ display:flex; align-items:center; justify-content:space-between; gap:14px; padding:13px 2px; border-bottom:1px solid var(--line-soft); flex-wrap:wrap; }
@@ -373,6 +390,24 @@
   .modal h3{ font-size:19px; margin-bottom:6px; }
   .modal p.hint{ font-size:12.5px; color:var(--text-dim); margin-bottom:16px; line-height:1.5; }
   .modal-close{ position:absolute; top:14px; right:14px; }
+
+  /* ---- Bienvenida de transición tras el login ---- */
+  #welcomeTransition{
+    display:none; position:fixed; inset:0; background:#FFFFFF; z-index:1000;
+    align-items:center; justify-content:center; flex-direction:column; overflow:hidden;
+  }
+  .welcome-trans-icons{ position:absolute; inset:0; pointer-events:none; }
+  .welcome-trans-icons span{ position:absolute; top:-40px; opacity:.5; }
+  @keyframes fallDown{ from{ transform:translateY(-40px) rotate(0deg); } to{ transform:translateY(112vh) rotate(25deg); } }
+  .welcome-trans-content{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; text-align:center; max-width:380px; padding:20px; animation:fadeIn .5s ease both; }
+  .welcome-dj-svg{ margin-bottom:14px; }
+  .welcome-trans-title{ font-size:25px; font-weight:800; color:var(--text); margin-bottom:8px; letter-spacing:-.01em; }
+  .welcome-trans-sub{ font-size:14px; color:var(--text-dim); margin-bottom:24px; }
+  .dj-vinyl-spin{ transform-box:fill-box; transform-origin:center; animation:spinVinyl 4s linear infinite; }
+  .dj-eq-bar{ transform-box:fill-box; transform-origin:center bottom; animation:djEq 1s ease-in-out infinite; }
+  .dj-eq-2{ animation-delay:-.3s; }
+  .dj-eq-3{ animation-delay:-.6s; }
+  @keyframes djEq{ 0%,100%{transform:scaleY(.4);} 50%{transform:scaleY(1);} }
 </style>
 </head>
 <body>
@@ -513,6 +548,31 @@
   </div>
 </div>
 
+<!-- ============================================================= BIENVENIDA DE TRANSICIÓN (tras iniciar sesión) ============================================================= -->
+<div id="welcomeTransition">
+  <div class="welcome-trans-icons" id="welcomeFallIcons"></div>
+  <div class="welcome-trans-content">
+    <svg viewBox="0 0 160 160" width="128" height="128" class="welcome-dj-svg">
+      <rect x="18" y="112" width="124" height="32" rx="8" fill="#0A0A0B"/>
+      <g class="dj-vinyl-spin">
+        <circle cx="54" cy="128" r="13" fill="#17171A" stroke="#E4102A" stroke-width="2"/>
+        <circle cx="54" cy="128" r="3" fill="#E4102A"/>
+      </g>
+      <rect class="dj-eq-bar dj-eq-1" x="94" y="116" width="6" height="22" rx="2" fill="#E4102A"/>
+      <rect class="dj-eq-bar dj-eq-2" x="104" y="110" width="6" height="28" rx="2" fill="#E4102A"/>
+      <rect class="dj-eq-bar dj-eq-3" x="114" y="119" width="6" height="19" rx="2" fill="#E4102A"/>
+      <path d="M44 112 Q80 84 116 112 L119 100 Q80 66 41 100 Z" fill="#111113"/>
+      <circle cx="80" cy="52" r="25" fill="#17171A"/>
+      <path d="M58 42 Q80 16 102 42" stroke="#E4102A" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <circle cx="57" cy="50" r="9" fill="#E4102A"/>
+      <circle cx="103" cy="50" r="9" fill="#E4102A"/>
+    </svg>
+    <h1 class="welcome-trans-title">¡Bienvenido, <span id="welcomeTransName">DJ</span>!</h1>
+    <p class="welcome-trans-sub">Preparando tu catálogo de World DJ Pool...</p>
+    <button class="btn btn-primary" onclick="continuarAlSistema()">Entrar al sistema</button>
+  </div>
+</div>
+
 <!-- ============================================================= APP SHELL ============================================================= -->
 <div id="app-screen">
   <div class="shell">
@@ -576,7 +636,7 @@
       </div>
 
       <div class="sidebar-footer">
-        <div class="sidebar-footer-version">World DJ Pool · v1.2</div>
+        <div class="sidebar-footer-version">World DJ Pool · v1.4</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -672,7 +732,15 @@
         </section>
 
         <!-- ===== BIENVENIDA BÁSICO/PRO ===== -->
-        <section class="view" id="view-inicio">
+        <section class="view" id="view-inicio" style="position:relative; overflow:hidden;">
+          <div class="inicio-vinyl-decor">
+            <div class="vinyl" style="width:100%; height:100%; animation-duration:14s;">
+              <div class="vinyl-label"><span>WDP</span></div>
+              <div class="vinyl-hole"></div>
+            </div>
+          </div>
+
+          <div style="position:relative; z-index:1;">
           <div class="view-head">
             <div>
               <h2>Hola, <span id="welcomeNameBasico">DJ</span></h2>
@@ -717,47 +785,14 @@
           </div>
 
           <div class="view-sub" style="margin:0 0 14px; font-weight:600; color:var(--text);">Modo aprendizaje: cómo descargar</div>
-          <div class="module" style="padding:4px 10px;">
-            <div class="learn-item open">
-              <button class="learn-head" type="button" onclick="toggleLearn(this)">
-                <span class="learn-num">1</span>
-                <span class="learn-title">El administrador sube el contenido</span>
-                <span class="learn-chevron">⌄</span>
-              </button>
-              <div class="learn-body"><p>Enlaces, samples, packs mensuales, FX y drops se publican desde el panel de Administrador. Tú los ves apenas se suben.</p></div>
+          <div class="module wizard-card">
+            <div class="wizard-dots" id="wizardDots"></div>
+            <div class="wizard-stage" id="wizardStage"></div>
+            <div class="wizard-nav">
+              <button class="btn btn-ghost btn-sm" id="wizardPrevBtn" onclick="wizardPrev()">Anterior</button>
+              <button class="btn btn-primary btn-sm" id="wizardNextBtn" onclick="wizardNext()">Siguiente</button>
             </div>
-            <div class="learn-item">
-              <button class="learn-head" type="button" onclick="toggleLearn(this)">
-                <span class="learn-num">2</span>
-                <span class="learn-title">Algunos enlaces tienen cuenta regresiva</span>
-                <span class="learn-chevron">⌄</span>
-              </button>
-              <div class="learn-body"><p>Si un enlace todavía no está disponible, verás un contador en vivo con el tiempo que falta. No se puede abrir hasta que llegue a cero.</p></div>
-            </div>
-            <div class="learn-item">
-              <button class="learn-head" type="button" onclick="toggleLearn(this)">
-                <span class="learn-num">3</span>
-                <span class="learn-title">Sigue @djjulto en Instagram (una sola vez)</span>
-                <span class="learn-chevron">⌄</span>
-              </button>
-              <div class="learn-body"><p>La primera vez que intentes abrir cualquier enlace, el sistema te va a pedir seguir nuestra cuenta de Instagram. Es un paso único: una vez confirmado, no se repite.</p></div>
-            </div>
-            <div class="learn-item">
-              <button class="learn-head" type="button" onclick="toggleLearn(this)">
-                <span class="learn-num">4</span>
-                <span class="learn-title">Abre el enlace cuando esté disponible</span>
-                <span class="learn-chevron">⌄</span>
-              </button>
-              <div class="learn-body"><p>Con el enlace activo, presiona "Abrir enlace". Se abre en una pestaña nueva de tu navegador.</p></div>
-            </div>
-            <div class="learn-item">
-              <button class="learn-head" type="button" onclick="toggleLearn(this)">
-                <span class="learn-num">5</span>
-                <span class="learn-title">Cada enlace es de un solo uso</span>
-                <span class="learn-chevron">⌄</span>
-              </button>
-              <div class="learn-body"><p>Una vez que lo abras, el sistema no te dejará volver a abrirlo — descarga lo que necesites apenas entres.</p></div>
-            </div>
+          </div>
           </div>
         </section>
 
@@ -949,14 +984,24 @@
 <script>
 /* ============================================================
    CONEXIÓN A LA BASE DE DATOS
-   El Administrador la configura desde el ícono de nube en la
-   barra superior (no hace falta editar este archivo). Se guarda
-   en este navegador y el sistema la usa siempre, de forma
-   automática, sin volver a pedirla.
+   Pega aquí tu URL de Google Apps Script (la que termina en
+   /exec). Así el sistema queda conectado automáticamente para
+   CUALQUIER persona que abra este archivo, en cualquier PC,
+   sin que nadie tenga que configurar nada.
+
+   El Administrador todavía puede usar el ícono de nube en la
+   barra superior para sobreescribirla solo en su propio
+   navegador (por ejemplo, para probar otra base de datos), pero
+   esta es la que se usa por defecto para todos los demás.
    ============================================================ */
+const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbyANALuQG96wmp5P3qEUt58M15Jtu31fDLFwsasOTUltc3p3CbE0QiIb0dm7VzzTdSGBw/exec';
+
 function cargarApiUrlGuardada(){
-  try{ return window.localStorage.getItem('wdp_api_url') || ''; }
-  catch(e){ return ''; } // almacenamiento no disponible en este entorno: se usa solo en memoria
+  try{
+    const guardada = window.localStorage.getItem('wdp_api_url');
+    if(guardada) return guardada;
+  }catch(e){ /* almacenamiento no disponible en este entorno */ }
+  return DEFAULT_API_URL;
 }
 function guardarApiUrlPersistente(url){
   try{ window.localStorage.setItem('wdp_api_url', url); }
@@ -1128,7 +1173,7 @@ async function handleLogin(e){
   if(resp.ok){
     err.style.display='none';
     STATE.currentUser = resp.usuario;
-    enterApp();
+    mostrarBienvenidaTransicion();
     return false;
   }
 
@@ -1157,6 +1202,40 @@ function cerrarSesion(){
 /* ============================================================
    APP: entrar, render, navegación
    ============================================================ */
+let welcomeTransTimer = null;
+
+function generarIconosCayendo(){
+  const cont = document.getElementById('welcomeFallIcons');
+  if(!cont || cont.dataset.built) return;
+  cont.dataset.built = '1';
+  const docIcon = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#E4102A" stroke-width="1.6"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/></svg>`;
+  const noteIcon = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#E4102A" stroke-width="1.6"><path d="M9 18V5l10-2v13"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="16" r="2"/></svg>`;
+  let html = '';
+  for(let i=0;i<18;i++){
+    const left = Math.random()*100;
+    const dur = (5 + Math.random()*5).toFixed(2);
+    const delay = (Math.random()*8).toFixed(2);
+    const icon = i%2===0 ? docIcon : noteIcon;
+    html += `<span style="left:${left}%; animation:fallDown ${dur}s linear infinite; animation-delay:-${delay}s;">${icon}</span>`;
+  }
+  cont.innerHTML = html;
+}
+
+function mostrarBienvenidaTransicion(){
+  generarIconosCayendo();
+  document.getElementById('welcomeTransName').textContent = STATE.currentUser.usuario;
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('welcomeTransition').style.display='flex';
+  if(welcomeTransTimer) clearTimeout(welcomeTransTimer);
+  welcomeTransTimer = setTimeout(continuarAlSistema, 3200);
+}
+
+function continuarAlSistema(){
+  if(welcomeTransTimer){ clearTimeout(welcomeTransTimer); welcomeTransTimer = null; }
+  document.getElementById('welcomeTransition').style.display='none';
+  enterApp();
+}
+
 async function enterApp(){
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app-screen').style.display='block';
@@ -1487,10 +1566,60 @@ async function confirmarSeguirInstagram(){
   }
 }
 
-function toggleLearn(btn){
-  const item = btn.closest('.learn-item');
-  item.classList.toggle('open');
+const WIZARD_STEPS = [
+  {
+    icon:`<svg class="wiz-anim-up" viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#E4102A" stroke-width="1.8"><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg>`,
+    title:'El administrador sube el contenido',
+    caption:'Enlaces, samples, packs, FX y drops aparecen aquí apenas se publican.'
+  },
+  {
+    icon:`<svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#E4102A" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><line x1="12" y1="12" x2="12" y2="7" class="wiz-anim-spin"/><line x1="12" y1="12" x2="15" y2="13"/></svg>`,
+    title:'Algunos enlaces tienen cuenta regresiva',
+    caption:'Verás un contador en vivo hasta que se habiliten.'
+  },
+  {
+    icon:`<svg class="wiz-anim-pulse" viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#E4102A" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r="1" fill="#E4102A" stroke="none"/></svg>`,
+    title:'Sigue @djjulto en Instagram',
+    caption:'Es un paso único, solo la primera vez que abras un enlace.'
+  },
+  {
+    icon:`<svg class="wiz-anim-nudge" viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#E4102A" stroke-width="1.8"><path d="M14 3h7v7"/><path d="M10 14L21 3"/><path d="M21 14v5a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h5"/></svg>`,
+    title:'Abre el enlace activo',
+    caption:'Se abre en una pestaña nueva de tu navegador.'
+  },
+  {
+    icon:`<svg class="wiz-anim-tilt" viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#E4102A" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>`,
+    title:'Cada enlace es de un solo uso',
+    caption:'Descárgalo apenas lo abras — no se puede reabrir desde el sistema.'
+  }
+];
+let wizardIndex = 0;
+
+function renderWizard(){
+  const step = WIZARD_STEPS[wizardIndex];
+  const stage = document.getElementById('wizardStage');
+  if(!stage) return;
+  stage.innerHTML = `
+    <div class="wizard-icon-wrap">${step.icon}</div>
+    <div class="wizard-title">${step.title}</div>
+    <div class="wizard-caption">${step.caption}</div>
+  `;
+  stage.classList.remove('wizard-fade');
+  void stage.offsetWidth;
+  stage.classList.add('wizard-fade');
+
+  document.getElementById('wizardDots').innerHTML = WIZARD_STEPS.map((_,i)=>`<span class="wizard-dot ${i===wizardIndex?'active':''}"></span>`).join('');
+  document.getElementById('wizardPrevBtn').style.visibility = wizardIndex===0 ? 'hidden' : 'visible';
+  document.getElementById('wizardNextBtn').textContent = wizardIndex===WIZARD_STEPS.length-1 ? '¡Entendido!' : 'Siguiente';
 }
+function wizardNext(){
+  if(wizardIndex < WIZARD_STEPS.length-1){ wizardIndex++; renderWizard(); }
+  else { wizardIndex = 0; renderWizard(); toast('¡Listo! Ya sabes cómo funciona.'); }
+}
+function wizardPrev(){
+  if(wizardIndex>0){ wizardIndex--; renderWizard(); }
+}
+renderWizard();
 
 /* ---------------- aviso de enlaces nuevos (para Básico/Pro) ---------------- */
 let enlacesVistos = null;
