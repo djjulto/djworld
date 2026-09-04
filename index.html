@@ -266,6 +266,22 @@
   .two-col{ display:grid; grid-template-columns:1.4fr 1fr; gap:16px; align-items:start; }
   @media (max-width:900px){ .two-col{grid-template-columns:1fr;} }
 
+  .quick-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  @media (max-width:900px){ .quick-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:640px){ .quick-grid{grid-template-columns:1fr;} }
+  .quick-card{
+    display:flex; align-items:center; gap:14px; padding:17px 18px; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-panel);
+    cursor:pointer; transition:transform .15s cubic-bezier(.2,.8,.2,1), box-shadow .15s ease, border-color .15s ease;
+  }
+  .quick-card:hover{ transform:translateY(-2px); box-shadow:0 14px 28px -14px rgba(228,16,42,.35); border-color:#F3C6CB; }
+  .quick-icon{ width:44px; height:44px; border-radius:10px; background:var(--red-vivid); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 10px -3px rgba(228,16,42,.5); }
+  .quick-icon svg{ width:20px; height:20px; }
+  .quick-info{ flex:1; min-width:0; }
+  .quick-label{ font-size:14.5px; font-weight:600; color:var(--text); }
+  .quick-count{ font-size:12.5px; color:var(--text-dim); margin-top:2px; }
+  .quick-arrow{ font-size:18px; color:var(--text-faint); flex-shrink:0; transition:transform .15s ease, color .15s ease; }
+  .quick-card:hover .quick-arrow{ color:var(--red-vivid); transform:translateX(3px); }
+
   .list-item{ display:flex; align-items:flex-start; gap:11px; padding:11px 0; border-bottom:1px solid var(--line-soft); }
   .solicitud-row{ display:flex; align-items:center; justify-content:space-between; gap:14px; padding:13px 2px; border-bottom:1px solid var(--line-soft); flex-wrap:wrap; }
   .solicitud-row:last-child{ border-bottom:none; }
@@ -297,7 +313,12 @@
   .cat-tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:2px; }
   .tag{ font-size:11px; color:var(--text-dim); background:var(--panel-raised); border:1px solid var(--line); padding:2px 8px; border-radius:12px; }
   .cat-card-foot{ display:flex; justify-content:space-between; align-items:center; margin-top:6px; }
-  .cat-link{ font-size:12.5px; color:var(--red-dark); font-weight:600; }
+  .cat-link-btn{
+    display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#FFFFFF; text-decoration:none;
+    background:var(--red-vivid); padding:7px 14px; border-radius:7px; box-shadow:0 1px 2px rgba(16,24,40,.05), 0 4px 10px -4px rgba(228,16,42,.4);
+    transition:background .12s ease, transform .12s ease;
+  }
+  .cat-link-btn:hover{ background:var(--red-dark); transform:translateY(-1px); }
   .icon-btn{ background:transparent; border:none; color:var(--text-faint); padding:4px; border-radius:6px; }
   .icon-btn:hover{ color:var(--red); background:#FEF3F2; }
 
@@ -581,10 +602,38 @@
             </div>
           </div>
 
-          <div class="module" style="padding:20px;">
-            <h3 style="font-size:15px; font-family:'Inter'; font-weight:600; margin-bottom:12px;">Últimos movimientos</h3>
-            <div class="activity-feed" id="miniActivityFeed"></div>
-            <button class="btn btn-ghost btn-sm" style="margin-top:12px;" onclick="showView('actividad')">Ver toda la actividad</button>
+          <div class="view-sub" style="margin:26px 0 14px; font-weight:600; color:var(--text);">Accede rápido al catálogo</div>
+          <div class="quick-grid">
+            <div class="quick-card" onclick="showView('enlaces')">
+              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M10 13a5 5 0 007 0l2-2a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-2 2a5 5 0 007 7l1-1"/></svg></div>
+              <div class="quick-info"><div class="quick-label">Enlaces</div><div class="quick-count" id="quickCountEnlaces">0 recursos</div></div>
+              <div class="quick-arrow">→</div>
+            </div>
+            <div class="quick-card" onclick="showView('samples')">
+              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M3 12h2l2-7 3 14 3-11 2 4h5"/></svg></div>
+              <div class="quick-info"><div class="quick-label">Samples</div><div class="quick-count" id="quickCountSamples">0 recursos</div></div>
+              <div class="quick-arrow">→</div>
+            </div>
+            <div class="quick-card" onclick="showView('packs')">
+              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></div>
+              <div class="quick-info"><div class="quick-label">Packs mensuales</div><div class="quick-count" id="quickCountPacks">0 recursos</div></div>
+              <div class="quick-arrow">→</div>
+            </div>
+            <div class="quick-card" onclick="showView('fx')">
+              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/></svg></div>
+              <div class="quick-info"><div class="quick-label">FX</div><div class="quick-count" id="quickCountFx">0 recursos</div></div>
+              <div class="quick-arrow">→</div>
+            </div>
+            <div class="quick-card" onclick="showView('drops')">
+              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg></div>
+              <div class="quick-info"><div class="quick-label">Drops</div><div class="quick-count" id="quickCountDrops">0 recursos</div></div>
+              <div class="quick-arrow">→</div>
+            </div>
+            <div class="quick-card" onclick="showView('usuarios')">
+              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.3 3-5 7-5s7 1.7 7 5"/><circle cx="17" cy="8" r="2.6"/><path d="M17.5 13c2.5.3 4.5 1.8 4.5 4"/></svg></div>
+              <div class="quick-info"><div class="quick-label">Usuarios</div><div class="quick-count" id="quickCountUsuarios">0 solicitudes pendientes</div></div>
+              <div class="quick-arrow">→</div>
+            </div>
           </div>
         </section>
 
@@ -940,15 +989,6 @@ async function handleLogin(e){
     return false;
   }
 
-  // Respaldo local solo para la cuenta principal del Administrador,
-  // por si la base de datos todavía no está conectada.
-  if(usuario==='djjulto' && pass==='djjulto123'){
-    err.style.display='none';
-    STATE.currentUser = {id:0, usuario:'djjulto', correo:'', whatsapp:'', rol:'Administrador', estado:'Activo'};
-    enterApp();
-    return false;
-  }
-
   err.textContent = resp.error || 'Usuario o contraseña incorrectos.';
   err.style.display='block';
   return false;
@@ -1069,7 +1109,7 @@ const CATALOG_CONFIG = {
       <span class="tag">${escapeHtml(it.categoria)}</span>
       ${estadoActivacionPill(it.activarEn)}
       ${it.notas?`<div class="cat-meta">${escapeHtml(it.notas)}</div>`:''}
-      <div class="cat-card-foot"><a class="cat-link" href="${it.url}" target="_blank" rel="noopener">Abrir enlace ↗</a></div>`
+      <div class="cat-card-foot"><a class="cat-link-btn" href="${it.url}" target="_blank" rel="noopener">Abrir enlace ↗</a></div>`
   },
   samples: {
     fields:['nombre','genero','bpm','tono','enlace','tags'],
@@ -1077,7 +1117,7 @@ const CATALOG_CONFIG = {
       <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3>${isAdmin()?`<button class="icon-btn" onclick="deleteItem('samples',${it.id})">✕</button>`:''}</div>
       <div class="cat-meta">${escapeHtml(it.genero||'—')} · ${it.bpm?it.bpm+' BPM':'—'} · ${escapeHtml(it.tono||'—')}</div>
       <div class="cat-tags">${(it.tags||[]).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>
-      <div class="cat-card-foot"><a class="cat-link" href="${it.enlace}" target="_blank" rel="noopener">Descargar ↗</a></div>`
+      <div class="cat-card-foot"><a class="cat-link-btn" href="${it.enlace}" target="_blank" rel="noopener">Descargar ↗</a></div>`
   },
   packs: {
     fields:['mes','nombre','enlace','desc'],
@@ -1085,7 +1125,7 @@ const CATALOG_CONFIG = {
       <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3>${isAdmin()?`<button class="icon-btn" onclick="deleteItem('packs',${it.id})">✕</button>`:''}</div>
       <span class="tag">${escapeHtml(it.mes)}</span>
       ${it.desc?`<div class="cat-meta">${escapeHtml(it.desc)}</div>`:''}
-      <div class="cat-card-foot"><a class="cat-link" href="${it.enlace}" target="_blank" rel="noopener">Descargar ↗</a></div>`
+      <div class="cat-card-foot"><a class="cat-link-btn" href="${it.enlace}" target="_blank" rel="noopener">Descargar ↗</a></div>`
   },
   fx: {
     fields:['nombre','tipo','enlace','notas'],
@@ -1093,7 +1133,7 @@ const CATALOG_CONFIG = {
       <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3>${isAdmin()?`<button class="icon-btn" onclick="deleteItem('fx',${it.id})">✕</button>`:''}</div>
       <span class="tag">${escapeHtml(it.tipo)}</span>
       ${it.notas?`<div class="cat-meta">${escapeHtml(it.notas)}</div>`:''}
-      <div class="cat-card-foot"><a class="cat-link" href="${it.enlace}" target="_blank" rel="noopener">Descargar ↗</a></div>`
+      <div class="cat-card-foot"><a class="cat-link-btn" href="${it.enlace}" target="_blank" rel="noopener">Descargar ↗</a></div>`
   },
   drops: {
     fields:['nombre','genero','enlace','notas'],
@@ -1101,7 +1141,7 @@ const CATALOG_CONFIG = {
       <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3>${isAdmin()?`<button class="icon-btn" onclick="deleteItem('drops',${it.id})">✕</button>`:''}</div>
       <div class="cat-meta">${escapeHtml(it.genero||'—')}</div>
       ${it.notas?`<div class="cat-meta">${escapeHtml(it.notas)}</div>`:''}
-      <div class="cat-card-foot"><a class="cat-link" href="${it.enlace}" target="_blank" rel="noopener">Descargar ↗</a></div>`
+      <div class="cat-card-foot"><a class="cat-link-btn" href="${it.enlace}" target="_blank" rel="noopener">Descargar ↗</a></div>`
   }
 };
 
@@ -1346,6 +1386,16 @@ function renderStats(){
   document.getElementById('statPendientes').textContent = STATE.users.filter(u=>u.estado==='Pendiente').length;
   document.getElementById('statRecursos').textContent = STATE.enlaces.length + STATE.samples.length + STATE.packs.length + STATE.fx.length + STATE.drops.length;
   document.getElementById('statHoy').textContent = STATE.actividad.length;
+
+  const singular = (n, palabra)=> n===1 ? '1 '+palabra : n+' '+palabra+'s';
+  const qc = (id, txt)=>{ const el=document.getElementById(id); if(el) el.textContent = txt; };
+  qc('quickCountEnlaces', singular(STATE.enlaces.length, 'recurso'));
+  qc('quickCountSamples', singular(STATE.samples.length, 'recurso'));
+  qc('quickCountPacks', singular(STATE.packs.length, 'recurso'));
+  qc('quickCountFx', singular(STATE.fx.length, 'recurso'));
+  qc('quickCountDrops', singular(STATE.drops.length, 'recurso'));
+  const pendientes = STATE.users.filter(u=>u.estado==='Pendiente').length;
+  qc('quickCountUsuarios', pendientes===0 ? 'Sin solicitudes pendientes' : pendientes===1 ? '1 solicitud pendiente' : pendientes+' solicitudes pendientes');
 }
 
 function renderUsuarios(){
@@ -1449,8 +1499,6 @@ function activityRowHtml(a){
   </div>`;
 }
 function renderActivity(){
-  document.getElementById('miniActivityFeed').innerHTML = STATE.actividad.slice(0,5).map(activityRowHtml).join('') ||
-    `<div class="empty-state"><p>Sin movimientos todavía.</p></div>`;
   document.getElementById('fullActivityFeed').innerHTML = STATE.actividad.map(activityRowHtml).join('') ||
     `<div class="empty-state"><h3>Sin actividad</h3><p>Los movimientos del grupo aparecerán aquí en tiempo real.</p></div>`;
 }
