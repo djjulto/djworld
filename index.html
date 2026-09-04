@@ -685,7 +685,7 @@
       </div>
 
       <div class="sidebar-footer">
-        <div class="sidebar-footer-version">World DJ Pool · v1.5</div>
+        <div class="sidebar-footer-version">World DJ Pool · v1.6</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -850,7 +850,7 @@
         <section class="view" id="view-enlaces">
           <div class="view-head">
             <div><h2>Enlaces</h2><div class="view-sub">Páginas desde donde el grupo descarga música.</div></div>
-            <button class="btn btn-primary admin-only" onclick="toggleForm('enlaces')">Agregar enlace</button>
+            <button class="btn btn-primary catalogo-editor" onclick="toggleForm('enlaces')">Agregar enlace</button>
           </div>
           <form class="module add-form hidden" id="form-enlaces" onsubmit="return addItem(event,'enlaces')">
             <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
@@ -877,7 +877,7 @@
         <section class="view" id="view-samples">
           <div class="view-head">
             <div><h2>Samples</h2><div class="view-sub">Loops, one-shots y samples sueltos para el grupo.</div></div>
-            <button class="btn btn-primary admin-only" onclick="toggleForm('samples')">Agregar sample</button>
+            <button class="btn btn-primary catalogo-editor" onclick="toggleForm('samples')">Agregar sample</button>
           </div>
           <form class="module add-form hidden" id="form-samples" onsubmit="return addItem(event,'samples')">
             <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
@@ -899,7 +899,7 @@
         <section class="view" id="view-packs">
           <div class="view-head">
             <div><h2>Packs mensuales</h2><div class="view-sub">El pack oficial del grupo, organizado por mes.</div></div>
-            <button class="btn btn-primary admin-only" onclick="toggleForm('packs')">Agregar pack</button>
+            <button class="btn btn-primary catalogo-editor" onclick="toggleForm('packs')">Agregar pack</button>
           </div>
           <form class="module add-form hidden" id="form-packs" onsubmit="return addItem(event,'packs')">
             <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
@@ -919,7 +919,7 @@
         <section class="view" id="view-fx">
           <div class="view-head">
             <div><h2>FX</h2><div class="view-sub">Risers, impacts, sweeps y transiciones.</div></div>
-            <button class="btn btn-primary admin-only" onclick="toggleForm('fx')">Agregar FX</button>
+            <button class="btn btn-primary catalogo-editor" onclick="toggleForm('fx')">Agregar FX</button>
           </div>
           <form class="module add-form hidden" id="form-fx" onsubmit="return addItem(event,'fx')">
             <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
@@ -941,7 +941,7 @@
         <section class="view" id="view-drops">
           <div class="view-head">
             <div><h2>Drops</h2><div class="view-sub">Drops listos para armar sets.</div></div>
-            <button class="btn btn-primary admin-only" onclick="toggleForm('drops')">Agregar drop</button>
+            <button class="btn btn-primary catalogo-editor" onclick="toggleForm('drops')">Agregar drop</button>
           </div>
           <form class="module add-form hidden" id="form-drops" onsubmit="return addItem(event,'drops')">
             <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
@@ -1319,7 +1319,7 @@ async function enterApp(){
   await cargarDatosIniciales();
   renderAll();
   if(isAdmin()) startActivitySimulation();
-  else startNotificacionesEnlaces();
+  else if(esBasico()) startNotificacionesEnlaces();
   startEnlacesTicker();
 }
 
@@ -1355,11 +1355,14 @@ async function cargarDatosIniciales(){
     if(resp.ok && resp.items) STATE[key] = resp.items.map(it=>normalizarItem(it,key));
   });
 
-  if(isAdmin()){
+  if(puedeEditarCatalogo()){
     tareas.push((async()=>{
       const resp = await api('listar_enlaces', {});
       if(resp.ok && resp.items) STATE.enlaces = resp.items.map(it=>normalizarItem(it,'enlaces'));
     })());
+  }
+
+  if(isAdmin()){
     tareas.push((async()=>{
       const resp = await api('listar_usuarios', {token: STATE.currentUser.token});
       if(resp.ok && resp.items){
@@ -1437,11 +1440,16 @@ const CATALOG_CONFIG = {
 };
 
 function isAdmin(){ return !!(STATE.currentUser && STATE.currentUser.rol==='Administrador'); }
+function isPro(){ return !!(STATE.currentUser && STATE.currentUser.rol==='Pro'); }
+function esBasico(){ return !!(STATE.currentUser && STATE.currentUser.rol==='Básico'); }
+function puedeEditarCatalogo(){ return isAdmin() || isPro(); }
 
 function applyRoleUI(){
   const admin = isAdmin();
+  const editor = puedeEditarCatalogo();
   document.querySelectorAll('.admin-only').forEach(el=> el.style.display = admin ? '' : 'none');
   document.querySelectorAll('.basico-only').forEach(el=> el.style.display = admin ? 'none' : '');
+  document.querySelectorAll('.catalogo-editor').forEach(el=> el.style.display = editor ? '' : 'none');
 }
 
 function escapeHtml(str){
@@ -1460,11 +1468,17 @@ async function addItem(e, key){
     else if(f==='bpm') data[f] = el.value ? Number(el.value) : null;
     else data[f] = el.value.trim();
   });
-  data.id = Date.now();
-  data.autor = STATE.currentUser.usuario;
+  data.token = STATE.currentUser.token;
 
+  const resp = await api('agregar_'+singular(key), data);
+  if(!resp.ok){
+    toast(resp.error || 'No se pudo guardar.', true);
+    return false;
+  }
+
+  data.id = resp.id || Date.now();
+  data.autor = STATE.currentUser.usuario;
   STATE[key].unshift(data);
-  await api('agregar_'+singular(key), data);
 
   const nombreCampo = data.nombre || data.mes;
   pushActivity(STATE.currentUser.usuario, 'agregó '+labelSingularAccion(key), nombreCampo);
@@ -1493,14 +1507,15 @@ function labelSingularAccion(key){
 }
 
 async function deleteItem(key, id){
+  const resp = await api('eliminar_item', {hoja:key, id, token: STATE.currentUser.token});
+  if(!resp.ok){ toast(resp.error || 'No se pudo eliminar.', true); return; }
   STATE[key] = STATE[key].filter(it=>it.id!==id);
-  await api('eliminar_item', {hoja:key, id});
   renderCatalog(key);
   renderStats();
 }
 
 function renderCatalog(key){
-  if(key==='enlaces' && !isAdmin()){ renderEnlacesBasico(); return; }
+  if(key==='enlaces' && esBasico()){ renderEnlacesBasico(); return; }
 
   const grid = document.getElementById('grid-'+key);
   const cfg = CATALOG_CONFIG[key];
@@ -1510,7 +1525,7 @@ function renderCatalog(key){
   if(items.length===0){
     grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
       <h3>Todavía no hay nada aquí</h3>
-      <p>${isAdmin() ? 'Usa "Agregar" para subir el primer elemento de este catálogo.' : 'El administrador todavía no ha subido nada aquí.'}</p>
+      <p>${puedeEditarCatalogo() ? 'Usa "Agregar" para subir el primer elemento de este catálogo.' : 'El administrador todavía no ha subido nada aquí.'}</p>
     </div>`;
     return;
   }
@@ -1770,8 +1785,8 @@ function startEnlacesTicker(){
   enlacesTicker = setInterval(()=>{
     const v = document.getElementById('view-enlaces');
     if(!v || !v.classList.contains('active')) return;
-    if(isAdmin()) renderCatalog('enlaces');
-    else pintarEnlacesBasico();
+    if(esBasico()) pintarEnlacesBasico();
+    else renderCatalog('enlaces');
   }, 1000);
 }
 
