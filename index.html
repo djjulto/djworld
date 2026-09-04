@@ -205,17 +205,28 @@
     background:linear-gradient(180deg, #1A1A1C 0%, #050506 100%);
     display:flex; flex-direction:column; padding:22px 0;
   }
-  .brand{ display:flex; flex-direction:column; padding:0 20px 18px; border-bottom:1px solid rgba(255,255,255,.09); margin-bottom:14px; }
+  .brand{ display:flex; align-items:center; gap:12px; padding:0 18px 18px; border-bottom:1px solid rgba(255,255,255,.09); margin-bottom:14px; }
+  .brand-badge{ position:relative; width:46px; height:46px; flex-shrink:0; }
+  .brand-badge svg{ position:absolute; top:0; left:0; }
+  .brand-globe{ animation:spinGlobe 9s linear infinite; }
+  @keyframes spinGlobe{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+  .brand-dj{ animation:djBob 2s ease-in-out infinite; transform-origin:30px 52px; }
+  @keyframes djBob{ 0%,100%{transform:rotate(0deg);} 25%{transform:rotate(-5deg);} 75%{transform:rotate(5deg);} }
   .brand-name{
-    font-family:'Inter'; font-weight:800; font-size:26px; letter-spacing:-.02em; line-height:1.1; color:#FFFFFF;
-    display:inline-block; transform:perspective(400px) rotateX(9deg); transform-origin:left center;
+    font-family:'Inter'; font-weight:800; font-size:29px; letter-spacing:-.01em; line-height:1.08; color:#FFFFFF;
+    display:flex; flex-wrap:wrap; column-gap:.28em;
+  }
+  .brand-word{ display:inline-flex; }
+  .brand-letter{
+    display:inline-block; animation:letterWave 2.6s ease-in-out infinite;
     text-shadow:
       1px 1px 0 #93101F,
       2px 2px 0 #7C0D1A,
       3px 3px 0 #650A15,
       4px 5px 10px rgba(0,0,0,.55);
   }
-  .brand-sub{ font-size:10.5px; color:#8A8A90; margin-top:5px; }
+  @keyframes letterWave{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-5px);} }
+  .brand-sub{ font-size:10.5px; color:#8A8A90; margin-top:6px; }
 
   .nav-group{ padding:0 12px; }
   .nav-title{ font-size:11px; color:#6E6E74; font-weight:600; padding:18px 10px 8px; text-transform:uppercase; letter-spacing:.06em; }
@@ -270,6 +281,17 @@
   .view-head h2{ font-size:26px; }
   .view-sub{ font-size:13.5px; color:var(--text-dim); margin-top:4px; }
 
+  .welcome-banner{
+    display:flex; align-items:center; justify-content:space-between; gap:18px;
+    background:linear-gradient(120deg, #17171A 0%, #2A0A0F 55%, var(--red-vivid) 130%);
+    border-radius:var(--radius-panel); padding:24px 28px; margin-bottom:22px;
+    box-shadow:0 14px 32px -16px rgba(228,16,42,.45);
+  }
+  .welcome-banner h2{ color:#FFFFFF; font-size:22px; margin-bottom:6px; }
+  .welcome-banner p{ color:rgba(255,255,255,.75); font-size:13.5px; max-width:480px; line-height:1.5; }
+  .welcome-banner-eq{ height:26px; flex-shrink:0; }
+  .welcome-banner-eq i{ width:4px; background:#FFFFFF; }
+
   .stat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:26px; }
   @media (max-width:900px){ .stat-grid{grid-template-columns:repeat(2,1fr);} }
   .stat-module{ padding:16px 18px; }
@@ -289,7 +311,17 @@
     cursor:pointer; transition:transform .15s cubic-bezier(.2,.8,.2,1), box-shadow .15s ease, border-color .15s ease;
   }
   .quick-card:hover{ transform:translateY(-2px); box-shadow:0 14px 28px -14px rgba(228,16,42,.35); border-color:#F3C6CB; }
-  .quick-icon{ width:44px; height:44px; border-radius:10px; background:var(--red-vivid); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 10px -3px rgba(228,16,42,.5); }
+  .quick-icon{ width:44px; height:44px; border-radius:10px; background:var(--red-vivid); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 10px -3px rgba(228,16,42,.5); transition:background .25s ease, box-shadow .25s ease; }
+  .quick-icon.has-content{ background:var(--green); box-shadow:0 4px 10px -3px rgba(18,183,106,.5); }
+
+  @keyframes flashUpdate{ 0%{ color:var(--red-vivid); transform:scale(1.18); } 100%{ color:inherit; transform:scale(1); } }
+  .flash-update{ animation:flashUpdate .7s ease; }
+
+  @keyframes justAddedPulse{
+    0%{ box-shadow:0 0 0 0 rgba(18,183,106,.55); transform:scale(1.02); border-color:var(--green); }
+    100%{ box-shadow:0 0 0 16px rgba(18,183,106,0); transform:scale(1); }
+  }
+  .just-added{ animation:justAddedPulse 1.6s ease; }
   .quick-icon svg{ width:20px; height:20px; }
   .quick-info{ flex:1; min-width:0; }
   .quick-label{ font-size:14.5px; font-weight:600; color:var(--text); }
@@ -578,8 +610,25 @@
   <div class="shell">
     <aside class="sidebar">
       <div class="brand">
-        <div class="brand-name">WORLD DJ POOL</div>
-        <div class="brand-sub">Sistema para DJs</div>
+        <div class="brand-badge">
+          <svg class="brand-globe" viewBox="0 0 60 60" width="46" height="46">
+            <circle cx="30" cy="30" r="25" fill="none" stroke="#E4102A" stroke-width="1.3" opacity=".6"/>
+            <ellipse cx="30" cy="30" rx="25" ry="9" fill="none" stroke="#E4102A" stroke-width="1" opacity=".45"/>
+            <ellipse cx="30" cy="30" rx="9" ry="25" fill="none" stroke="#E4102A" stroke-width="1" opacity=".45"/>
+            <line x1="5" y1="30" x2="55" y2="30" stroke="#E4102A" stroke-width="1" opacity=".45"/>
+          </svg>
+          <svg class="brand-dj" viewBox="0 0 60 60" width="46" height="46">
+            <path d="M12 48 Q30 32 48 48 L50 52 Q30 36 10 52 Z" fill="#FFFFFF"/>
+            <circle cx="30" cy="24" r="10" fill="#FFFFFF"/>
+            <path d="M18 22 Q30 8 42 22" stroke="#E4102A" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <circle cx="18" cy="26" r="3.6" fill="#E4102A"/>
+            <circle cx="42" cy="26" r="3.6" fill="#E4102A"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-name" id="brandNameAnimated">WORLD DJ POOL</div>
+          <div class="brand-sub">Sistema para DJs</div>
+        </div>
       </div>
 
       <div class="nav-group basico-only">
@@ -636,7 +685,7 @@
       </div>
 
       <div class="sidebar-footer">
-        <div class="sidebar-footer-version">World DJ Pool · v1.4</div>
+        <div class="sidebar-footer-version">World DJ Pool · v1.5</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -666,11 +715,12 @@
 
         <!-- ===== BIENVENIDA ===== -->
         <section class="view active" id="view-bienvenida">
-          <div class="view-head">
+          <div class="welcome-banner">
             <div>
-              <h2>Hola, <span id="welcomeName">Administrador</span></h2>
-              <div class="view-sub">Este es el estado general del grupo hoy.</div>
+              <h2>¡Bienvenido de nuevo, <span id="welcomeName">Administrador</span>!</h2>
+              <p>Este es el estado general del grupo hoy. Todo lo que subas aquí se refleja al instante para tus DJs.</p>
             </div>
+            <span class="eq-mini welcome-banner-eq"><i></i><i></i><i></i></span>
           </div>
 
           <div class="stat-grid">
@@ -699,32 +749,32 @@
           <div class="view-sub" style="margin:26px 0 14px; font-weight:600; color:var(--text);">Accede rápido al catálogo</div>
           <div class="quick-grid">
             <div class="quick-card" onclick="showView('enlaces')">
-              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M10 13a5 5 0 007 0l2-2a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-2 2a5 5 0 007 7l1-1"/></svg></div>
+              <div class="quick-icon" id="qIconEnlaces"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M10 13a5 5 0 007 0l2-2a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-2 2a5 5 0 007 7l1-1"/></svg></div>
               <div class="quick-info"><div class="quick-label">Enlaces</div><div class="quick-count" id="quickCountEnlaces">0 recursos</div></div>
               <div class="quick-arrow">→</div>
             </div>
             <div class="quick-card" onclick="showView('samples')">
-              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M3 12h2l2-7 3 14 3-11 2 4h5"/></svg></div>
+              <div class="quick-icon" id="qIconSamples"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M3 12h2l2-7 3 14 3-11 2 4h5"/></svg></div>
               <div class="quick-info"><div class="quick-label">Samples</div><div class="quick-count" id="quickCountSamples">0 recursos</div></div>
               <div class="quick-arrow">→</div>
             </div>
             <div class="quick-card" onclick="showView('packs')">
-              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></div>
+              <div class="quick-icon" id="qIconPacks"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></div>
               <div class="quick-info"><div class="quick-label">Packs mensuales</div><div class="quick-count" id="quickCountPacks">0 recursos</div></div>
               <div class="quick-arrow">→</div>
             </div>
             <div class="quick-card" onclick="showView('fx')">
-              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/></svg></div>
+              <div class="quick-icon" id="qIconFx"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/></svg></div>
               <div class="quick-info"><div class="quick-label">FX</div><div class="quick-count" id="quickCountFx">0 recursos</div></div>
               <div class="quick-arrow">→</div>
             </div>
             <div class="quick-card" onclick="showView('drops')">
-              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg></div>
+              <div class="quick-icon" id="qIconDrops"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg></div>
               <div class="quick-info"><div class="quick-label">Drops</div><div class="quick-count" id="quickCountDrops">0 recursos</div></div>
               <div class="quick-arrow">→</div>
             </div>
             <div class="quick-card" onclick="showView('usuarios')">
-              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.3 3-5 7-5s7 1.7 7 5"/><circle cx="17" cy="8" r="2.6"/><path d="M17.5 13c2.5.3 4.5 1.8 4.5 4"/></svg></div>
+              <div class="quick-icon" id="qIconUsuarios"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.3 3-5 7-5s7 1.7 7 5"/><circle cx="17" cy="8" r="2.6"/><path d="M17.5 13c2.5.3 4.5 1.8 4.5 4"/></svg></div>
               <div class="quick-info"><div class="quick-label">Usuarios</div><div class="quick-count" id="quickCountUsuarios">0 solicitudes pendientes</div></div>
               <div class="quick-arrow">→</div>
             </div>
@@ -758,27 +808,27 @@
           <div class="view-sub" style="margin:0 0 14px; font-weight:600; color:var(--text);">Ir directo a...</div>
           <div class="quick-grid" style="margin-bottom:26px;">
             <div class="quick-card" onclick="showView('enlaces')">
-              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M10 13a5 5 0 007 0l2-2a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-2 2a5 5 0 007 7l1-1"/></svg></div>
+              <div class="quick-icon" id="qIconEnlacesB"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M10 13a5 5 0 007 0l2-2a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-2 2a5 5 0 007 7l1-1"/></svg></div>
               <div class="quick-info"><div class="quick-label">Enlaces</div><div class="quick-count">Páginas de descarga</div></div>
               <div class="quick-arrow">→</div>
             </div>
             <div class="quick-card" onclick="showView('samples')">
-              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M3 12h2l2-7 3 14 3-11 2 4h5"/></svg></div>
+              <div class="quick-icon" id="qIconSamplesB"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M3 12h2l2-7 3 14 3-11 2 4h5"/></svg></div>
               <div class="quick-info"><div class="quick-label">Samples</div><div class="quick-count" id="qcSamplesB">0 recursos</div></div>
               <div class="quick-arrow">→</div>
             </div>
             <div class="quick-card" onclick="showView('packs')">
-              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></div>
+              <div class="quick-icon" id="qIconPacksB"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></div>
               <div class="quick-info"><div class="quick-label">Packs mensuales</div><div class="quick-count" id="qcPacksB">0 recursos</div></div>
               <div class="quick-arrow">→</div>
             </div>
             <div class="quick-card" onclick="showView('fx')">
-              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/></svg></div>
+              <div class="quick-icon" id="qIconFxB"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/></svg></div>
               <div class="quick-info"><div class="quick-label">FX</div><div class="quick-count" id="qcFxB">0 recursos</div></div>
               <div class="quick-arrow">→</div>
             </div>
             <div class="quick-card" onclick="showView('drops')">
-              <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg></div>
+              <div class="quick-icon" id="qIconDropsB"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg></div>
               <div class="quick-info"><div class="quick-label">Drops</div><div class="quick-count" id="qcDropsB">0 recursos</div></div>
               <div class="quick-arrow">→</div>
             </div>
@@ -1037,6 +1087,22 @@ function nowLabel(){ return 'justo ahora'; }
 
 const footerYearEl = document.getElementById('footerYear');
 if(footerYearEl) footerYearEl.textContent = new Date().getFullYear();
+
+function animarTituloMarca(){
+  const el = document.getElementById('brandNameAnimated');
+  if(!el) return;
+  const palabras = el.textContent.trim().split(' ');
+  let contador = 0;
+  el.innerHTML = palabras.map(palabra=>{
+    const letras = palabra.split('').map(ch=>{
+      const delay = (contador * 0.07).toFixed(2);
+      contador++;
+      return `<span class="brand-letter" style="animation-delay:-${delay}s">${ch}</span>`;
+    }).join('');
+    return `<span class="brand-word">${letras}</span>`;
+  }).join('');
+}
+animarTituloMarca();
 
 /* ---------------- llamada al backend (real o demo) ---------------- */
 async function api(accion, payload){
@@ -1407,6 +1473,14 @@ async function addItem(e, key){
   toggleForm(key);
   renderCatalog(key);
   renderStats();
+
+  const grid = document.getElementById('grid-'+key);
+  const nuevaTarjeta = grid ? grid.firstElementChild : null;
+  if(nuevaTarjeta){
+    nuevaTarjeta.classList.add('just-added');
+    setTimeout(()=> nuevaTarjeta.classList.remove('just-added'), 1800);
+  }
+
   toast('Guardado en '+key+'.');
   return false;
 }
@@ -1481,6 +1555,7 @@ async function renderEnlacesBasico(){
   enlacesBasicoCache = resp.items || [];
   instagramConfirmado = !!resp.siguioInstagram;
   document.getElementById('count-enlaces').textContent = enlacesBasicoCache.length + ' enlaces';
+  pintarEstadoCaja('qIconEnlacesB', enlacesBasicoCache.length>0);
   pintarEnlacesBasico();
 }
 
@@ -1646,6 +1721,7 @@ async function revisarEnlacesNuevos(){
   const resp = await api('listar_enlaces_basico', {token: STATE.currentUser.token});
   if(!resp.ok || !resp.items) return;
   instagramConfirmado = !!resp.siguioInstagram;
+  pintarEstadoCaja('qIconEnlacesB', resp.items.length>0);
 
   const vistaActiva = document.getElementById('view-enlaces').classList.contains('active');
 
@@ -1699,11 +1775,28 @@ function startEnlacesTicker(){
   }, 1000);
 }
 
+function qcNum(id, valor){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const anterior = el.dataset.valor;
+  el.textContent = valor;
+  el.dataset.valor = String(valor);
+  if(anterior!==undefined && anterior!==String(valor)){
+    el.classList.remove('flash-update');
+    void el.offsetWidth;
+    el.classList.add('flash-update');
+  }
+}
+function pintarEstadoCaja(iconId, tieneContenido){
+  const el = document.getElementById(iconId);
+  if(el) el.classList.toggle('has-content', !!tieneContenido);
+}
+
 function renderStats(){
-  document.getElementById('statTotalDjs').textContent = STATE.users.length;
-  document.getElementById('statPendientes').textContent = STATE.users.filter(u=>u.estado==='Pendiente').length;
-  document.getElementById('statRecursos').textContent = STATE.enlaces.length + STATE.samples.length + STATE.packs.length + STATE.fx.length + STATE.drops.length;
-  document.getElementById('statHoy').textContent = STATE.actividad.length;
+  qcNum('statTotalDjs', STATE.users.length);
+  qcNum('statPendientes', STATE.users.filter(u=>u.estado==='Pendiente').length);
+  qcNum('statRecursos', STATE.enlaces.length + STATE.samples.length + STATE.packs.length + STATE.fx.length + STATE.drops.length);
+  qcNum('statHoy', STATE.actividad.length);
 
   const singular = (n, palabra)=> n===1 ? '1 '+palabra : n+' '+palabra+'s';
   const qc = (id, txt)=>{ const el=document.getElementById(id); if(el) el.textContent = txt; };
@@ -1719,6 +1812,20 @@ function renderStats(){
   qc('qcPacksB', singular(STATE.packs.length, 'recurso'));
   qc('qcFxB', singular(STATE.fx.length, 'recurso'));
   qc('qcDropsB', singular(STATE.drops.length, 'recurso'));
+
+  // Verde si hay contenido, rojo si está vacío (o si hay solicitudes pendientes por revisar)
+  pintarEstadoCaja('qIconEnlaces', STATE.enlaces.length>0);
+  pintarEstadoCaja('qIconSamples', STATE.samples.length>0);
+  pintarEstadoCaja('qIconPacks', STATE.packs.length>0);
+  pintarEstadoCaja('qIconFx', STATE.fx.length>0);
+  pintarEstadoCaja('qIconDrops', STATE.drops.length>0);
+  pintarEstadoCaja('qIconUsuarios', pendientes===0);
+
+  pintarEstadoCaja('qIconEnlacesB', enlacesBasicoCache.length>0);
+  pintarEstadoCaja('qIconSamplesB', STATE.samples.length>0);
+  pintarEstadoCaja('qIconPacksB', STATE.packs.length>0);
+  pintarEstadoCaja('qIconFxB', STATE.fx.length>0);
+  pintarEstadoCaja('qIconDropsB', STATE.drops.length>0);
 }
 
 function renderUsuarios(){
