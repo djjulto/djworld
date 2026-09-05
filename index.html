@@ -182,6 +182,24 @@
   .tonearm .pivot{ position:absolute; right:-6px; top:-6px; width:16px; height:16px; border-radius:50%; background:#FFFFFF; border:2px solid #BFBFC3; }
   .tonearm .head{ position:absolute; left:0; top:-1px; width:14px; height:8px; background:#BFBFC3; border-radius:2px; }
   .vinyl-stage:hover .tonearm{ transform:rotate(-40deg); }
+  .vinyl-stage{ cursor:pointer; transition:transform .2s ease; }
+  .vinyl-stage:active{ transform:scale(.97); }
+  .scratch-hint{
+    text-align:center; font-size:11.5px; font-weight:600; color:var(--red-dark);
+    margin-top:10px; opacity:.75; animation:hintPulse 2.2s ease-in-out infinite;
+  }
+  @keyframes hintPulse{ 0%,100%{opacity:.5;} 50%{opacity:.9;} }
+  @keyframes vinylScratch{
+    0%{ transform:rotate(0deg); }
+    15%{ transform:rotate(-18deg); }
+    35%{ transform:rotate(12deg); }
+    55%{ transform:rotate(-10deg); }
+    75%{ transform:rotate(5deg); }
+    100%{ transform:rotate(0deg); }
+  }
+  .vinyl.scratching{ animation:spinVinyl 7s linear infinite, vinylScratch .45s ease-out; }
+  .tonearm.scratching{ animation:tonearmShake .45s ease-out; }
+  @keyframes tonearmShake{ 0%,100%{ margin-right:0; } 30%{ margin-right:4px; } 60%{ margin-right:-3px; } }
 
   .auth-copy{ margin-top:34px; text-align:center; max-width:280px; }
   .auth-copy h1{ font-size:26px; line-height:1.15; color:var(--text); }
@@ -560,7 +578,7 @@
   <div class="auth-wrap fade-in">
     <div class="auth-visual">
       <div class="rack-brand">WORLD DJ POOL</div>
-      <div class="vinyl-stage">
+      <div class="vinyl-stage" onclick="scratchVinilo()" title="Tócalo">
         <div class="vinyl-drop-wrap">
           <div class="vinyl">
             <div class="vinyl-label"><span>WDP</span></div>
@@ -569,6 +587,7 @@
         </div>
         <div class="tonearm"><div class="pivot"></div><div class="arm"></div><div class="head"></div></div>
       </div>
+      <div class="scratch-hint">🎧 Tócalo</div>
       <div class="auth-copy">
         <h1>Un solo lugar para todo el material.</h1>
         <p>Enlaces, samples, packs, FX y drops del grupo, organizados y disponibles para cada DJ autorizado.</p>
@@ -814,7 +833,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v2.7</div>
+        <div class="sidebar-footer-version">World DJ Pool · v2.9</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -1374,8 +1393,74 @@ async function api(accion, payload){
    AUTENTICACIÓN
    ============================================================ */
 function setAuthTab(tab){
-  document.getElementById('paneAcceso').classList.toggle('hidden', tab!=='acceso');
-  document.getElementById('paneLogin').classList.toggle('hidden', tab!=='login');
+  reproducirScratch();
+  const acceso = document.getElementById('paneAcceso');
+  const login = document.getElementById('paneLogin');
+  acceso.classList.toggle('hidden', tab!=='acceso');
+  login.classList.toggle('hidden', tab!=='login');
+  const activo = tab==='acceso' ? acceso : login;
+  activo.classList.remove('fade-in');
+  void activo.offsetWidth;
+  activo.classList.add('fade-in');
+}
+
+/* ---------------- audio: scratch sintetizado (sin archivos externos) ---------------- */
+let audioCtx = null;
+function getAudioCtx(){
+  if(!audioCtx){
+    try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch(e){ return null; }
+  }
+  if(audioCtx.state==='suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function reproducirScratch(){
+  const ctx = getAudioCtx();
+  if(!ctx) return;
+
+  const duracion = 0.4;
+  const bufferSize = Math.floor(ctx.sampleRate * duracion);
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for(let i=0;i<bufferSize;i++){ data[i] = Math.random()*2-1; }
+
+  const ruido = ctx.createBufferSource();
+  ruido.buffer = buffer;
+
+  const filtro = ctx.createBiquadFilter();
+  filtro.type = 'bandpass';
+  filtro.Q.value = 7;
+  filtro.frequency.setValueAtTime(280, ctx.currentTime);
+  filtro.frequency.linearRampToValueAtTime(2400, ctx.currentTime + duracion*0.35);
+  filtro.frequency.linearRampToValueAtTime(180, ctx.currentTime + duracion*0.7);
+  filtro.frequency.linearRampToValueAtTime(1200, ctx.currentTime + duracion);
+
+  const volumen = ctx.createGain();
+  volumen.gain.setValueAtTime(0.0001, ctx.currentTime);
+  volumen.gain.exponentialRampToValueAtTime(0.45, ctx.currentTime + 0.025);
+  volumen.gain.exponentialRampToValueAtTime(0.22, ctx.currentTime + duracion*0.55);
+  volumen.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duracion);
+
+  ruido.connect(filtro);
+  filtro.connect(volumen);
+  volumen.connect(ctx.destination);
+
+  ruido.start();
+  ruido.stop(ctx.currentTime + duracion);
+}
+
+function scratchVinilo(){
+  reproducirScratch();
+  const v = document.querySelector('.vinyl-stage .vinyl');
+  const t = document.querySelector('.vinyl-stage .tonearm');
+  [v,t].forEach(el=>{
+    if(!el) return;
+    el.classList.remove('scratching');
+    void el.offsetWidth;
+    el.classList.add('scratching');
+    setTimeout(()=>el.classList.remove('scratching'), 500);
+  });
 }
 
 async function handleSolicitud(e){
@@ -1496,10 +1581,7 @@ async function handleLogin(e){
 
 function cerrarSesion(){
   STATE.currentUser = null;
-  if(notifTicker){ clearInterval(notifTicker); notifTicker = null; }
-  if(simTimer){ clearInterval(simTimer); simTimer = null; }
-  if(solicitudesTimer){ clearInterval(solicitudesTimer); solicitudesTimer = null; }
-  if(catalogosTimer){ clearInterval(catalogosTimer); catalogosTimer = null; }
+  if(syncTimer){ clearInterval(syncTimer); syncTimer = null; }
   if(enlacesTicker){ clearInterval(enlacesTicker); enlacesTicker = null; }
   enlacesVistos = null;
   instagramConfirmado = false;
@@ -1613,11 +1695,9 @@ async function enterApp(){
   await verificarConexion();
   await cargarDatosIniciales();
   renderAll();
-  if(isAdmin()) startActivitySimulation();
-  else if(isPro()) startSolicitudesTicker();
-  else if(esBasico()) startNotificacionesEnlaces();
+  if(esBasico()) startNotificacionesEnlaces();
   startEnlacesTicker();
-  startCatalogosTicker();
+  startSyncTicker();
   mostrarCommunityTab();
 }
 
@@ -2153,7 +2233,6 @@ renderWizard();
 
 /* ---------------- aviso de enlaces nuevos (para Básico/Pro) ---------------- */
 let enlacesVistos = null;
-let notifTicker = null;
 
 function cargarEnlacesVistos(){
   const key = 'wdp_enlaces_vistos_' + (STATE.currentUser ? STATE.currentUser.usuario : '');
@@ -2215,9 +2294,7 @@ async function revisarEnlacesNuevos(){
 }
 
 function startNotificacionesEnlaces(){
-  if(notifTicker) clearInterval(notifTicker);
   revisarEnlacesNuevos();
-  notifTicker = setInterval(revisarEnlacesNuevos, REFRESCO_MS);
 }
 
 function startEnlacesTicker(){
@@ -2443,51 +2520,29 @@ function pushActivity(usuario, accion, detalle){
   renderStats();
 }
 
-let simTimer = null;
-function startActivitySimulation(){
-  if(simTimer) clearInterval(simTimer);
-  simTimer = setInterval(async ()=>{
-    await verificarConexion();
+let syncTimer = null;
+function startSyncTicker(){
+  if(syncTimer) clearInterval(syncTimer);
+  syncTimer = setInterval(async ()=>{
     if(!API_URL) return;
-    const resp = await api('listar_actividad', {});
-    if(resp.ok && resp.items){
-      STATE.actividad = resp.items;
-      renderActivity();
-      renderStats();
-    }
-    const respUsuarios = await api('listar_usuarios', {token: STATE.currentUser.token});
-    if(respUsuarios.ok && respUsuarios.items){
-      STATE.users = respUsuarios.items.map(u=>({
-        id:u.ID, usuario:u.Usuario, correo:u.Correo, whatsapp:u.WhatsApp, rol:u.Rol, estado:u.Estado, fecha: formatFechaSegura(u.FechaRegistro)
-      }));
-      renderUsuarios();
-      renderStats();
-    }
-  }, REFRESCO_MS);
-}
 
-let solicitudesTimer = null;
-function startSolicitudesTicker(){
-  if(solicitudesTimer) clearInterval(solicitudesTimer);
-  solicitudesTimer = setInterval(async ()=>{
-    if(!API_URL) return;
-    const resp = await api('listar_usuarios', {token: STATE.currentUser.token});
-    if(resp.ok && resp.items){
-      STATE.users = resp.items.map(u=>({
-        id:u.ID, usuario:u.Usuario, correo:u.Correo, whatsapp:u.WhatsApp, rol:u.Rol, estado:u.Estado, fecha: formatFechaSegura(u.FechaRegistro)
-      }));
-      renderUsuarios();
-      renderStats();
+    if(isAdmin()){
+      await verificarConexion();
+      const respAct = await api('listar_actividad', {});
+      if(respAct.ok && respAct.items){ STATE.actividad = respAct.items; renderActivity(); }
     }
-  }, REFRESCO_MS);
-}
 
-let catalogosTimer = null;
-function startCatalogosTicker(){
-  if(catalogosTimer) clearInterval(catalogosTimer);
-  catalogosTimer = setInterval(async ()=>{
-    if(!API_URL) return;
-    // se recorre uno por uno (no en paralelo) para no saturar Apps Script
+    if(puedeGestionarSolicitudes()){
+      const respU = await api('listar_usuarios', {token: STATE.currentUser.token});
+      if(respU.ok && respU.items){
+        STATE.users = respU.items.map(u=>({
+          id:u.ID, usuario:u.Usuario, correo:u.Correo, whatsapp:u.WhatsApp, rol:u.Rol, estado:u.Estado, fecha: formatFechaSegura(u.FechaRegistro)
+        }));
+        renderUsuarios();
+      }
+    }
+
+    // uno por uno (no en paralelo), para no saturar Apps Script con ráfagas simultáneas
     for(const key of ['samples','packs','fx','drops','libreria']){
       const resp = await api('listar_'+key, {});
       if(resp.ok && resp.items){
@@ -2495,13 +2550,17 @@ function startCatalogosTicker(){
         renderCatalog(key);
       }
     }
+
     if(puedeEditarCatalogo()){
-      const resp = await api('listar_enlaces', {});
-      if(resp.ok && resp.items){
-        STATE.enlaces = resp.items.map(it=>normalizarItem(it,'enlaces'));
+      const respE = await api('listar_enlaces', {});
+      if(respE.ok && respE.items){
+        STATE.enlaces = respE.items.map(it=>normalizarItem(it,'enlaces'));
         renderCatalog('enlaces');
       }
+    }else if(esBasico()){
+      await revisarEnlacesNuevos();
     }
+
     renderStats();
   }, REFRESCO_MS);
 }
