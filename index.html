@@ -343,13 +343,6 @@
   .user-role{ font-size:11px; color:var(--text-faint); }
 
   .content{ padding:28px 30px 60px; flex:1; }
-  .conn-banner{
-    display:none; align-items:center; justify-content:space-between; gap:14px;
-    background:#FFB454; color:#7A2E00; font-size:13px; font-weight:600;
-    padding:11px 16px; border-radius:10px; margin-bottom:18px;
-  }
-  .conn-banner.show{ display:flex; }
-  @media (max-width:640px){ .conn-banner{ flex-direction:column; align-items:flex-start; } }
   .cargando-overlay{
     display:none; align-items:center; gap:10px; font-size:13px; font-weight:600; color:var(--text-dim);
     background:var(--panel-raised); border:1px solid var(--line); border-radius:10px; padding:10px 16px; margin-bottom:18px;
@@ -802,6 +795,10 @@
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg></span>
           Drops
         </div>
+        <div class="nav-item" data-view="libreria" onclick="showView('libreria')">
+          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4v16M4 4h13a3 3 0 013 3v13H7a3 3 0 01-3-3z"/><path d="M8 8h8M8 12h8"/></svg></span>
+          Librería
+        </div>
       </div>
 
       <div class="nav-group gestion-usuarios">
@@ -817,7 +814,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v2.4</div>
+        <div class="sidebar-footer-version">World DJ Pool · v2.7</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -834,7 +831,7 @@
           <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleModoOscuro()" title="Modo oscuro">
             <svg id="themeIcon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.5A8.5 8.5 0 1111.5 3a7 7 0 009.5 9.5z"/></svg>
           </button>
-          <button class="cloud-btn admin-only" id="cloudBtn" onclick="abrirConexion()" title="Conexión con la base de datos">
+          <button class="cloud-btn" id="cloudBtn" onclick="abrirConexion()" title="Conexión con la base de datos">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 18a4.5 4.5 0 01-.5-8.98A5.5 5.5 0 0117 8.06 4 4 0 0117.5 18H7z"/></svg>
             <span class="cloud-dot" id="cloudDot"></span>
           </button>
@@ -853,10 +850,6 @@
         <div class="cargando-overlay" id="cargandoOverlay">
           <span class="eq-mini" style="color:var(--red-vivid); height:20px;"><i></i><i></i><i></i></span>
           Cargando tu catálogo…
-        </div>
-        <div class="conn-banner" id="connBanner">
-          <span>⚠️ Sin conexión con la base de datos ahora mismo. Lo que ves puede estar desactualizado.</span>
-          <button class="btn btn-sm" style="background:#FFFFFF; color:#7A2E00;" onclick="reintentarConexion(this)">Reintentar</button>
         </div>
 
 
@@ -929,6 +922,11 @@
               <div class="quick-info"><div class="quick-label">Drops</div><div class="quick-count" id="quickCountDrops">0 recursos</div></div>
               <div class="quick-arrow">→</div>
             </div>
+            <div class="quick-card" onclick="showView('libreria')">
+              <div class="quick-icon" id="qIconLibreria"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M4 4v16M4 4h13a3 3 0 013 3v13H7a3 3 0 01-3-3z"/><path d="M8 8h8M8 12h8"/></svg></div>
+              <div class="quick-info"><div class="quick-label">Librería</div><div class="quick-count" id="quickCountLibreria">0 recursos</div></div>
+              <div class="quick-arrow">→</div>
+            </div>
             <div class="quick-card" onclick="showView('usuarios')">
               <div class="quick-icon" id="qIconUsuarios"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.3 3-5 7-5s7 1.7 7 5"/><circle cx="17" cy="8" r="2.6"/><path d="M17.5 13c2.5.3 4.5 1.8 4.5 4"/></svg></div>
               <div class="quick-info"><div class="quick-label">Usuarios</div><div class="quick-count" id="quickCountUsuarios">0 solicitudes pendientes</div></div>
@@ -988,6 +986,11 @@
             <div class="quick-card" onclick="showView('drops')">
               <div class="quick-icon" id="qIconDropsB"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg></div>
               <div class="quick-info"><div class="quick-label">Drops</div><div class="quick-count" id="qcDropsB">0 recursos</div></div>
+              <div class="quick-arrow">→</div>
+            </div>
+            <div class="quick-card" onclick="showView('libreria')">
+              <div class="quick-icon" id="qIconLibreriaB"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M4 4v16M4 4h13a3 3 0 013 3v13H7a3 3 0 01-3-3z"/><path d="M8 8h8M8 12h8"/></svg></div>
+              <div class="quick-info"><div class="quick-label">Librería</div><div class="quick-count" id="qcLibreriaB">0 recursos</div></div>
               <div class="quick-arrow">→</div>
             </div>
           </div>
@@ -1113,6 +1116,26 @@
           </form>
           <div class="catalog-toolbar"><div class="toolbar-left"><span class="count-chip" id="count-drops">0 drops</span><input class="search-input" type="text" placeholder="Buscar..." oninput="actualizarFiltroTexto('drops', this.value)"><label class="fav-toggle-label"><input type="checkbox" onchange="actualizarFiltroFav('drops', this.checked)"> Solo favoritos</label></div><button class="refresh-btn" onclick="refrescarCatalogo('drops', this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button></div>
           <div class="cat-grid" id="grid-drops"></div>
+        </section>
+
+        <!-- ===== LIBRERÍA ===== -->
+        <section class="view" id="view-libreria">
+          <div class="view-head">
+            <div><h2>Librería</h2><div class="view-sub">Bibliotecas de música por estilo y género — todo organizado en un solo lugar.</div></div>
+            <button class="btn btn-primary catalogo-editor" onclick="toggleForm('libreria')">Agregar a librería</button>
+          </div>
+          <form class="module add-form hidden" id="form-libreria" onsubmit="return addItem(event,'libreria')">
+            <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+            <div class="form-grid">
+              <div><label class="field-label">Nombre</label><input class="field" required id="libreria_nombre" placeholder="ej. Librería Afro House Vol.1"></div>
+              <div><label class="field-label">Género / estilo</label><input class="field" id="libreria_genero" placeholder="ej. Afro House, Techno, Reggaetón"></div>
+              <div class="full"><label class="field-label">Enlace de la librería</label><input class="field" required type="url" id="libreria_enlace" placeholder="https://"></div>
+              <div class="full"><label class="field-label">Notas</label><input class="field" id="libreria_notas" placeholder="ej. actualizada cada mes, incluye remixes"></div>
+            </div>
+            <div class="form-actions"><button class="btn btn-primary" type="submit">Guardar en librería</button><button class="btn btn-ghost" type="button" onclick="toggleForm('libreria')">Cancelar</button></div>
+          </form>
+          <div class="catalog-toolbar"><div class="toolbar-left"><span class="count-chip" id="count-libreria">0 libreria</span><input class="search-input" type="text" placeholder="Buscar..." oninput="actualizarFiltroTexto('libreria', this.value)"><label class="fav-toggle-label"><input type="checkbox" onchange="actualizarFiltroFav('libreria', this.checked)"> Solo favoritos</label></div><button class="refresh-btn" onclick="refrescarCatalogo('libreria', this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button></div>
+          <div class="cat-grid" id="grid-libreria"></div>
         </section>
 
         <!-- ===== USUARIOS ===== -->
@@ -1271,6 +1294,7 @@ const STATE = {
   packs: [],
   fx: [],
   drops: [],
+  libreria: [],
   actividad: []
 };
 
@@ -1341,7 +1365,6 @@ async function api(accion, payload){
     }catch(segundoError){
       marcarConexionFallida();
       const motivo = (primerError && primerError.name==='AbortError') ? 'La base de datos tardó demasiado en responder.' : 'No se pudo contactar la base de datos.';
-      toast(motivo+' Revisa tu conexión a internet e intenta de nuevo.', true);
       return {ok:false, error:motivo};
     }
   }
@@ -1476,6 +1499,7 @@ function cerrarSesion(){
   if(notifTicker){ clearInterval(notifTicker); notifTicker = null; }
   if(simTimer){ clearInterval(simTimer); simTimer = null; }
   if(solicitudesTimer){ clearInterval(solicitudesTimer); solicitudesTimer = null; }
+  if(catalogosTimer){ clearInterval(catalogosTimer); catalogosTimer = null; }
   if(enlacesTicker){ clearInterval(enlacesTicker); enlacesTicker = null; }
   enlacesVistos = null;
   instagramConfirmado = false;
@@ -1586,13 +1610,14 @@ async function enterApp(){
   showView(isAdmin() ? 'bienvenida' : 'inicio');
   toast('Sesión iniciada como '+u.usuario+'.');
 
-  if(isAdmin()) await verificarConexion();
+  await verificarConexion();
   await cargarDatosIniciales();
   renderAll();
   if(isAdmin()) startActivitySimulation();
   else if(isPro()) startSolicitudesTicker();
   else if(esBasico()) startNotificacionesEnlaces();
   startEnlacesTicker();
+  startCatalogosTicker();
   mostrarCommunityTab();
 }
 
@@ -1601,7 +1626,8 @@ const MAPEOS_CATALOGO = {
   samples: {ID:'id', Nombre:'nombre', Genero:'genero', BPM:'bpm', Tono:'tono', Enlace:'enlace', Etiquetas:'tags', Autor:'autor', Fecha:'fecha'},
   packs: {ID:'id', Mes:'mes', Nombre:'nombre', Enlace:'enlace', Descripcion:'desc', Autor:'autor', Fecha:'fecha'},
   fx: {ID:'id', Nombre:'nombre', Tipo:'tipo', Enlace:'enlace', Notas:'notas', Autor:'autor', Fecha:'fecha'},
-  drops: {ID:'id', Nombre:'nombre', Genero:'genero', Enlace:'enlace', Notas:'notas', Autor:'autor', Fecha:'fecha'}
+  drops: {ID:'id', Nombre:'nombre', Genero:'genero', Enlace:'enlace', Notas:'notas', Autor:'autor', Fecha:'fecha'},
+  libreria: {ID:'id', Nombre:'nombre', Genero:'genero', Enlace:'enlace', Notas:'notas', Autor:'autor', Fecha:'fecha'}
 };
 
 function normalizarItem(raw, key){
@@ -1627,7 +1653,7 @@ async function cargarDatosIniciales(){
 
   // Se cargan de a una a la vez (no todas en paralelo): Google Apps Script se satura
   // y falla más seguido si le llegan muchas peticiones al mismo tiempo.
-  for(const key of ['samples','packs','fx','drops']){
+  for(const key of ['samples','packs','fx','drops','libreria']){
     const resp = await api('listar_'+key, {});
     if(resp.ok && resp.items) STATE[key] = resp.items.map(it=>normalizarItem(it,key));
   }
@@ -1713,7 +1739,7 @@ function showView(name){
   document.getElementById('view-'+name).classList.add('active');
   document.getElementById('view-'+name).classList.add('fade-in');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.view===name));
-  const titles = {bienvenida:'Bienvenida', inicio:'Bienvenida', enlaces:'Enlaces', samples:'Samples', packs:'Packs mensuales', fx:'FX', drops:'Drops', usuarios:'Usuarios', actividad:'Actividad'};
+  const titles = {bienvenida:'Bienvenida', inicio:'Bienvenida', enlaces:'Enlaces', samples:'Samples', packs:'Packs mensuales', fx:'FX', drops:'Drops', libreria:'Librería', usuarios:'Usuarios', actividad:'Actividad'};
   document.getElementById('viewTitle').textContent = titles[name];
   if(name==='enlaces') ocultarAvisoEnlaces();
   cerrarMobileMenu();
@@ -1804,6 +1830,14 @@ const CATALOG_CONFIG = {
       <div class="cat-meta">${escapeHtml(it.genero||'—')}</div>
       ${it.notas?`<div class="cat-meta">${escapeHtml(it.notas)}</div>`:''}
       <div class="cat-card-foot"><a class="cat-link-btn" href="${it.enlace}" target="_blank" rel="noopener">Descargar ↗</a></div>`
+  },
+  libreria: {
+    fields:['nombre','genero','enlace','notas'],
+    render:(it)=>`
+      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3><div class="row-flex" style="gap:2px;">${favBtn('libreria',it.id)}${isAdmin()?`<button class="icon-btn" onclick="deleteItem('libreria',${it.id})">✕</button>`:''}</div></div>
+      <span class="tag">${escapeHtml(it.genero||'General')}</span>
+      ${it.notas?`<div class="cat-meta">${escapeHtml(it.notas)}</div>`:''}
+      <div class="cat-card-foot"><a class="cat-link-btn" href="${it.enlace}" target="_blank" rel="noopener">Abrir librería ↗</a></div>`
   }
 };
 
@@ -1894,7 +1928,7 @@ async function deleteItem(key, id){
 
 const filtrosCatalogo = {
   enlaces:{texto:'', soloFav:false}, samples:{texto:'', soloFav:false}, packs:{texto:'', soloFav:false},
-  fx:{texto:'', soloFav:false}, drops:{texto:'', soloFav:false}
+  fx:{texto:'', soloFav:false}, drops:{texto:'', soloFav:false}, libreria:{texto:'', soloFav:false}
 };
 function actualizarFiltroTexto(key, valor){ filtrosCatalogo[key].texto = valor.trim().toLowerCase(); renderCatalog(key); }
 function actualizarFiltroFav(key, checked){ filtrosCatalogo[key].soloFav = checked; renderCatalog(key); }
@@ -2216,7 +2250,7 @@ function pintarEstadoCaja(iconId, tieneContenido){
 function renderStats(){
   qcNum('statTotalDjs', STATE.users.length);
   qcNum('statPendientes', STATE.users.filter(u=>u.estado==='Pendiente').length);
-  qcNum('statRecursos', STATE.enlaces.length + STATE.samples.length + STATE.packs.length + STATE.fx.length + STATE.drops.length);
+  qcNum('statRecursos', STATE.enlaces.length + STATE.samples.length + STATE.packs.length + STATE.fx.length + STATE.drops.length + STATE.libreria.length);
   qcNum('statHoy', STATE.actividad.length);
 
   const singular = (n, palabra)=> n===1 ? '1 '+palabra : n+' '+palabra+'s';
@@ -2226,6 +2260,7 @@ function renderStats(){
   qc('quickCountPacks', singular(STATE.packs.length, 'recurso'));
   qc('quickCountFx', singular(STATE.fx.length, 'recurso'));
   qc('quickCountDrops', singular(STATE.drops.length, 'recurso'));
+  qc('quickCountLibreria', singular(STATE.libreria.length, 'recurso'));
   const pendientes = STATE.users.filter(u=>u.estado==='Pendiente').length;
   qc('quickCountUsuarios', pendientes===0 ? 'Sin solicitudes pendientes' : pendientes===1 ? '1 solicitud pendiente' : pendientes+' solicitudes pendientes');
 
@@ -2233,6 +2268,7 @@ function renderStats(){
   qc('qcPacksB', singular(STATE.packs.length, 'recurso'));
   qc('qcFxB', singular(STATE.fx.length, 'recurso'));
   qc('qcDropsB', singular(STATE.drops.length, 'recurso'));
+  qc('qcLibreriaB', singular(STATE.libreria.length, 'recurso'));
 
   // Verde si hay contenido, rojo si está vacío (o si hay solicitudes pendientes por revisar)
   pintarEstadoCaja('qIconEnlaces', STATE.enlaces.length>0);
@@ -2240,6 +2276,7 @@ function renderStats(){
   pintarEstadoCaja('qIconPacks', STATE.packs.length>0);
   pintarEstadoCaja('qIconFx', STATE.fx.length>0);
   pintarEstadoCaja('qIconDrops', STATE.drops.length>0);
+  pintarEstadoCaja('qIconLibreria', STATE.libreria.length>0);
   pintarEstadoCaja('qIconUsuarios', pendientes===0);
 
   pintarEstadoCaja('qIconEnlacesB', enlacesBasicoCache.length>0);
@@ -2247,6 +2284,7 @@ function renderStats(){
   pintarEstadoCaja('qIconPacksB', STATE.packs.length>0);
   pintarEstadoCaja('qIconFxB', STATE.fx.length>0);
   pintarEstadoCaja('qIconDropsB', STATE.drops.length>0);
+  pintarEstadoCaja('qIconLibreriaB', STATE.libreria.length>0);
 }
 
 function renderUsuarios(){
@@ -2444,6 +2482,30 @@ function startSolicitudesTicker(){
   }, REFRESCO_MS);
 }
 
+let catalogosTimer = null;
+function startCatalogosTicker(){
+  if(catalogosTimer) clearInterval(catalogosTimer);
+  catalogosTimer = setInterval(async ()=>{
+    if(!API_URL) return;
+    // se recorre uno por uno (no en paralelo) para no saturar Apps Script
+    for(const key of ['samples','packs','fx','drops','libreria']){
+      const resp = await api('listar_'+key, {});
+      if(resp.ok && resp.items){
+        STATE[key] = resp.items.map(it=>normalizarItem(it,key));
+        renderCatalog(key);
+      }
+    }
+    if(puedeEditarCatalogo()){
+      const resp = await api('listar_enlaces', {});
+      if(resp.ok && resp.items){
+        STATE.enlaces = resp.items.map(it=>normalizarItem(it,'enlaces'));
+        renderCatalog('enlaces');
+      }
+    }
+    renderStats();
+  }, REFRESCO_MS);
+}
+
 /* ---------------- conexión con la base de datos (ícono de nube) ---------------- */
 async function verificarConexion(){
   if(!API_URL){ conectado = false; pintarEstadoConexion(); return; }
@@ -2458,8 +2520,6 @@ function pintarEstadoConexion(){
     dot.classList.toggle('on', conectado);
     dot.classList.toggle('off', !conectado && !!API_URL);
   }
-  const banner = document.getElementById('connBanner');
-  if(banner) banner.classList.toggle('show', !conectado && !!API_URL);
 }
 
 function marcarConexionOk(){
@@ -2483,6 +2543,10 @@ async function reintentarConexion(btn){
 }
 
 function abrirConexion(){
+  if(!isAdmin()){
+    toast(conectado ? 'Conectado con la base de datos.' : 'Sin conexión con la base de datos ahora mismo.', !conectado);
+    return;
+  }
   document.getElementById('apiUrlInput').value = API_URL;
   document.getElementById('connEstadoTexto').textContent = API_URL
     ? (conectado ? 'Conectado y guardado en este navegador.' : 'Guardado, pero no se pudo confirmar la conexión ahora mismo.')
@@ -2524,7 +2588,7 @@ document.addEventListener('pointerdown', function(e){
 
 /* ---------------- render inicial ---------------- */
 function renderAll(){
-  ['enlaces','samples','packs','fx','drops'].forEach(renderCatalog);
+  ['enlaces','samples','packs','fx','drops','libreria'].forEach(renderCatalog);
   renderUsuarios();
   renderActivity();
   renderStats();
