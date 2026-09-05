@@ -98,7 +98,7 @@
 
   label.field-label{ display:block; font-size:13px; color:var(--text-dim); margin-bottom:6px; font-weight:500; }
   input.field, select.field, textarea.field{
-    width:100%; background:#FFFFFF; border:1px solid var(--line); color:var(--text);
+    width:100%; background:var(--panel); border:1px solid var(--line); color:var(--text);
     padding:10px 12px; border-radius:8px; font-size:14.5px; outline:none;
     transition:border-color .12s ease, box-shadow .12s ease;
   }
@@ -385,7 +385,19 @@
 
   .stat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:26px; }
   @media (max-width:900px){ .stat-grid{grid-template-columns:repeat(2,1fr);} }
-  .stat-module{ padding:16px 18px; }
+  .stat-module{ padding:16px 18px; transition:transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s ease; }
+  .stat-module:hover{ transform:perspective(700px) rotateX(3deg) rotateY(-3deg) translateY(-3px); box-shadow:0 14px 26px -14px rgba(0,0,0,.25); }
+
+  .community-strip{ display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding:18px 20px; }
+  .community-avatars{ display:flex; }
+  .community-avatar{
+    width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:12.5px; font-weight:700; color:#FFFFFF; border:2.5px solid var(--panel); margin-left:-10px;
+    transition:transform .15s ease, z-index 0s; position:relative;
+  }
+  .community-avatar:first-child{ margin-left:0; }
+  .community-avatar:hover{ transform:translateY(-4px) scale(1.08); z-index:5; }
+  .community-more{ font-size:12.5px; color:var(--text-dim); margin-left:6px; }
   .stat-num{ font-family:'Inter'; font-size:30px; font-weight:800; line-height:1; letter-spacing:-.02em; }
   .stat-label{ font-size:12.5px; color:var(--text-dim); margin-top:6px; }
   .stat-bar{ height:3px; border-radius:2px; margin-top:12px; background:var(--line-soft); overflow:hidden; }
@@ -485,6 +497,15 @@
   }
   body.theme-dark .search-input{ background:var(--panel-raised); }
   body.theme-dark .cat-link-btn{ color:#FFFFFF; }
+  body.theme-dark .pill-green{ color:#4ADE80; background:rgba(74,222,128,.12); border-color:rgba(74,222,128,.3); }
+  body.theme-dark .pill-amber{ color:#FBBF24; background:rgba(251,191,36,.12); border-color:rgba(251,191,36,.3); }
+  body.theme-dark .pill-red{ color:#F87171; background:rgba(248,113,113,.12); border-color:rgba(248,113,113,.3); }
+  body.theme-dark .pill-blue{ color:#D4D4D8; background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.16); }
+  body.theme-dark .quick-card:hover, body.theme-dark .cat-card:hover{ box-shadow:0 14px 26px -14px rgba(0,0,0,.6); }
+  body.theme-dark .demo-code-hint{ background:rgba(251,191,36,.1); border-color:rgba(251,191,36,.3); color:#FBBF24; }
+  body.theme-dark .toast{ box-shadow:0 12px 30px -10px rgba(0,0,0,.6); }
+  body.theme-dark .cargando-overlay{ background:var(--panel-raised); }
+  body.theme-dark .modal-bg{ background:rgba(0,0,0,.7); }
   .theme-toggle-btn{ display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:8px; background:transparent; border:1px solid var(--line); color:var(--text-dim); }
   .theme-toggle-btn:hover{ background:var(--panel-raised); color:var(--text); }
 
@@ -552,7 +573,7 @@
 
   /* ---- Bienvenida de transición tras el login ---- */
   #welcomeTransition{
-    display:none; position:fixed; inset:0; background:#FFFFFF; z-index:1000;
+    display:none; position:fixed; inset:0; background:var(--bg); z-index:1000;
     align-items:center; justify-content:center; flex-direction:column; overflow:hidden;
   }
   .welcome-trans-icons{ position:absolute; inset:0; pointer-events:none; }
@@ -833,7 +854,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v2.9</div>
+        <div class="sidebar-footer-version">World DJ Pool · v3.0</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -895,7 +916,7 @@
             <div class="module stat-module"><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
               <div class="stat-num" id="statTotalDjs">0</div>
               <div class="stat-label">DJs registrados</div>
-              <div class="stat-bar"><i style="width:100%; background:#18181B;"></i></div>
+              <div class="stat-bar"><i style="width:100%; background:var(--text);"></i></div>
             </div>
             <div class="module stat-module"><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
               <div class="stat-num" id="statPendientes">0</div>
@@ -911,6 +932,14 @@
               <div class="stat-num" id="statHoy">0</div>
               <div class="stat-label">Acciones hoy</div>
               <div class="stat-bar"><i style="width:35%; background:var(--red-vivid);"></i></div>
+            </div>
+          </div>
+
+          <div class="module community-strip">
+            <div class="community-avatars" id="communityAvatars"></div>
+            <div>
+              <div style="font-weight:600; font-size:13.5px;">La comunidad</div>
+              <div class="community-more" id="communityCount">Cargando DJs…</div>
             </div>
           </div>
 
@@ -2362,6 +2391,38 @@ function renderStats(){
   pintarEstadoCaja('qIconFxB', STATE.fx.length>0);
   pintarEstadoCaja('qIconDropsB', STATE.drops.length>0);
   pintarEstadoCaja('qIconLibreriaB', STATE.libreria.length>0);
+
+  renderComunidad();
+}
+
+function coloresDeAvatar(texto){
+  const paleta = ['#E4102A','#2563EB','#12B76A','#F79009','#8B5CF6','#EC4899','#0EA5E9','#F43F5E'];
+  let hash = 0;
+  for(let i=0;i<texto.length;i++) hash = texto.charCodeAt(i) + ((hash<<5)-hash);
+  return paleta[Math.abs(hash) % paleta.length];
+}
+
+function renderComunidad(){
+  const cont = document.getElementById('communityAvatars');
+  const label = document.getElementById('communityCount');
+  if(!cont || !label) return;
+
+  const activos = STATE.users.filter(u=>u.estado==='Activo');
+  if(activos.length===0){
+    cont.innerHTML = '';
+    label.textContent = 'Todavía no hay DJs activos.';
+    return;
+  }
+
+  const visibles = activos.slice(0, 8);
+  cont.innerHTML = visibles.map(u=>
+    `<div class="community-avatar" style="background:${coloresDeAvatar(u.usuario)};" title="${escapeHtml(u.usuario)} · ${escapeHtml(u.rol)}">${u.usuario.charAt(0).toUpperCase()}</div>`
+  ).join('');
+
+  const restantes = activos.length - visibles.length;
+  label.textContent = restantes>0
+    ? `${activos.length} DJs activos (+${restantes} más)`
+    : `${activos.length} DJ${activos.length===1?'':'s'} activo${activos.length===1?'':'s'} en la comunidad`;
 }
 
 function renderUsuarios(){
