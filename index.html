@@ -22,7 +22,15 @@
     --red-vivid:#E4102A;
     --red-dark:#AD0C21;
     --red-soft:#FDEAEC;
+    --accent-rgb:228,16,42;
     --radius-panel: 10px;
+  }
+  /* Tema Pro: interfaz azul en vez de roja (los estados de error/peligro se mantienen en rojo siempre) */
+  body.theme-pro{
+    --red-vivid:#2563EB;
+    --red-dark:#1D4ED8;
+    --red-soft:#EEF3FF;
+    --accent-rgb:37,99,235;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html,body{height:100%;}
@@ -69,8 +77,8 @@
     transition:transform .15s cubic-bezier(.2,.8,.2,1), filter .12s ease, background .12s ease, box-shadow .15s ease;
   }
   .btn:active{transform:translateY(1px) scale(.98);}
-  .btn-primary{ background:var(--red-vivid); color:#FFFFFF; box-shadow:0 1px 2px rgba(16,24,40,.05), 0 4px 10px -4px rgba(228,16,42,.45); }
-  .btn-primary:hover{ background:var(--red-dark); transform:translateY(-1px); box-shadow:0 2px 4px rgba(16,24,40,.06), 0 10px 20px -6px rgba(228,16,42,.55); }
+  .btn-primary{ background:var(--red-vivid); color:#FFFFFF; box-shadow:0 1px 2px rgba(16,24,40,.05), 0 4px 10px -4px rgba(var(--accent-rgb),.45); }
+  .btn-primary:hover{ background:var(--red-dark); transform:translateY(-1px); box-shadow:0 2px 4px rgba(16,24,40,.06), 0 10px 20px -6px rgba(var(--accent-rgb),.55); }
   .btn-ghost{ background:transparent; color:var(--text-dim); border:1px solid var(--line); }
   .btn-ghost:hover{ color:var(--text); border-color:#C6CDDB; background:var(--panel-raised); transform:translateY(-1px); }
   .btn-danger-outline{ background:transparent; color:var(--red); border:1px solid #FECDCA; }
@@ -160,7 +168,7 @@
     width:78px; height:78px; border-radius:50%;
     background:conic-gradient(from 0deg, var(--red-vivid), #FF6B7A, var(--red-vivid));
     display:flex; align-items:center; justify-content:center;
-    box-shadow:0 0 0 1px rgba(0,0,0,.15), 0 0 24px -4px rgba(228,16,42,.55);
+    box-shadow:0 0 0 1px rgba(0,0,0,.15), 0 0 24px -4px rgba(var(--accent-rgb),.55);
   }
   .vinyl-label span{ font-family:'Inter'; font-weight:800; font-size:12px; color:#FFFFFF; letter-spacing:.5px; }
   .vinyl-hole{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:10px; height:10px; border-radius:50%; background:#0D1017; }
@@ -278,20 +286,20 @@
   .nav-item svg{ width:16px; height:16px; flex-shrink:0; opacity:.85; }
   .nav-item:hover{ color:#FFFFFF; }
   .nav-item:hover .nav-icon-wrap{ background:rgba(255,255,255,.11); transform:scale(1.06); }
-  .nav-item.active{ background:rgba(228,16,42,.14); color:#FFFFFF; font-weight:600; }
-  .nav-item.active .nav-icon-wrap{ background:var(--red-vivid); box-shadow:0 3px 10px -2px rgba(228,16,42,.7); }
+  .nav-item.active{ background:rgba(var(--accent-rgb),.14); color:#FFFFFF; font-weight:600; }
+  .nav-item.active .nav-icon-wrap{ background:var(--red-vivid); box-shadow:0 3px 10px -2px rgba(var(--accent-rgb),.7); }
   .nav-item.active svg{ opacity:1; }
-  .nav-item.active::before{ content:''; position:absolute; left:-12px; top:8px; bottom:8px; width:3px; background:var(--red-vivid); border-radius:2px; box-shadow:0 0 8px -1px rgba(228,16,42,.8); }
-  .nav-badge{ width:8px; height:8px; border-radius:50%; background:var(--red-vivid); box-shadow:0 0 0 2px rgba(228,16,42,.25); margin-left:auto; display:none; flex-shrink:0; animation:pulse 1.8s ease-in-out infinite; }
+  .nav-item.active::before{ content:''; position:absolute; left:-12px; top:8px; bottom:8px; width:3px; background:var(--red-vivid); border-radius:2px; box-shadow:0 0 8px -1px rgba(var(--accent-rgb),.8); }
+  .nav-badge{ width:8px; height:8px; border-radius:50%; background:var(--red-vivid); box-shadow:0 0 0 2px rgba(var(--accent-rgb),.25); margin-left:auto; display:none; flex-shrink:0; animation:pulse 1.8s ease-in-out infinite; }
   .nav-badge.on{ display:block; }
 
   .sidebar-footer{ margin-top:auto; padding:18px 20px 4px; border-top:1px solid rgba(255,255,255,.09); }
   .sidebar-insta-link{
     display:flex; align-items:center; gap:8px; text-decoration:none; color:#FFFFFF; font-size:12px; font-weight:600;
-    background:rgba(228,16,42,.14); border:1px solid rgba(228,16,42,.35); border-radius:8px; padding:8px 10px; margin-bottom:12px;
+    background:rgba(var(--accent-rgb),.14); border:1px solid rgba(var(--accent-rgb),.35); border-radius:8px; padding:8px 10px; margin-bottom:12px;
     transition:background .15s ease, transform .15s ease;
   }
-  .sidebar-insta-link:hover{ background:rgba(228,16,42,.24); transform:translateY(-1px); }
+  .sidebar-insta-link:hover{ background:rgba(var(--accent-rgb),.24); transform:translateY(-1px); }
   .sidebar-insta-icon{ width:22px; height:22px; border-radius:6px; background:var(--red-vivid); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .sidebar-footer-version{ font-size:11.5px; font-weight:700; color:#FFFFFF; letter-spacing:.02em; margin-bottom:5px; }
   .sidebar-footer-line{ font-size:10.5px; color:#75757B; line-height:1.6; }
@@ -327,7 +335,7 @@
     display:flex; align-items:center; justify-content:space-between; gap:18px;
     background:linear-gradient(120deg, #17171A 0%, #2A0A0F 55%, var(--red-vivid) 130%);
     border-radius:var(--radius-panel); padding:24px 28px; margin-bottom:22px;
-    box-shadow:0 14px 32px -16px rgba(228,16,42,.45);
+    box-shadow:0 14px 32px -16px rgba(var(--accent-rgb),.45);
   }
   .welcome-banner h2{ color:#FFFFFF; font-size:22px; margin-bottom:6px; }
   .welcome-banner p{ color:rgba(255,255,255,.75); font-size:13.5px; max-width:480px; line-height:1.5; }
@@ -353,8 +361,8 @@
     cursor:pointer; transition:transform .15s cubic-bezier(.2,.8,.2,1), box-shadow .15s ease, border-color .15s ease;
   }
   .quick-card{ transform-style:preserve-3d; perspective:600px; }
-  .quick-card:hover{ transform:perspective(600px) rotateX(3deg) rotateY(-3deg) translateY(-3px); box-shadow:0 16px 30px -14px rgba(228,16,42,.4); border-color:#F3C6CB; }
-  .quick-icon{ width:44px; height:44px; border-radius:10px; background:var(--red-vivid); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 10px -3px rgba(228,16,42,.5); transition:background .25s ease, box-shadow .25s ease; }
+  .quick-card:hover{ transform:perspective(600px) rotateX(3deg) rotateY(-3deg) translateY(-3px); box-shadow:0 16px 30px -14px rgba(var(--accent-rgb),.4); border-color:#F3C6CB; }
+  .quick-icon{ width:44px; height:44px; border-radius:10px; background:var(--red-vivid); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 10px -3px rgba(var(--accent-rgb),.5); transition:background .25s ease, box-shadow .25s ease; }
   .quick-icon.has-content{ background:var(--green); box-shadow:0 4px 10px -3px rgba(18,183,106,.5); }
 
   @keyframes flashUpdate{ 0%{ color:var(--red-vivid); transform:scale(1.18); } 100%{ color:inherit; transform:scale(1); } }
@@ -442,7 +450,7 @@
   .cat-card-foot{ display:flex; justify-content:space-between; align-items:center; margin-top:6px; }
   .cat-link-btn{
     display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#FFFFFF; text-decoration:none;
-    background:var(--red-vivid); padding:7px 14px; border-radius:7px; box-shadow:0 1px 2px rgba(16,24,40,.05), 0 4px 10px -4px rgba(228,16,42,.4);
+    background:var(--red-vivid); padding:7px 14px; border-radius:7px; box-shadow:0 1px 2px rgba(16,24,40,.05), 0 4px 10px -4px rgba(var(--accent-rgb),.4);
     transition:background .12s ease, transform .12s ease;
   }
   .cat-link-btn:hover{ background:var(--red-dark); transform:translateY(-1px); }
@@ -728,7 +736,7 @@
         </div>
       </div>
 
-      <div class="nav-group admin-only">
+      <div class="nav-group gestion-usuarios">
         <div class="nav-title">Administración</div>
         <div class="nav-item" data-view="usuarios" onclick="showView('usuarios')">
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.3 3-5 7-5s7 1.7 7 5"/><circle cx="17" cy="8" r="2.6"/><path d="M17.5 13c2.5.3 4.5 1.8 4.5 4"/></svg></span>
@@ -741,7 +749,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v1.9</div>
+        <div class="sidebar-footer-version">World DJ Pool · v2.0</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -1019,7 +1027,7 @@
         <!-- ===== USUARIOS ===== -->
         <section class="view" id="view-usuarios">
           <div class="view-head">
-            <div><h2>Usuarios</h2><div class="view-sub">Cuentas del grupo y su nivel de acceso.</div></div>
+            <div><h2>Usuarios</h2><div class="view-sub" id="usuariosViewSub">Cuentas del grupo y su nivel de acceso.</div></div>
             <button class="refresh-btn" onclick="refrescarUsuarios(this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button>
           </div>
 
@@ -1032,7 +1040,7 @@
             <div id="listaSolicitudes"></div>
           </div>
 
-          <div class="module" style="padding:6px 10px;">
+          <div class="module admin-only" style="padding:6px 10px;">
             <table class="data-table">
               <thead><tr><th>Usuario</th><th>Correo</th><th>WhatsApp</th><th>Rol</th><th>Estado</th><th>Registro</th><th></th></tr></thead>
               <tbody id="tbodyUsuarios"></tbody>
@@ -1330,11 +1338,13 @@ function cerrarSesion(){
   STATE.currentUser = null;
   if(notifTicker){ clearInterval(notifTicker); notifTicker = null; }
   if(simTimer){ clearInterval(simTimer); simTimer = null; }
+  if(solicitudesTimer){ clearInterval(solicitudesTimer); solicitudesTimer = null; }
   if(enlacesTicker){ clearInterval(enlacesTicker); enlacesTicker = null; }
   enlacesVistos = null;
   instagramConfirmado = false;
   pendingEnlaceId = null;
   ocultarAvisoEnlaces();
+  document.body.classList.remove('theme-pro');
   document.getElementById('app-screen').style.display='none';
   document.getElementById('auth-screen').style.display='flex';
   document.getElementById('pane-landing').classList.remove('hidden');
@@ -1397,6 +1407,7 @@ async function enterApp(){
   await cargarDatosIniciales();
   renderAll();
   if(isAdmin()) startActivitySimulation();
+  else if(isPro()) startSolicitudesTicker();
   else if(esBasico()) startNotificacionesEnlaces();
   startEnlacesTicker();
 }
@@ -1440,7 +1451,7 @@ async function cargarDatosIniciales(){
     })());
   }
 
-  if(isAdmin()){
+  if(puedeGestionarSolicitudes()){
     tareas.push((async()=>{
       const resp = await api('listar_usuarios', {token: STATE.currentUser.token});
       if(resp.ok && resp.items){
@@ -1449,6 +1460,9 @@ async function cargarDatosIniciales(){
         }));
       }
     })());
+  }
+
+  if(isAdmin()){
     tareas.push((async()=>{
       const resp = await api('listar_actividad', {});
       if(resp.ok && resp.items) STATE.actividad = resp.items;
@@ -1580,13 +1594,21 @@ function isAdmin(){ return !!(STATE.currentUser && STATE.currentUser.rol==='Admi
 function isPro(){ return !!(STATE.currentUser && STATE.currentUser.rol==='Pro'); }
 function esBasico(){ return !!(STATE.currentUser && STATE.currentUser.rol==='Básico'); }
 function puedeEditarCatalogo(){ return isAdmin() || isPro(); }
+function puedeGestionarSolicitudes(){ return isAdmin() || isPro(); }
 
 function applyRoleUI(){
   const admin = isAdmin();
   const editor = puedeEditarCatalogo();
+  const gestorSolicitudes = puedeGestionarSolicitudes();
   document.querySelectorAll('.admin-only').forEach(el=> el.style.display = admin ? '' : 'none');
   document.querySelectorAll('.basico-only').forEach(el=> el.style.display = admin ? 'none' : '');
   document.querySelectorAll('.catalogo-editor').forEach(el=> el.style.display = editor ? '' : 'none');
+  document.querySelectorAll('.gestion-usuarios').forEach(el=> el.style.display = gestorSolicitudes ? '' : 'none');
+
+  const sub = document.getElementById('usuariosViewSub');
+  if(sub) sub.textContent = admin ? 'Cuentas del grupo y su nivel de acceso.' : 'Puedes aceptar o rechazar solicitudes de acceso.';
+
+  document.body.classList.toggle('theme-pro', isPro());
 }
 
 function escapeHtml(str){
@@ -2162,6 +2184,22 @@ function startActivitySimulation(){
   }, REFRESCO_MS);
 }
 
+let solicitudesTimer = null;
+function startSolicitudesTicker(){
+  if(solicitudesTimer) clearInterval(solicitudesTimer);
+  solicitudesTimer = setInterval(async ()=>{
+    if(!API_URL) return;
+    const resp = await api('listar_usuarios', {token: STATE.currentUser.token});
+    if(resp.ok && resp.items){
+      STATE.users = resp.items.map(u=>({
+        id:u.ID, usuario:u.Usuario, correo:u.Correo, whatsapp:u.WhatsApp, rol:u.Rol, estado:u.Estado, fecha: formatFechaSegura(u.FechaRegistro)
+      }));
+      renderUsuarios();
+      renderStats();
+    }
+  }, REFRESCO_MS);
+}
+
 /* ---------------- conexión con la base de datos (ícono de nube) ---------------- */
 async function verificarConexion(){
   if(!API_URL){ conectado = false; pintarEstadoConexion(); return; }
@@ -2212,7 +2250,7 @@ document.addEventListener('pointerdown', function(e){
   ripple.style.width = ripple.style.height = size + 'px';
   ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
   ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
-  ripple.style.background = btn.classList.contains('btn-primary') ? 'rgba(255,255,255,.45)' : 'rgba(228,16,42,.18)';
+  ripple.style.background = btn.classList.contains('btn-primary') ? 'rgba(255,255,255,.45)' : 'rgba(var(--accent-rgb),.18)';
   btn.appendChild(ripple);
   setTimeout(()=>ripple.remove(), 600);
 });
