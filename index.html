@@ -459,6 +459,24 @@
   .list-item-time{ font-size:11.5px; color:var(--text-faint); margin-top:2px; }
 
   .catalog-toolbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; flex-wrap:wrap; }
+  .toolbar-left{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .search-input{ width:200px; padding:6px 12px; font-size:12.5px; background:var(--panel); border:1px solid var(--line); border-radius:20px; color:var(--text); }
+  .search-input:focus{ outline:none; border-color:var(--red-vivid); }
+  .fav-toggle-label{ display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--text-dim); cursor:pointer; user-select:none; }
+  .fav-star{ background:transparent; border:none; color:var(--text-faint); padding:3px; font-size:16px; line-height:1; }
+  .fav-star:hover{ color:var(--amber); }
+  .fav-star.active{ color:var(--amber); }
+
+  /* Modo oscuro */
+  body.theme-dark{
+    --bg:#0B0B0D; --panel:#141416; --panel-raised:#1C1C1F;
+    --line:#2A2A2E; --line-soft:#222226; --text:#F2F2F3; --text-dim:#A7A7AD; --text-faint:#6E6E74;
+  }
+  body.theme-dark .search-input{ background:var(--panel-raised); }
+  body.theme-dark .cat-link-btn{ color:#FFFFFF; }
+  .theme-toggle-btn{ display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:8px; background:transparent; border:1px solid var(--line); color:var(--text-dim); }
+  .theme-toggle-btn:hover{ background:var(--panel-raised); color:var(--text); }
+
   .count-chip{ font-size:12.5px; color:var(--text-dim); background:var(--panel-raised); border:1px solid var(--line); padding:4px 10px; border-radius:20px; }
   .refresh-btn{
     display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:var(--text-dim);
@@ -799,7 +817,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v2.2</div>
+        <div class="sidebar-footer-version">World DJ Pool · v2.4</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -813,6 +831,9 @@
         <div class="topbar-title" id="viewTitle">Bienvenida</div>
         <div class="topbar-right">
           <div class="live-chip"><span class="eq-mini" style="color:var(--red);"><i></i><i></i><i></i></span> En vivo</div>
+          <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleModoOscuro()" title="Modo oscuro">
+            <svg id="themeIcon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.5A8.5 8.5 0 1111.5 3a7 7 0 009.5 9.5z"/></svg>
+          </button>
           <button class="cloud-btn admin-only" id="cloudBtn" onclick="abrirConexion()" title="Conexión con la base de datos">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 18a4.5 4.5 0 01-.5-8.98A5.5 5.5 0 0117 8.06 4 4 0 0117.5 18H7z"/></svg>
             <span class="cloud-dot" id="cloudDot"></span>
@@ -1006,7 +1027,7 @@
             </div>
             <div class="form-actions"><button class="btn btn-primary" type="submit">Guardar enlace</button><button class="btn btn-ghost" type="button" onclick="toggleForm('enlaces')">Cancelar</button></div>
           </form>
-          <div class="catalog-toolbar"><span class="count-chip" id="count-enlaces">0 enlaces</span><button class="refresh-btn" onclick="refrescarEnlaces(this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button></div>
+          <div class="catalog-toolbar"><div class="toolbar-left"><span class="count-chip" id="count-enlaces">0 enlaces</span><input class="search-input" type="text" placeholder="Buscar..." oninput="actualizarFiltroTexto('enlaces', this.value)"><label class="fav-toggle-label"><input type="checkbox" onchange="actualizarFiltroFav('enlaces', this.checked)"> Solo favoritos</label></div><button class="refresh-btn" onclick="refrescarEnlaces(this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button></div>
           <div class="cat-grid" id="grid-enlaces"></div>
         </section>
 
@@ -1028,7 +1049,7 @@
             </div>
             <div class="form-actions"><button class="btn btn-primary" type="submit">Guardar sample</button><button class="btn btn-ghost" type="button" onclick="toggleForm('samples')">Cancelar</button></div>
           </form>
-          <div class="catalog-toolbar"><span class="count-chip" id="count-samples">0 samples</span><button class="refresh-btn" onclick="refrescarCatalogo('samples', this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button></div>
+          <div class="catalog-toolbar"><div class="toolbar-left"><span class="count-chip" id="count-samples">0 samples</span><input class="search-input" type="text" placeholder="Buscar..." oninput="actualizarFiltroTexto('samples', this.value)"><label class="fav-toggle-label"><input type="checkbox" onchange="actualizarFiltroFav('samples', this.checked)"> Solo favoritos</label></div><button class="refresh-btn" onclick="refrescarCatalogo('samples', this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button></div>
           <div class="cat-grid" id="grid-samples"></div>
         </section>
 
@@ -1048,7 +1069,7 @@
             </div>
             <div class="form-actions"><button class="btn btn-primary" type="submit">Guardar pack</button><button class="btn btn-ghost" type="button" onclick="toggleForm('packs')">Cancelar</button></div>
           </form>
-          <div class="catalog-toolbar"><span class="count-chip" id="count-packs">0 packs</span><button class="refresh-btn" onclick="refrescarCatalogo('packs', this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button></div>
+          <div class="catalog-toolbar"><div class="toolbar-left"><span class="count-chip" id="count-packs">0 packs</span><input class="search-input" type="text" placeholder="Buscar..." oninput="actualizarFiltroTexto('packs', this.value)"><label class="fav-toggle-label"><input type="checkbox" onchange="actualizarFiltroFav('packs', this.checked)"> Solo favoritos</label></div><button class="refresh-btn" onclick="refrescarCatalogo('packs', this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button></div>
           <div class="cat-grid" id="grid-packs"></div>
         </section>
 
@@ -1070,7 +1091,7 @@
             </div>
             <div class="form-actions"><button class="btn btn-primary" type="submit">Guardar FX</button><button class="btn btn-ghost" type="button" onclick="toggleForm('fx')">Cancelar</button></div>
           </form>
-          <div class="catalog-toolbar"><span class="count-chip" id="count-fx">0 FX</span><button class="refresh-btn" onclick="refrescarCatalogo('fx', this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button></div>
+          <div class="catalog-toolbar"><div class="toolbar-left"><span class="count-chip" id="count-fx">0 FX</span><input class="search-input" type="text" placeholder="Buscar..." oninput="actualizarFiltroTexto('fx', this.value)"><label class="fav-toggle-label"><input type="checkbox" onchange="actualizarFiltroFav('fx', this.checked)"> Solo favoritos</label></div><button class="refresh-btn" onclick="refrescarCatalogo('fx', this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button></div>
           <div class="cat-grid" id="grid-fx"></div>
         </section>
 
@@ -1090,7 +1111,7 @@
             </div>
             <div class="form-actions"><button class="btn btn-primary" type="submit">Guardar drop</button><button class="btn btn-ghost" type="button" onclick="toggleForm('drops')">Cancelar</button></div>
           </form>
-          <div class="catalog-toolbar"><span class="count-chip" id="count-drops">0 drops</span><button class="refresh-btn" onclick="refrescarCatalogo('drops', this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button></div>
+          <div class="catalog-toolbar"><div class="toolbar-left"><span class="count-chip" id="count-drops">0 drops</span><input class="search-input" type="text" placeholder="Buscar..." oninput="actualizarFiltroTexto('drops', this.value)"><label class="fav-toggle-label"><input type="checkbox" onchange="actualizarFiltroFav('drops', this.checked)"> Solo favoritos</label></div><button class="refresh-btn" onclick="refrescarCatalogo('drops', this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button></div>
           <div class="cat-grid" id="grid-drops"></div>
         </section>
 
@@ -1110,7 +1131,7 @@
             <div id="listaSolicitudes"></div>
           </div>
 
-          <div class="module admin-only" style="padding:6px 10px;">
+          <div class="module gestion-usuarios" style="padding:6px 10px;">
             <table class="data-table">
               <thead><tr><th>Usuario</th><th>Correo</th><th>WhatsApp</th><th>Rol</th><th>Estado</th><th>Registro</th><th></th></tr></thead>
               <tbody id="tbodyUsuarios"></tbody>
@@ -1203,6 +1224,27 @@
    esta es la que se usa por defecto para todos los demás.
    ============================================================ */
 const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbyANALuQG96wmp5P3qEUt58M15Jtu31fDLFwsasOTUltc3p3CbE0QiIb0dm7VzzTdSGBw/exec';
+
+/* ---------------- modo oscuro ---------------- */
+const ICONO_LUNA = '<path d="M21 12.5A8.5 8.5 0 1111.5 3a7 7 0 009.5 9.5z"/>';
+const ICONO_SOL = '<circle cx="12" cy="12" r="4.5"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/>';
+function cargarModoOscuro(){
+  try{ return window.localStorage.getItem('wdp_dark_mode') === '1'; }
+  catch(e){ return false; }
+}
+function aplicarModoOscuro(activo){
+  document.body.classList.toggle('theme-dark', activo);
+  const icon = document.getElementById('themeIcon');
+  if(icon) icon.innerHTML = activo ? ICONO_SOL : ICONO_LUNA;
+  const btn = document.getElementById('themeToggleBtn');
+  if(btn) btn.title = activo ? 'Modo claro' : 'Modo oscuro';
+}
+function toggleModoOscuro(){
+  const activo = !document.body.classList.contains('theme-dark');
+  aplicarModoOscuro(activo);
+  try{ window.localStorage.setItem('wdp_dark_mode', activo ? '1' : '0'); }catch(e){}
+}
+aplicarModoOscuro(cargarModoOscuro());
 
 function cargarApiUrlGuardada(){
   try{
@@ -1438,6 +1480,7 @@ function cerrarSesion(){
   enlacesVistos = null;
   instagramConfirmado = false;
   pendingEnlaceId = null;
+  favoritosSet = null;
   ocultarAvisoEnlaces();
   document.body.classList.remove('theme-pro');
   const ctab = document.getElementById('communityTab');
@@ -1690,11 +1733,41 @@ function toggleForm(key){
 }
 
 /* ---------------- catálogo genérico ---------------- */
+/* ---------------- favoritos ---------------- */
+let favoritosSet = null;
+function claveFavoritos(){ return 'wdp_favoritos_' + (STATE.currentUser ? STATE.currentUser.usuario : ''); }
+function cargarFavoritos(){
+  if(favoritosSet) return favoritosSet;
+  try{
+    const raw = window.localStorage.getItem(claveFavoritos());
+    favoritosSet = new Set(raw ? JSON.parse(raw) : []);
+  }catch(e){ favoritosSet = new Set(); }
+  return favoritosSet;
+}
+function guardarFavoritos(){
+  try{ window.localStorage.setItem(claveFavoritos(), JSON.stringify(Array.from(favoritosSet))); }
+  catch(e){ /* no persiste entre sesiones, pero sigue funcionando en esta */ }
+}
+function esFavorito(key, id){ return cargarFavoritos().has(key+':'+id); }
+function toggleFavorito(key, id, event){
+  if(event) event.stopPropagation();
+  const set = cargarFavoritos();
+  const k = key+':'+id;
+  if(set.has(k)) set.delete(k); else set.add(k);
+  guardarFavoritos();
+  if(key==='enlaces' && esBasico()) pintarEnlacesBasico();
+  else renderCatalog(key);
+}
+function favBtn(key, id){
+  const activo = esFavorito(key, id);
+  return `<button class="fav-star ${activo?'active':''}" onclick="toggleFavorito('${key}',${id},event)" title="${activo?'Quitar de favoritos':'Marcar como favorito'}">${activo?'★':'☆'}</button>`;
+}
+
 const CATALOG_CONFIG = {
   enlaces: {
     fields:['nombre','categoria','url','notas','activarEn'],
     render:(it)=>`
-      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3>${isAdmin()?`<button class="icon-btn" onclick="deleteItem('enlaces',${it.id})">✕</button>`:''}</div>
+      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3><div class="row-flex" style="gap:2px;">${favBtn('enlaces',it.id)}${isAdmin()?`<button class="icon-btn" onclick="deleteItem('enlaces',${it.id})">✕</button>`:''}</div></div>
       <span class="tag">${escapeHtml(it.categoria)}</span>
       ${estadoActivacionPill(it.activarEn)}
       ${it.notas?`<div class="cat-meta">${escapeHtml(it.notas)}</div>`:''}
@@ -1703,7 +1776,7 @@ const CATALOG_CONFIG = {
   samples: {
     fields:['nombre','genero','bpm','tono','enlace','tags'],
     render:(it)=>`
-      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3>${isAdmin()?`<button class="icon-btn" onclick="deleteItem('samples',${it.id})">✕</button>`:''}</div>
+      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3><div class="row-flex" style="gap:2px;">${favBtn('samples',it.id)}${isAdmin()?`<button class="icon-btn" onclick="deleteItem('samples',${it.id})">✕</button>`:''}</div></div>
       <div class="cat-meta">${escapeHtml(it.genero||'—')} · ${it.bpm?it.bpm+' BPM':'—'} · ${escapeHtml(it.tono||'—')}</div>
       <div class="cat-tags">${(it.tags||[]).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>
       <div class="cat-card-foot"><a class="cat-link-btn" href="${it.enlace}" target="_blank" rel="noopener">Descargar ↗</a></div>`
@@ -1711,7 +1784,7 @@ const CATALOG_CONFIG = {
   packs: {
     fields:['mes','nombre','enlace','desc'],
     render:(it)=>`
-      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3>${isAdmin()?`<button class="icon-btn" onclick="deleteItem('packs',${it.id})">✕</button>`:''}</div>
+      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3><div class="row-flex" style="gap:2px;">${favBtn('packs',it.id)}${isAdmin()?`<button class="icon-btn" onclick="deleteItem('packs',${it.id})">✕</button>`:''}</div></div>
       <span class="tag">${escapeHtml(it.mes)}</span>
       ${it.desc?`<div class="cat-meta">${escapeHtml(it.desc)}</div>`:''}
       <div class="cat-card-foot"><a class="cat-link-btn" href="${it.enlace}" target="_blank" rel="noopener">Descargar ↗</a></div>`
@@ -1719,7 +1792,7 @@ const CATALOG_CONFIG = {
   fx: {
     fields:['nombre','tipo','enlace','notas'],
     render:(it)=>`
-      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3>${isAdmin()?`<button class="icon-btn" onclick="deleteItem('fx',${it.id})">✕</button>`:''}</div>
+      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3><div class="row-flex" style="gap:2px;">${favBtn('fx',it.id)}${isAdmin()?`<button class="icon-btn" onclick="deleteItem('fx',${it.id})">✕</button>`:''}</div></div>
       <span class="tag">${escapeHtml(it.tipo)}</span>
       ${it.notas?`<div class="cat-meta">${escapeHtml(it.notas)}</div>`:''}
       <div class="cat-card-foot"><a class="cat-link-btn" href="${it.enlace}" target="_blank" rel="noopener">Descargar ↗</a></div>`
@@ -1727,7 +1800,7 @@ const CATALOG_CONFIG = {
   drops: {
     fields:['nombre','genero','enlace','notas'],
     render:(it)=>`
-      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3>${isAdmin()?`<button class="icon-btn" onclick="deleteItem('drops',${it.id})">✕</button>`:''}</div>
+      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3><div class="row-flex" style="gap:2px;">${favBtn('drops',it.id)}${isAdmin()?`<button class="icon-btn" onclick="deleteItem('drops',${it.id})">✕</button>`:''}</div></div>
       <div class="cat-meta">${escapeHtml(it.genero||'—')}</div>
       ${it.notas?`<div class="cat-meta">${escapeHtml(it.notas)}</div>`:''}
       <div class="cat-card-foot"><a class="cat-link-btn" href="${it.enlace}" target="_blank" rel="noopener">Descargar ↗</a></div>`
@@ -1750,7 +1823,9 @@ function applyRoleUI(){
   document.querySelectorAll('.gestion-usuarios').forEach(el=> el.style.display = gestorSolicitudes ? '' : 'none');
 
   const sub = document.getElementById('usuariosViewSub');
-  if(sub) sub.textContent = admin ? 'Cuentas del grupo y su nivel de acceso.' : 'Puedes aceptar o rechazar solicitudes de acceso.';
+  if(sub) sub.textContent = admin
+    ? 'Cuentas del grupo y su nivel de acceso.'
+    : 'Puedes aceptar, rechazar y eliminar cuentas. No puedes cambiar roles ni eliminar Administradores.';
 
   document.body.classList.toggle('theme-pro', isPro());
 }
@@ -1817,16 +1892,36 @@ async function deleteItem(key, id){
   renderStats();
 }
 
+const filtrosCatalogo = {
+  enlaces:{texto:'', soloFav:false}, samples:{texto:'', soloFav:false}, packs:{texto:'', soloFav:false},
+  fx:{texto:'', soloFav:false}, drops:{texto:'', soloFav:false}
+};
+function actualizarFiltroTexto(key, valor){ filtrosCatalogo[key].texto = valor.trim().toLowerCase(); renderCatalog(key); }
+function actualizarFiltroFav(key, checked){ filtrosCatalogo[key].soloFav = checked; renderCatalog(key); }
+
 function renderCatalog(key){
   if(key==='enlaces' && esBasico()){ renderEnlacesBasico(); return; }
 
   const grid = document.getElementById('grid-'+key);
   const cfg = CATALOG_CONFIG[key];
-  const items = STATE[key];
+  const totalReal = STATE[key].length;
+  const filtro = filtrosCatalogo[key];
+
+  let items = STATE[key];
+  if(filtro.soloFav) items = items.filter(it=>esFavorito(key, it.id));
+  if(filtro.texto){
+    items = items.filter(it=>{
+      const campos = [it.nombre, it.genero, it.categoria, it.tipo, it.mes, it.tono, ...(it.tags||[])].filter(Boolean).join(' ').toLowerCase();
+      return campos.includes(filtro.texto);
+    });
+  }
   document.getElementById('count-'+key).textContent = items.length + ' ' + key;
 
   if(items.length===0){
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
+    const filtroActivo = filtro.soloFav || filtro.texto;
+    grid.innerHTML = filtroActivo
+      ? `<div class="empty-state" style="grid-column:1/-1;"><h3>Nada por aquí</h3><p>No hay resultados con ese filtro. Prueba con otra búsqueda.</p></div>`
+      : `<div class="empty-state" style="grid-column:1/-1;">
       <h3>Todavía no hay nada aquí</h3>
       <p>${puedeEditarCatalogo() ? 'Usa "Agregar" para subir el primer elemento de este catálogo.' : 'El administrador todavía no ha subido nada aquí.'}</p>
     </div>`;
@@ -1899,7 +1994,7 @@ function cardEnlaceBasico(it){
     cuerpo = `<div class="cat-card-foot"><button class="btn btn-primary btn-sm" onclick="abrirEnlaceBasico(${it.id}, this)">Abrir enlace</button></div>`;
   }
   return `<div class="module cat-card">
-    <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3></div>
+    <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3>${favBtn('enlaces',it.id)}</div>
     <span class="tag">${escapeHtml(it.categoria)}</span>
     ${it.notas?`<div class="cat-meta">${escapeHtml(it.notas)}</div>`:''}
     ${cuerpo}
@@ -2166,27 +2261,32 @@ function renderUsuarios(){
       `<tr><td colspan="7"><div class="empty-state"><h3>Todavía no hay cuentas</h3><p>Aparecerán aquí en cuanto alguien solicite acceso al sistema.</p></div></td></tr>`;
     return;
   }
-  document.getElementById('tbodyUsuarios').innerHTML = STATE.users.map(u=>`
+  document.getElementById('tbodyUsuarios').innerHTML = STATE.users.map(u=>{
+    const esUnoMismo = u.usuario === STATE.currentUser.usuario;
+    const puedeEliminar = !esUnoMismo && !(isPro() && u.rol==='Administrador');
+    const celdaRol = isAdmin()
+      ? `<select class="field" style="padding:5px 8px; font-size:12.5px; width:auto;" onchange="cambiarRol(${u.id}, this.value)">
+          <option ${u.rol==='Básico'?'selected':''}>Básico</option>
+          <option ${u.rol==='Pro'?'selected':''}>Pro</option>
+          <option ${u.rol==='Administrador'?'selected':''}>Administrador</option>
+        </select>`
+      : `<span class="pill pill-blue">${escapeHtml(u.rol)}</span>`;
+    return `
     <tr>
       <td><div class="row-flex"><div class="user-avatar" style="width:24px;height:24px;font-size:10px;">${u.usuario.charAt(0).toUpperCase()}</div>${escapeHtml(u.usuario)}</div></td>
       <td style="color:var(--text-dim)">${escapeHtml(u.correo)}</td>
       <td style="color:var(--text-dim)">${escapeHtml(u.whatsapp||'—')}</td>
-      <td>
-        <select class="field" style="padding:5px 8px; font-size:12.5px; width:auto;" onchange="cambiarRol(${u.id}, this.value)">
-          <option ${u.rol==='Básico'?'selected':''}>Básico</option>
-          <option ${u.rol==='Pro'?'selected':''}>Pro</option>
-          <option ${u.rol==='Administrador'?'selected':''}>Administrador</option>
-        </select>
-      </td>
+      <td>${celdaRol}</td>
       <td>${pillFor(u.estado)}</td>
       <td style="color:var(--text-dim)">${u.fecha}</td>
       <td>
         <div class="row-flex" style="gap:4px;">
-          <button class="icon-btn" title="Cambiar contraseña" onclick="abrirModalPassword(${u.id}, '${escapeHtml(u.usuario).replace(/'/g,"\\'")}')">🔑</button>
-          ${u.usuario===STATE.currentUser.usuario ? '' : `<button class="icon-btn" title="Eliminar cuenta" onclick="confirmarEliminarUsuario(${u.id}, '${escapeHtml(u.usuario).replace(/'/g,"\\'")}')">✕</button>`}
+          ${isAdmin() ? `<button class="icon-btn" title="Cambiar contraseña" onclick="abrirModalPassword(${u.id}, '${escapeHtml(u.usuario).replace(/'/g,"\\'")}')">🔑</button>` : ''}
+          ${puedeEliminar ? `<button class="icon-btn" title="Eliminar cuenta" onclick="confirmarEliminarUsuario(${u.id}, '${escapeHtml(u.usuario).replace(/'/g,"\\'")}')">✕</button>` : ''}
         </div>
       </td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 }
 
 function renderSolicitudes(){
