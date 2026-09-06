@@ -1093,7 +1093,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v5.1</div>
+        <div class="sidebar-footer-version">World DJ Pool · v5.3</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -2819,7 +2819,7 @@ function renderBadges(){
 
   const usuariosBadge = document.getElementById('usuariosBadge');
   if(usuariosBadge){
-    const pendientes = STATE.users.filter(u=>u.estado==='Pendiente').length;
+    const pendientes = STATE.users.filter(u=>u.estado==='Pendiente').length + solicitudesPasswordCount;
     usuariosBadge.textContent = pendientes>9 ? '9+' : String(pendientes);
     usuariosBadge.classList.toggle('on', pendientes>0);
   }
@@ -3112,14 +3112,19 @@ function renderSolicitudes(){
     </div>`).join('');
 }
 
+let solicitudesPasswordCount = 0;
 async function cargarSolicitudesPassword(){
-  const cont = document.getElementById('listaSolicitudesPassword');
-  if(!cont) return;
   const resp = await api('listar_solicitudes_password', {token: STATE.currentUser.token});
+  const cont = document.getElementById('listaSolicitudesPassword');
   if(!resp.ok || !resp.items){
-    cont.innerHTML = `<div class="empty-state" style="padding:16px 0;"><p>${escapeHtml(resp.error||'No se pudieron cargar.')}</p></div>`;
+    solicitudesPasswordCount = 0;
+    if(cont) cont.innerHTML = `<div class="empty-state" style="padding:16px 0;"><p>${escapeHtml(resp.error||'No se pudieron cargar.')}</p></div>`;
+    renderBadges();
     return;
   }
+  solicitudesPasswordCount = resp.items.length;
+  renderBadges();
+  if(!cont) return;
   if(resp.items.length===0){
     cont.innerHTML = `<div class="empty-state" style="padding:16px 0;"><p>No hay solicitudes de cambio de contraseña por ahora.</p></div>`;
     return;
@@ -3429,10 +3434,46 @@ function pushActivity(usuario, accion, detalle){
 }
 
 let syncTimer = null;
+
+/* ---------------- detectar cambios de rol/estado en mi propia sesión ---------------- */
+async function revisarMiEstado(){
+  const resp = await api('verificar_mi_estado', {token: STATE.currentUser.token});
+  if(!resp.ok){
+    toast('Tu sesión ya no es válida. Vuelve a iniciar sesión.', true);
+    cerrarSesion();
+    return false;
+  }
+  if(resp.estado !== 'Activo'){
+    const motivo = resp.estado==='Bloqueada' ? 'fue bloqueada' : resp.estado==='Rechazada' ? 'fue rechazada' : 'ya no está activa';
+    toast('Tu cuenta '+motivo+'. Se cerrará tu sesión.', true);
+    cerrarSesion();
+    return false;
+  }
+  if(resp.rol !== STATE.currentUser.rol){
+    const rolAnterior = STATE.currentUser.rol;
+    STATE.currentUser.rol = resp.rol;
+    applyRoleUI();
+    toast('Tu rol cambió de '+rolAnterior+' a '+resp.rol+'.');
+
+    const vistaActiva = document.querySelector('.view.active');
+    const nombreVista = vistaActiva ? vistaActiva.id.replace('view-','') : '';
+    const soloAdminPro = ['usuarios','actividad','descargas'];
+    if(soloAdminPro.includes(nombreVista) && !puedeGestionarSolicitudes()){
+      showView(esBasico() ? 'inicio' : 'bienvenida');
+    }else if(nombreVista==='inicio' && puedeEditarCatalogo()){
+      showView('bienvenida');
+    }
+    renderAll();
+  }
+  return true;
+}
 function startSyncTicker(){
   if(syncTimer) clearInterval(syncTimer);
   syncTimer = setInterval(async ()=>{
     if(!API_URL) return;
+
+    const seguirEnSesion = await revisarMiEstado();
+    if(!seguirEnSesion) return;
 
     if(isAdmin()){
       await verificarConexion();
