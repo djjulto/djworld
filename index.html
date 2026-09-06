@@ -1093,7 +1093,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v5.3</div>
+        <div class="sidebar-footer-version">World DJ Pool · v5.4</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -3054,7 +3054,7 @@ function renderUsuarios(){
   renderSolicitudes();
 
   const pillFor = (estado)=>{
-    const map = {Activo:'pill-green', Pendiente:'pill-amber', Rechazada:'pill-red', Suspendido:'pill-red', Bloqueada:'pill-red'};
+    const map = {Activo:'pill-green', Pendiente:'pill-amber', Rechazada:'pill-red', Suspendido:'pill-red', Bloqueada:'pill-red', Vetada:'pill-red'};
     return `<span class="pill ${map[estado]||'pill-blue'}">${estado}</span>`;
   };
   if(STATE.users.length===0){
@@ -3065,6 +3065,7 @@ function renderUsuarios(){
   document.getElementById('tbodyUsuarios').innerHTML = STATE.users.map(u=>{
     const esUnoMismo = u.usuario === STATE.currentUser.usuario;
     const puedeEliminar = !esUnoMismo && !(isPro() && u.rol==='Administrador');
+    const puedeBanear = isAdmin() && !esUnoMismo && u.rol!=='Administrador' && u.estado!=='Vetada';
     const celdaRol = isAdmin()
       ? `<select class="field" style="padding:5px 8px; font-size:12.5px; width:auto;" onchange="cambiarRol(${u.id}, this.value)">
           <option ${u.rol==='Básico'?'selected':''}>Básico</option>
@@ -3082,7 +3083,8 @@ function renderUsuarios(){
       <td style="color:var(--text-dim)">${u.fecha}</td>
       <td>
         <div class="row-flex" style="gap:4px;">
-          ${u.estado==='Bloqueada' ? `<button class="icon-btn" title="Reactivar cuenta" onclick="aceptarSolicitud(${u.id})">🔓</button>` : ''}
+          ${(u.estado==='Bloqueada'||u.estado==='Vetada') ? `<button class="icon-btn" title="Reactivar cuenta" onclick="aceptarSolicitud(${u.id})">🔓</button>` : ''}
+          ${puedeBanear ? `<button class="icon-btn" title="Banear cuenta" onclick="confirmarBanearUsuario(${u.id}, '${escapeHtml(u.usuario).replace(/'/g,"\\'")}')">🚫</button>` : ''}
           ${isAdmin() ? `<button class="icon-btn" title="Cambiar contraseña" onclick="abrirModalPassword(${u.id}, '${escapeHtml(u.usuario).replace(/'/g,"\\'")}')">🔑</button>` : ''}
           ${puedeEliminar ? `<button class="icon-btn" title="Eliminar cuenta" onclick="confirmarEliminarUsuario(${u.id}, '${escapeHtml(u.usuario).replace(/'/g,"\\'")}')">✕</button>` : ''}
         </div>
@@ -3405,6 +3407,19 @@ async function confirmarEliminarUsuario(id, usuario){
   toast('Cuenta de '+usuario+' eliminada.');
 }
 
+async function confirmarBanearUsuario(id, usuario){
+  const confirmado = window.confirm('¿Banear la cuenta de "'+usuario+'" por infringir los derechos del pool? Verá un aviso pidiéndole contactar a @djjulto o @djfrekoo, y se le cerrará la sesión si está conectado.');
+  if(!confirmado) return;
+  const resp = await api('banear_usuario', {id, token: STATE.currentUser.token});
+  if(!resp.ok){ toast(resp.error || 'No se pudo banear la cuenta.', true); return; }
+  const u = STATE.users.find(x=>x.id===id);
+  if(u) u.estado = 'Vetada';
+  pushActivity(STATE.currentUser.usuario, 'baneó la cuenta de', usuario);
+  renderUsuarios();
+  renderStats();
+  toast('Cuenta de '+usuario+' baneada.');
+}
+
 /* ---------------- actividad en tiempo real ---------------- */
 function iconColorFor(accion){
   if(accion.includes('aprobó') || accion.includes('aceptó') || accion.includes('agregó')) return {bg:'#ECFDF3', color:'var(--green)'};
@@ -3444,8 +3459,14 @@ async function revisarMiEstado(){
     return false;
   }
   if(resp.estado !== 'Activo'){
-    const motivo = resp.estado==='Bloqueada' ? 'fue bloqueada' : resp.estado==='Rechazada' ? 'fue rechazada' : 'ya no está activa';
-    toast('Tu cuenta '+motivo+'. Se cerrará tu sesión.', true);
+    const mensaje = resp.estado==='Vetada'
+      ? 'Tu cuenta ha sido desactivada porque infringió los derechos de World DJ Pool. Contáctate con @djjulto o @djfrekoo para que te habiliten.'
+      : resp.estado==='Bloqueada'
+        ? 'Tu cuenta fue bloqueada. Pídele a un Administrador o Pro que la reactive.'
+        : resp.estado==='Rechazada'
+          ? 'Tu cuenta fue rechazada.'
+          : 'Tu cuenta ya no está activa.';
+    toast(mensaje, true);
     cerrarSesion();
     return false;
   }
