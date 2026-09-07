@@ -1013,16 +1013,12 @@
         </div>
       </div>
 
-      <div class="nav-group admin-only" id="navGroupPanel">
+      <div class="nav-group gestion-usuarios">
         <div class="nav-title">&nbsp;</div>
         <div class="nav-item" data-view="actividad" onclick="showView('actividad')">
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l2 7 4-14 2 7h6"/></svg></span>
           Actividad
         </div>
-      </div>
-
-      <div class="nav-group gestion-usuarios">
-        <div class="nav-title">&nbsp;</div>
         <div class="nav-item" data-view="descargas" onclick="showView('descargas')">
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg></span>
           Descargas
@@ -1093,7 +1089,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v5.5</div>
+        <div class="sidebar-footer-version">World DJ Pool · v5.6</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -2273,8 +2269,8 @@ async function cargarDatosIniciales(){
     }
   }
 
-  if(isAdmin()){
-    const resp = await api('listar_actividad', {});
+  if(puedeGestionarSolicitudes()){
+    const resp = await api('listar_actividad', {token: STATE.currentUser.token});
     if(resp.ok && resp.items) STATE.actividad = resp.items;
   }
 
@@ -3564,9 +3560,9 @@ function startSyncTicker(){
     const seguirEnSesion = await revisarMiEstado();
     if(!seguirEnSesion) return;
 
-    if(isAdmin()){
-      await verificarConexion();
-      const respAct = await api('listar_actividad', {});
+    if(puedeGestionarSolicitudes()){
+      if(isAdmin()) await verificarConexion();
+      const respAct = await api('listar_actividad', {token: STATE.currentUser.token});
       if(respAct.ok && respAct.items){ STATE.actividad = respAct.items; renderActivity(); }
     }
 
