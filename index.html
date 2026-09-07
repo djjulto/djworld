@@ -1089,7 +1089,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v5.8</div>
+        <div class="sidebar-footer-version">World DJ Pool · v5.9</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -2398,7 +2398,7 @@ const CATALOG_CONFIG = {
     fields:['nombre','categoria','url','notas','activarEn'],
     render:(it)=>`
       ${mag_cover(it.nombre||it.mes)}
-      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3><div class="row-flex" style="gap:2px;">${favBtn('enlaces',it.id)}${isAdmin()?`<button class="icon-btn" onclick="deleteItem('enlaces',${it.id})">✕</button>`:''}</div></div>
+      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3><div class="row-flex" style="gap:2px;">${favBtn('enlaces',it.id)}${(isAdmin()||(isPro()&&it.autor===STATE.currentUser.usuario))?`<button class="icon-btn" title="Eliminar" onclick="deleteItem('enlaces',${it.id})">✕</button>`:''}</div></div>
       <span class="tag">${escapeHtml(it.categoria)}</span>
       ${estadoActivacionPill(it.activarEn)}
       ${it.notas?`<div class="cat-meta">${escapeHtml(it.notas)}</div>`:''}
@@ -2408,7 +2408,7 @@ const CATALOG_CONFIG = {
     fields:['nombre','genero','bpm','tono','enlace','tags'],
     render:(it)=>`
       ${mag_cover(it.nombre||it.mes)}
-      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3><div class="row-flex" style="gap:2px;">${favBtn('samples',it.id)}${isAdmin()?`<button class="icon-btn" onclick="deleteItem('samples',${it.id})">✕</button>`:''}</div></div>
+      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3><div class="row-flex" style="gap:2px;">${favBtn('samples',it.id)}${(isAdmin()||(isPro()&&it.autor===STATE.currentUser.usuario))?`<button class="icon-btn" title="Eliminar" onclick="deleteItem('samples',${it.id})">✕</button>`:''}</div></div>
       <div class="cat-meta">${escapeHtml(it.genero||'—')} · ${it.bpm?it.bpm+' BPM':'—'} · ${escapeHtml(it.tono||'—')}</div>
       <div class="cat-tags">${(it.tags||[]).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>
       <div class="cat-card-foot"><a class="cat-link-btn" href="${it.enlace}" target="_blank" rel="noopener">Descargar ↗</a></div>`
@@ -2417,7 +2417,7 @@ const CATALOG_CONFIG = {
     fields:['mes','nombre','enlace','desc'],
     render:(it)=>`
       ${mag_cover(it.nombre||it.mes)}
-      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3><div class="row-flex" style="gap:2px;">${favBtn('packs',it.id)}${isAdmin()?`<button class="icon-btn" onclick="deleteItem('packs',${it.id})">✕</button>`:''}</div></div>
+      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3><div class="row-flex" style="gap:2px;">${favBtn('packs',it.id)}${(isAdmin()||(isPro()&&it.autor===STATE.currentUser.usuario))?`<button class="icon-btn" title="Eliminar" onclick="deleteItem('packs',${it.id})">✕</button>`:''}</div></div>
       <span class="tag">${escapeHtml(it.mes)}</span>
       ${it.desc?`<div class="cat-meta">${escapeHtml(it.desc)}</div>`:''}
       <div class="cat-card-foot"><a class="cat-link-btn" href="${it.enlace}" target="_blank" rel="noopener">Descargar ↗</a></div>`
@@ -2426,7 +2426,7 @@ const CATALOG_CONFIG = {
     fields:['nombre','tipo','enlace','notas'],
     render:(it)=>`
       ${mag_cover(it.nombre||it.mes)}
-      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3><div class="row-flex" style="gap:2px;">${favBtn('fx',it.id)}${isAdmin()?`<button class="icon-btn" onclick="deleteItem('fx',${it.id})">✕</button>`:''}</div></div>
+      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3><div class="row-flex" style="gap:2px;">${favBtn('fx',it.id)}${(isAdmin()||(isPro()&&it.autor===STATE.currentUser.usuario))?`<button class="icon-btn" title="Eliminar" onclick="deleteItem('fx',${it.id})">✕</button>`:''}</div></div>
       <span class="tag">${escapeHtml(it.tipo)}</span>
       ${it.notas?`<div class="cat-meta">${escapeHtml(it.notas)}</div>`:''}
       <div class="cat-card-foot"><a class="cat-link-btn" href="${it.enlace}" target="_blank" rel="noopener">Descargar ↗</a></div>`
@@ -2435,7 +2435,7 @@ const CATALOG_CONFIG = {
     fields:['nombre','genero','enlace','notas'],
     render:(it)=>`
       ${mag_cover(it.nombre||it.mes)}
-      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3><div class="row-flex" style="gap:2px;">${favBtn('drops',it.id)}${isAdmin()?`<button class="icon-btn" onclick="deleteItem('drops',${it.id})">✕</button>`:''}</div></div>
+      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3><div class="row-flex" style="gap:2px;">${favBtn('drops',it.id)}${(isAdmin()||(isPro()&&it.autor===STATE.currentUser.usuario))?`<button class="icon-btn" title="Eliminar" onclick="deleteItem('drops',${it.id})">✕</button>`:''}</div></div>
       <div class="cat-meta">${escapeHtml(it.genero||'—')}</div>
       ${it.notas?`<div class="cat-meta">${escapeHtml(it.notas)}</div>`:''}
       <div class="cat-card-foot"><a class="cat-link-btn" href="${it.enlace}" target="_blank" rel="noopener">Descargar ↗</a></div>`
@@ -2444,7 +2444,7 @@ const CATALOG_CONFIG = {
     fields:['nombre','genero','enlace','notas'],
     render:(it)=>`
       ${mag_cover(it.nombre||it.mes)}
-      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3><div class="row-flex" style="gap:2px;">${favBtn('libreria',it.id)}${isAdmin()?`<button class="icon-btn" onclick="deleteItem('libreria',${it.id})">✕</button>`:''}</div></div>
+      <div class="cat-card-top"><h3>${escapeHtml(it.nombre)}</h3><div class="row-flex" style="gap:2px;">${favBtn('libreria',it.id)}${(isAdmin()||(isPro()&&it.autor===STATE.currentUser.usuario))?`<button class="icon-btn" title="Eliminar" onclick="deleteItem('libreria',${it.id})">✕</button>`:''}</div></div>
       <span class="tag">${escapeHtml(it.genero||'General')}</span>
       ${it.notas?`<div class="cat-meta">${escapeHtml(it.notas)}</div>`:''}
       <div class="cat-card-foot"><a class="cat-link-btn" href="${it.enlace}" target="_blank" rel="noopener">Abrir librería ↗</a></div>`
