@@ -1093,7 +1093,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v5.4</div>
+        <div class="sidebar-footer-version">World DJ Pool · v5.5</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -1183,6 +1183,7 @@
             </div>
             <button class="btn btn-primary btn-sm admin-only" onclick="abrirModalAviso()">📧 Avisar por correo</button>
             <button class="btn btn-sm btn-hora-caliente admin-only" id="btnHoraCaliente" onclick="toggleHoraCaliente()">🔥 Activar Hora Caliente</button>
+            <button class="btn btn-primary btn-sm admin-only" onclick="abrirModalAnuncio()">📢 Enviar anuncio</button>
           </div>
 
           <div class="view-sub" style="margin:26px 0 14px; font-weight:600; color:var(--text);">Accede rápido al catálogo</div>
@@ -1675,6 +1676,34 @@
       <p style="margin-bottom:0;"><b style="color:var(--text);">5. Aceptación.</b> Al marcar la casilla de aceptación, confirmas que entiendes y aceptas estos términos en su totalidad, y que asumes la responsabilidad de cualquier uso indebido del contenido descargado desde tu cuenta.</p>
     </div>
     <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="cerrarModalTerminos()">Entendido</button>
+  </div>
+</div>
+
+<!-- ============ MODAL: ENVIAR ANUNCIO (solo Administrador) ============ -->
+<div class="modal-bg hidden" id="anuncioComposeModalBg">
+  <div class="module modal" style="max-width:480px;">
+    <button class="icon-btn modal-close" onclick="cerrarModalAnuncio()">✕</button>
+    <h3>📢 Enviar anuncio a todo el grupo</h3>
+    <p class="hint" style="margin-bottom:14px;">Este mensaje le aparecerá a todos los DJs apenas entren a su cuenta (y a quienes ya estén conectados, en unos segundos).</p>
+    <textarea class="field" id="anuncioTexto" rows="5" maxlength="1000" placeholder="ej. Este sábado hay Hora Caliente a las 9pm, no se lo pierdan 🔥"></textarea>
+    <button class="btn btn-primary" style="width:100%; justify-content:center; margin-top:14px;" onclick="enviarAnuncioAdmin()">Enviar a todo el grupo</button>
+  </div>
+</div>
+
+<!-- ============ MODAL: ANUNCIO (lo ve cualquier usuario) ============ -->
+<div class="modal-bg hidden" id="anuncioVerModalBg">
+  <div class="module modal" style="max-width:440px; padding:0; overflow:hidden;">
+    <div style="background:linear-gradient(120deg,#17171A 0%, #2A0A0F 55%, var(--red-vivid) 130%); padding:26px 28px 20px;">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+        <span style="font-size:22px;">📢</span>
+        <span style="color:#FFFFFF; font-weight:700; font-size:15px;">Anuncio de World DJ Pool</span>
+      </div>
+      <div style="color:rgba(255,255,255,.65); font-size:12px;" id="anuncioMeta">De Admin · hace un momento</div>
+    </div>
+    <div style="padding:24px 28px;">
+      <p id="anuncioTextoMostrado" style="font-size:14.5px; line-height:1.7; color:var(--text); white-space:pre-wrap; margin-bottom:20px;"></p>
+      <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="cerrarModalAnuncioVer()">Entendido</button>
+    </div>
   </div>
 </div>
 
@@ -2183,6 +2212,7 @@ async function enterApp(){
   startEnlacesTicker();
   startSyncTicker();
   revisarHoraCaliente();
+  revisarAnuncio();
   mostrarCommunityTab();
 }
 
@@ -3366,6 +3396,44 @@ function renderHoraCalienteGrid(){
   }).join('');
 }
 
+/* ---------------- anuncio del administrador ---------------- */
+function abrirModalAnuncio(){
+  document.getElementById('anuncioComposeModalBg').classList.remove('hidden');
+  document.getElementById('anuncioTexto').value = '';
+}
+function cerrarModalAnuncio(){ document.getElementById('anuncioComposeModalBg').classList.add('hidden'); }
+
+async function enviarAnuncioAdmin(){
+  const texto = document.getElementById('anuncioTexto').value.trim();
+  if(!texto){ toast('Escribe un mensaje antes de enviarlo.', true); return; }
+  const resp = await api('enviar_anuncio_admin', {token: STATE.currentUser.token, texto});
+  if(!resp.ok){ toast(resp.error || 'No se pudo enviar el anuncio.', true); return; }
+  toast('Anuncio enviado a todo el grupo.');
+  cerrarModalAnuncio();
+}
+
+function claveAnuncioVisto(){ return 'wdp_anuncio_visto_' + (STATE.currentUser ? STATE.currentUser.usuario : ''); }
+
+async function revisarAnuncio(){
+  const resp = await api('obtener_anuncio', {});
+  if(!resp.ok || !resp.hay) return;
+  let visto = null;
+  try{ visto = window.localStorage.getItem(claveAnuncioVisto()); }catch(e){}
+  if(String(resp.id) === String(visto)) return;
+
+  document.getElementById('anuncioTextoMostrado').textContent = resp.texto;
+  document.getElementById('anuncioMeta').textContent = 'De '+(resp.autor||'Admin')+' · '+formatFechaHoraSegura(resp.fecha);
+  document.getElementById('anuncioVerModalBg').dataset.idActual = resp.id;
+  document.getElementById('anuncioVerModalBg').classList.remove('hidden');
+}
+
+function cerrarModalAnuncioVer(){
+  const modal = document.getElementById('anuncioVerModalBg');
+  const id = modal.dataset.idActual;
+  try{ if(id) window.localStorage.setItem(claveAnuncioVisto(), id); }catch(e){}
+  modal.classList.add('hidden');
+}
+
 function abrirModalAviso(){
   document.getElementById('avisoModalBg').classList.remove('hidden');
   cargarOpcionesAviso();
@@ -3535,6 +3603,7 @@ function startSyncTicker(){
 
     await revisarHoraCaliente();
     if(document.getElementById('view-horacaliente').classList.contains('active')) renderHoraCalienteGrid();
+    await revisarAnuncio();
 
     renderStats();
   }, REFRESCO_MS);
