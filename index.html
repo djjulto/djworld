@@ -1089,7 +1089,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v5.7</div>
+        <div class="sidebar-footer-version">World DJ Pool · v5.8</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -1517,7 +1517,7 @@
 
           <div class="module gestion-usuarios" style="padding:6px 10px;">
             <table class="data-table">
-              <thead><tr><th>Usuario</th><th>Correo</th><th>WhatsApp</th><th>Rol</th><th>Estado</th><th>Registro</th><th></th></tr></thead>
+              <thead><tr><th>Usuario</th><th>Correo</th><th>WhatsApp</th><th>Rol</th><th>Estado</th><th>Registro</th><th>Último acceso</th><th></th></tr></thead>
               <tbody id="tbodyUsuarios"></tbody>
             </table>
           </div>
@@ -2264,7 +2264,7 @@ async function cargarDatosIniciales(){
     const resp = await api('listar_usuarios', {token: STATE.currentUser.token});
     if(resp.ok && resp.items){
       STATE.users = resp.items.map(u=>({
-        id:u.ID, usuario:u.Usuario, correo:u.Correo, whatsapp:u.WhatsApp, rol:u.Rol, estado:u.Estado, fecha: formatFechaSegura(u.FechaRegistro)
+        id:u.ID, usuario:u.Usuario, correo:u.Correo, whatsapp:u.WhatsApp, rol:u.Rol, estado:u.Estado, fecha: formatFechaSegura(u.FechaRegistro), ultimoAcceso: formatFechaHoraSegura(u.UltimoAcceso), ultimoAccesoRaw: u.UltimoAcceso
       }));
     }
   }
@@ -2320,7 +2320,7 @@ async function refrescarUsuarios(btn){
   const resp = await api('listar_usuarios', {token: STATE.currentUser.token});
   if(resp.ok && resp.items){
     STATE.users = resp.items.map(u=>({
-      id:u.ID, usuario:u.Usuario, correo:u.Correo, whatsapp:u.WhatsApp, rol:u.Rol, estado:u.Estado, fecha: formatFechaSegura(u.FechaRegistro)
+      id:u.ID, usuario:u.Usuario, correo:u.Correo, whatsapp:u.WhatsApp, rol:u.Rol, estado:u.Estado, fecha: formatFechaSegura(u.FechaRegistro), ultimoAcceso: formatFechaHoraSegura(u.UltimoAcceso), ultimoAccesoRaw: u.UltimoAcceso
     }));
     renderUsuarios();
     renderStats();
@@ -3083,9 +3083,15 @@ function renderUsuarios(){
     const map = {Activo:'pill-green', Pendiente:'pill-amber', Rechazada:'pill-red', Suspendido:'pill-red', Bloqueada:'pill-red', Vetada:'pill-red'};
     return `<span class="pill ${map[estado]||'pill-blue'}">${estado}</span>`;
   };
+  const celdaUltimoAcceso = (u)=>{
+    if(!u.ultimoAccesoRaw) return `<span style="color:var(--text-faint);">Nunca</span>`;
+    const dias = (new Date().getTime() - new Date(u.ultimoAccesoRaw).getTime()) / 86400000;
+    const color = dias>=5 ? 'var(--red)' : dias>=3 ? '#B54708' : 'var(--text-dim)';
+    return `<span style="color:${color};">${u.ultimoAcceso}</span>`;
+  };
   if(STATE.users.length===0){
     document.getElementById('tbodyUsuarios').innerHTML =
-      `<tr><td colspan="7"><div class="empty-state"><h3>Todavía no hay cuentas</h3><p>Aparecerán aquí en cuanto alguien solicite acceso al sistema.</p></div></td></tr>`;
+      `<tr><td colspan="8"><div class="empty-state"><h3>Todavía no hay cuentas</h3><p>Aparecerán aquí en cuanto alguien solicite acceso al sistema.</p></div></td></tr>`;
     return;
   }
   document.getElementById('tbodyUsuarios').innerHTML = STATE.users.map(u=>{
@@ -3107,6 +3113,7 @@ function renderUsuarios(){
       <td>${celdaRol}</td>
       <td>${pillFor(u.estado)}</td>
       <td style="color:var(--text-dim)">${u.fecha}</td>
+      <td>${celdaUltimoAcceso(u)}</td>
       <td>
         <div class="row-flex" style="gap:4px;">
           ${(u.estado==='Bloqueada'||u.estado==='Vetada') ? `<button class="icon-btn" title="Reactivar cuenta" onclick="aceptarSolicitud(${u.id})">🔓</button>` : ''}
@@ -3570,7 +3577,7 @@ function startSyncTicker(){
       const respU = await api('listar_usuarios', {token: STATE.currentUser.token});
       if(respU.ok && respU.items){
         STATE.users = respU.items.map(u=>({
-          id:u.ID, usuario:u.Usuario, correo:u.Correo, whatsapp:u.WhatsApp, rol:u.Rol, estado:u.Estado, fecha: formatFechaSegura(u.FechaRegistro)
+          id:u.ID, usuario:u.Usuario, correo:u.Correo, whatsapp:u.WhatsApp, rol:u.Rol, estado:u.Estado, fecha: formatFechaSegura(u.FechaRegistro), ultimoAcceso: formatFechaHoraSegura(u.UltimoAcceso), ultimoAccesoRaw: u.UltimoAcceso
         }));
         renderUsuarios();
       }
