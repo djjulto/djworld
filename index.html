@@ -294,6 +294,39 @@
     background-size:200% 100%; animation:accentShift 4s linear infinite;
   }
   @keyframes accentShift{ from{background-position:0% 0%;} to{background-position:200% 0%;} }
+  .radio-dial{
+    background:#0A0A0B; border-radius:14px; padding:16px 20px; margin-bottom:26px;
+    border:1px solid rgba(255,255,255,.07); position:relative; overflow:hidden;
+  }
+  .radio-display{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px; }
+  .radio-freq-wrap{ display:flex; align-items:baseline; }
+  .radio-freq{ font-family:'IBM Plex Mono', monospace; font-size:26px; font-weight:700; color:#4ADE80; letter-spacing:1px; text-shadow:0 0 12px rgba(74,222,128,.55); }
+  .radio-freq-unit{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:#4ADE80; opacity:.75; margin-left:5px; }
+  .radio-station{ font-size:10.5px; color:#6E6E74; font-weight:600; text-transform:uppercase; letter-spacing:.08em; }
+  .radio-eq{ display:flex; align-items:flex-end; gap:3px; height:18px; }
+  .radio-eq i{ width:3px; background:#4ADE80; border-radius:1px; animation:radioEqBar .9s ease-in-out infinite; box-shadow:0 0 4px rgba(74,222,128,.6); }
+  .radio-eq i:nth-child(1){ height:40%; animation-delay:-.6s; }
+  .radio-eq i:nth-child(2){ height:100%; animation-delay:-.3s; }
+  .radio-eq i:nth-child(3){ height:65%; animation-delay:-.9s; }
+  .radio-eq i:nth-child(4){ height:85%; animation-delay:0s; }
+  @keyframes radioEqBar{ 0%,100%{ transform:scaleY(.35); } 50%{ transform:scaleY(1); } }
+  .radio-scale{
+    position:relative; height:22px; border-radius:5px;
+    background:repeating-linear-gradient(90deg, rgba(255,255,255,.12) 0, rgba(255,255,255,.12) 1px, transparent 1px, transparent 8px);
+  }
+  .radio-needle{
+    position:absolute; top:-3px; width:2px; height:28px; background:#E4102A; border-radius:1px;
+    box-shadow:0 0 8px #E4102A, 0 0 16px rgba(228,16,42,.5);
+    transition:left .65s cubic-bezier(.22,1,.36,1);
+  }
+  .radio-static{
+    position:absolute; inset:0; z-index:5; pointer-events:none; opacity:0;
+    background:repeating-linear-gradient(0deg, rgba(255,255,255,.9) 0, rgba(255,255,255,.9) 1px, transparent 1px, transparent 3px);
+    mix-blend-mode:overlay;
+  }
+  .radio-static.on{ animation:radioStaticFlash .45s steps(3); }
+  @keyframes radioStaticFlash{ 0%{opacity:0;} 25%{opacity:.6;} 50%{opacity:.15;} 75%{opacity:.5;} 100%{opacity:0;} }
+
   .auth-kicker{
     display:inline-block; font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase;
     color:var(--red-dark); margin-bottom:10px;
@@ -860,6 +893,18 @@
     <div class="auth-panel">
      <div class="auth-panel-inner">
 
+      <div class="radio-dial">
+        <div class="radio-static" id="radioStatic"></div>
+        <div class="radio-display">
+          <div>
+            <div class="radio-freq-wrap"><span class="radio-freq" id="radioFreq">98.5</span><span class="radio-freq-unit">FM</span></div>
+            <div class="radio-station" id="radioStation">Acceso</div>
+          </div>
+          <div class="radio-eq"><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="radio-scale"><div class="radio-needle" id="radioNeedle" style="left:15%;"></div></div>
+      </div>
+
       <!-- STEP 0: choose -->
       <div id="pane-landing">
         <!-- login (visible por defecto) -->
@@ -1178,7 +1223,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v6.3</div>
+        <div class="sidebar-footer-version">World DJ Pool · v6.4</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -1986,7 +2031,7 @@ async function api(accion, payload){
    AUTENTICACIÓN
    ============================================================ */
 function setAuthTab(tab){
-  reproducirScratch();
+  sintonizarRadio(tab);
   const acceso = document.getElementById('paneAcceso');
   const login = document.getElementById('paneLogin');
   acceso.classList.toggle('hidden', tab!=='acceso');
@@ -1995,6 +2040,78 @@ function setAuthTab(tab){
   activo.classList.remove('fade-in');
   void activo.offsetWidth;
   activo.classList.add('fade-in');
+}
+
+/* ---------------- dial de radio: sintonización entre pasos del login ---------------- */
+const RADIO_STATIONS = {
+  login: {freq:'98.5', needle:'15%', nombre:'Acceso'},
+  acceso: {freq:'101.2', needle:'42%', nombre:'Nuevo miembro'},
+  verificacion: {freq:'104.7', needle:'68%', nombre:'Verificación'},
+  exito: {freq:'107.9', needle:'92%', nombre:'Confirmado'}
+};
+
+function sintonizarRadio(destino){
+  const estacion = RADIO_STATIONS[destino];
+  if(!estacion) return;
+
+  const staticEl = document.getElementById('radioStatic');
+  if(staticEl){
+    staticEl.classList.remove('on');
+    void staticEl.offsetWidth;
+    staticEl.classList.add('on');
+  }
+  const needle = document.getElementById('radioNeedle');
+  if(needle) needle.style.left = estacion.needle;
+  const stationEl = document.getElementById('radioStation');
+  if(stationEl) stationEl.textContent = estacion.nombre;
+
+  reproducirSintonia();
+
+  const freqEl = document.getElementById('radioFreq');
+  if(!freqEl) return;
+  let ciclos = 0;
+  const timer = setInterval(()=>{
+    ciclos++;
+    if(ciclos>=9){
+      clearInterval(timer);
+      freqEl.textContent = estacion.freq;
+      return;
+    }
+    freqEl.textContent = (88 + Math.random()*20).toFixed(1);
+  }, 45);
+}
+
+function reproducirSintonia(){
+  const ctx = getAudioCtx();
+  if(!ctx) return;
+
+  const duracion = 0.32;
+  const bufferSize = Math.floor(ctx.sampleRate * duracion);
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for(let i=0;i<bufferSize;i++){ data[i] = Math.random()*2-1; }
+
+  const ruido = ctx.createBufferSource();
+  ruido.buffer = buffer;
+
+  const filtro = ctx.createBiquadFilter();
+  filtro.type = 'bandpass';
+  filtro.Q.value = 14;
+  filtro.frequency.setValueAtTime(500, ctx.currentTime);
+  filtro.frequency.exponentialRampToValueAtTime(3200, ctx.currentTime + duracion*0.65);
+  filtro.frequency.exponentialRampToValueAtTime(1000, ctx.currentTime + duracion);
+
+  const volumen = ctx.createGain();
+  volumen.gain.setValueAtTime(0.0001, ctx.currentTime);
+  volumen.gain.exponentialRampToValueAtTime(0.32, ctx.currentTime + 0.02);
+  volumen.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duracion);
+
+  ruido.connect(filtro);
+  filtro.connect(volumen);
+  volumen.connect(ctx.destination);
+
+  ruido.start();
+  ruido.stop(ctx.currentTime + duracion);
 }
 
 /* ---------------- audio: scratch sintetizado (sin archivos externos) ---------------- */
@@ -2092,6 +2209,7 @@ async function handleSolicitud(e){
   document.getElementById('pane-landing').classList.add('hidden');
   document.getElementById('pane-verificacion').classList.remove('hidden');
   document.getElementById('pane-verificacion').classList.add('fade-in');
+  sintonizarRadio('verificacion');
   setupCodeInputs();
   return false;
 }
@@ -2135,6 +2253,7 @@ async function handleVerificacion(e){
   document.getElementById('pane-verificacion').classList.add('hidden');
   document.getElementById('pane-exito').classList.remove('hidden');
   document.getElementById('pane-exito').classList.add('fade-in');
+  sintonizarRadio('exito');
   return false;
 }
 
