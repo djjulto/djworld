@@ -1305,7 +1305,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v7.2</div>
+        <div class="sidebar-footer-version">World DJ Pool · v7.3</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -2097,19 +2097,20 @@ async function apiIntento(accion, payload, timeoutMs){
   }
 }
 
-async function api(accion, payload){
+async function api(accion, payload, timeoutMs){
+  timeoutMs = timeoutMs || 12000;
   if(!API_URL){
     return {ok:false, error:'El sistema aún no tiene configurada la conexión con la base de datos (API_URL).'};
   }
   try{
-    const resultado = await apiIntento(accion, payload, 12000);
+    const resultado = await apiIntento(accion, payload, timeoutMs);
     marcarConexionOk();
     return resultado;
   }catch(primerError){
     // primer intento falló (tiempo agotado o red): esperamos un momento y reintentamos una sola vez
     await new Promise(r=>setTimeout(r, 1200));
     try{
-      const resultado = await apiIntento(accion, payload, 12000);
+      const resultado = await apiIntento(accion, payload, timeoutMs);
       marcarConexionOk();
       return resultado;
     }catch(segundoError){
@@ -3432,7 +3433,7 @@ async function subirVideoBienvenida(input){
 
   const btn = document.getElementById('btnSubirVideoBienvenida');
   if(btn){ btn.disabled = true; btn.style.opacity = '.5'; }
-  toast('Subiendo video…');
+  toast('Subiendo video… puede tardar hasta 1-2 minutos, no cierres esta pantalla.');
 
   try{
     const base64 = await new Promise((resolve, reject)=>{
@@ -3442,7 +3443,7 @@ async function subirVideoBienvenida(input){
       lector.readAsDataURL(archivo);
     });
 
-    const resp = await api('subir_video_bienvenida', {token: STATE.currentUser.token, videoBase64: base64, mimeType: archivo.type});
+    const resp = await api('subir_video_bienvenida', {token: STATE.currentUser.token, videoBase64: base64, mimeType: archivo.type}, 120000);
     if(!resp.ok){ toast(resp.error || 'No se pudo subir el video.', true); return; }
 
     const video = document.getElementById('welcomeBannerVideo');
