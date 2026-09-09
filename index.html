@@ -1223,7 +1223,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v6.5</div>
+        <div class="sidebar-footer-version">World DJ Pool · v6.6</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -2772,10 +2772,10 @@ async function addItem(e, key){
 }
 
 function singular(key){
-  return {enlaces:'enlace', samples:'sample', packs:'pack', fx:'fx', drops:'drop'}[key];
+  return {enlaces:'enlace', samples:'sample', packs:'pack', fx:'fx', drops:'drop', libreria:'libreria'}[key];
 }
 function labelSingularAccion(key){
-  return {enlaces:'un enlace', samples:'un sample', packs:'un pack', fx:'un FX', drops:'un drop'}[key];
+  return {enlaces:'un enlace', samples:'un sample', packs:'un pack', fx:'un FX', drops:'un drop', libreria:'contenido de librería'}[key];
 }
 
 async function deleteItem(key, id){
