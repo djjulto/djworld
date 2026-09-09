@@ -1223,7 +1223,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v6.6</div>
+        <div class="sidebar-footer-version">World DJ Pool · v6.7</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -1839,10 +1839,10 @@
 
 <!-- ============ MODAL: ENVIAR AVISO POR CORREO (solo Administrador) ============ -->
 <div class="modal-bg hidden" id="avisoModalBg">
-  <div class="module modal">
+  <div class="module modal" style="max-width:480px;">
     <button class="icon-btn modal-close" onclick="cerrarModalAviso()">✕</button>
     <h3>Enviar aviso por correo</h3>
-    <p class="hint">Elige qué contenido quieres anunciarle a la comunidad. Se enviará por correo a todos los DJs con cuenta activa.</p>
+    <p class="hint">Marca uno o varios contenidos — puedes combinar de distintos catálogos. Se envía un solo correo con todo lo elegido, a todos los DJs con cuenta activa.</p>
     <div class="field-row">
       <label class="field-label">Catálogo</label>
       <select class="field" id="avisoCatalogo" onchange="cargarOpcionesAviso()">
@@ -1855,8 +1855,12 @@
       </select>
     </div>
     <div class="field-row">
-      <label class="field-label">Contenido a anunciar</label>
-      <select class="field" id="avisoItem"></select>
+      <label class="field-label">Marca lo que quieras incluir</label>
+      <div id="avisoListaOpciones" style="max-height:180px; overflow-y:auto; border:1px solid var(--line); border-radius:8px; padding:6px 10px;"></div>
+    </div>
+    <div class="field-row" id="avisoSeleccionadosWrap" style="display:none;">
+      <label class="field-label">Seleccionados (<span id="avisoContadorSel">0</span>)</label>
+      <div id="avisoChips" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
     </div>
     <div class="form-actions">
       <button class="btn btn-primary" onclick="enviarAvisoManual()">Enviar aviso a la comunidad</button>
@@ -3759,30 +3763,70 @@ function cerrarModalAnuncioVer(){
   modal.classList.add('hidden');
 }
 
+let avisoSeleccionados = [];
+
 function abrirModalAviso(){
+  avisoSeleccionados = [];
   document.getElementById('avisoModalBg').classList.remove('hidden');
   cargarOpcionesAviso();
+  renderAvisoChips();
 }
 function cerrarModalAviso(){ document.getElementById('avisoModalBg').classList.add('hidden'); }
 
 function cargarOpcionesAviso(){
   const key = document.getElementById('avisoCatalogo').value;
-  const sel = document.getElementById('avisoItem');
+  const cont = document.getElementById('avisoListaOpciones');
   const items = STATE[key] || [];
   if(items.length===0){
-    sel.innerHTML = '<option value="">(este catálogo todavía no tiene contenido)</option>';
+    cont.innerHTML = '<p style="font-size:12.5px; color:var(--text-faint); margin:6px 0;">Este catálogo todavía no tiene contenido.</p>';
     return;
   }
-  sel.innerHTML = items.map(it=>`<option value="${it.id}">${escapeHtml(it.nombre || it.mes || 'Sin nombre')}</option>`).join('');
+  cont.innerHTML = items.map(it=>{
+    const nombre = it.nombre || it.mes || 'Sin nombre';
+    const marcado = avisoSeleccionados.some(s=>s.hoja===key && String(s.id)===String(it.id));
+    return `<label style="display:flex; align-items:center; gap:8px; padding:6px 2px; cursor:pointer; font-size:13px; border-bottom:1px solid var(--line);">
+      <input type="checkbox" ${marcado?'checked':''} onchange="toggleAvisoSeleccion('${key}', ${it.id}, '${escapeHtml(nombre).replace(/'/g,"\\'")}', this.checked)">
+      ${escapeHtml(nombre)}
+    </label>`;
+  }).join('');
+}
+
+function toggleAvisoSeleccion(hoja, id, nombre, marcado){
+  if(marcado){
+    if(!avisoSeleccionados.some(s=>s.hoja===hoja && String(s.id)===String(id))){
+      avisoSeleccionados.push({hoja, id, nombre});
+    }
+  }else{
+    avisoSeleccionados = avisoSeleccionados.filter(s=>!(s.hoja===hoja && String(s.id)===String(id)));
+  }
+  renderAvisoChips();
+}
+
+function quitarAvisoSeleccion(hoja, id){
+  avisoSeleccionados = avisoSeleccionados.filter(s=>!(s.hoja===hoja && String(s.id)===String(id)));
+  renderAvisoChips();
+  cargarOpcionesAviso();
+}
+
+function renderAvisoChips(){
+  const wrap = document.getElementById('avisoSeleccionadosWrap');
+  const cont = document.getElementById('avisoChips');
+  document.getElementById('avisoContadorSel').textContent = avisoSeleccionados.length;
+  if(avisoSeleccionados.length===0){ wrap.style.display='none'; return; }
+  wrap.style.display='';
+  cont.innerHTML = avisoSeleccionados.map(s=>`
+    <span style="display:inline-flex; align-items:center; gap:5px; background:var(--panel-raised); border:1px solid var(--line); border-radius:14px; padding:4px 10px; font-size:12px;">
+      ${escapeHtml(s.nombre)}
+      <button onclick="quitarAvisoSeleccion('${s.hoja}',${s.id})" style="background:none;border:none;color:var(--text-faint);cursor:pointer;padding:0;font-size:13px;line-height:1;">✕</button>
+    </span>`).join('');
 }
 
 async function enviarAvisoManual(){
-  const hoja = document.getElementById('avisoCatalogo').value;
-  const id = document.getElementById('avisoItem').value;
-  if(!id){ toast('Elige un contenido para avisar.', true); return; }
-  const confirmado = window.confirm('¿Enviar este aviso por correo a todos los DJs activos?');
+  if(avisoSeleccionados.length===0){ toast('Marca al menos un contenido para avisar.', true); return; }
+  const confirmado = window.confirm('¿Enviar aviso por correo sobre '+avisoSeleccionados.length+' elemento(s) a todos los DJs activos?');
   if(!confirmado) return;
-  const resp = await api('enviar_aviso_manual', {token: STATE.currentUser.token, hoja, id});
+  const items = avisoSeleccionados.map(s=>({hoja:s.hoja, id:s.id}));
+  const resp = await api('enviar_aviso_manual', {token: STATE.currentUser.token, items});
   if(!resp.ok){ toast(resp.error || 'No se pudo enviar el aviso.', true); return; }
   toast('Aviso enviado a '+(resp.enviados!==undefined ? resp.enviados+' DJs' : 'la comunidad')+'.');
   cerrarModalAviso();
