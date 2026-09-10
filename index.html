@@ -1314,7 +1314,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v7.6</div>
+        <div class="sidebar-footer-version">World DJ Pool · v7.7</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -2113,7 +2113,7 @@ async function apiIntento(accion, payload, timeoutMs){
 }
 
 async function api(accion, payload, timeoutMs){
-  timeoutMs = timeoutMs || 12000;
+  timeoutMs = timeoutMs || 18000;
   if(!API_URL){
     return {ok:false, error:'El sistema aún no tiene configurada la conexión con la base de datos (API_URL).'};
   }
@@ -2391,7 +2391,7 @@ async function handleLogin(e){
   const pass = document.getElementById('loginPass').value;
   const err = document.getElementById('errLogin');
 
-  const resp = await api('iniciar_sesion', {usuario, passwordHash: pass});
+  const resp = await api('iniciar_sesion', {usuario, passwordHash: pass}, 25000);
 
   if(resp.ok){
     err.style.display='none';
