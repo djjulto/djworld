@@ -1305,7 +1305,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v7.3</div>
+        <div class="sidebar-footer-version">World DJ Pool · v7.4</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -1361,6 +1361,12 @@
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
             </button>
             <input type="file" id="inputVideoBienvenida" accept="video/mp4,video/webm" style="display:none;" onchange="subirVideoBienvenida(this)">
+            <div id="videoUploadStatus" class="hidden" style="position:absolute; left:14px; right:14px; bottom:14px; z-index:3;">
+              <div style="font-size:11.5px; color:#fff; font-weight:600; margin-bottom:5px; text-shadow:0 1px 3px rgba(0,0,0,.6);" id="videoUploadStatusTxt">Subiendo… 0%</div>
+              <div style="height:6px; border-radius:3px; background:rgba(255,255,255,.25); overflow:hidden;">
+                <div id="videoUploadProgressBar" style="height:100%; width:0%; background:#22C55E; border-radius:3px; transition:width .15s ease;"></div>
+              </div>
+            </div>
             <div>
               <span class="welcome-kicker">World DJ Pool · Edición de hoy</span>
               <h2>¡Bienvenido de nuevo, <span id="welcomeName">Administrador</span>!</h2>
@@ -3432,8 +3438,14 @@ async function subirVideoBienvenida(input){
   }
 
   const btn = document.getElementById('btnSubirVideoBienvenida');
+  const statusWrap = document.getElementById('videoUploadStatus');
+  const statusTxt = document.getElementById('videoUploadStatusTxt');
+  const barra = document.getElementById('videoUploadProgressBar');
+
   if(btn){ btn.disabled = true; btn.style.opacity = '.5'; }
-  toast('Subiendo video… puede tardar hasta 1-2 minutos, no cierres esta pantalla.');
+  if(statusWrap) statusWrap.classList.remove('hidden');
+  if(barra) barra.style.width = '0%';
+  if(statusTxt) statusTxt.textContent = 'Leyendo archivo…';
 
   try{
     const base64 = await new Promise((resolve, reject)=>{
@@ -3443,18 +3455,44 @@ async function subirVideoBienvenida(input){
       lector.readAsDataURL(archivo);
     });
 
-    const resp = await api('subir_video_bienvenida', {token: STATE.currentUser.token, videoBase64: base64, mimeType: archivo.type}, 120000);
+    const resp = await subirVideoConProgreso(base64, archivo.type, (porcentaje)=>{
+      if(barra) barra.style.width = porcentaje + '%';
+      if(statusTxt) statusTxt.textContent = porcentaje < 100 ? `Subiendo… ${porcentaje}%` : 'Guardando en Drive… casi listo';
+    });
+
     if(!resp.ok){ toast(resp.error || 'No se pudo subir el video.', true); return; }
 
     const video = document.getElementById('welcomeBannerVideo');
-    if(video){ video.src = resp.url; video.dataset.urlActual = resp.url; }
+    if(video){ video.src = resp.url; video.dataset.urlActual = resp.url; video.load(); }
     toast('¡Listo! Ya todos van a ver este video de fondo.');
   }catch(err){
-    toast('No se pudo leer el archivo de video.', true);
+    toast('No se pudo subir el video. Revisa tu conexión e intenta de nuevo.', true);
   }finally{
     input.value = '';
     if(btn){ btn.disabled = false; btn.style.opacity = '1'; }
+    if(statusWrap) statusWrap.classList.add('hidden');
   }
+}
+
+function subirVideoConProgreso(videoBase64, mimeType, onProgreso){
+  return new Promise((resolve, reject)=>{
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', API_URL, true);
+    xhr.setRequestHeader('Content-Type', 'text/plain;charset=utf-8');
+    xhr.timeout = 180000; // 3 minutos, de sobra para el guardado en Drive del lado del servidor
+
+    xhr.upload.onprogress = (e)=>{
+      if(e.lengthComputable && onProgreso) onProgreso(Math.round((e.loaded/e.total)*100));
+    };
+    xhr.onload = ()=>{
+      try{ resolve(JSON.parse(xhr.responseText)); }
+      catch(e){ reject(new Error('Respuesta inválida del servidor')); }
+    };
+    xhr.onerror = ()=> reject(new Error('Error de red'));
+    xhr.ontimeout = ()=> reject(new Error('Tiempo agotado'));
+
+    xhr.send(JSON.stringify({accion:'subir_video_bienvenida', token: STATE.currentUser.token, videoBase64, mimeType}));
+  });
 }
 
 function renderComunidad(){
