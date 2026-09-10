@@ -1305,7 +1305,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v7.4</div>
+        <div class="sidebar-footer-version">World DJ Pool · v7.5</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -1356,7 +1356,7 @@
 
           <div style="position:relative; z-index:1;">
           <div class="welcome-banner">
-            <video class="welcome-banner-video" id="welcomeBannerVideo" autoplay muted loop playsinline></video>
+            <iframe class="welcome-banner-video" id="welcomeBannerVideo" frameborder="0" scrolling="no" style="border:none; pointer-events:none;"></iframe>
             <button class="icon-btn admin-only" id="btnSubirVideoBienvenida" title="Subir video de fondo" onclick="document.getElementById('inputVideoBienvenida').click()" style="position:absolute; top:14px; right:14px; z-index:2; background:rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.25); color:#fff;">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
             </button>
@@ -3463,7 +3463,7 @@ async function subirVideoBienvenida(input){
     if(!resp.ok){ toast(resp.error || 'No se pudo subir el video.', true); return; }
 
     const video = document.getElementById('welcomeBannerVideo');
-    if(video){ video.src = resp.url; video.dataset.urlActual = resp.url; video.load(); }
+    if(video){ video.src = resp.url; video.dataset.urlActual = resp.url; }
     toast('¡Listo! Ya todos van a ver este video de fondo.');
   }catch(err){
     toast('No se pudo subir el video. Revisa tu conexión e intenta de nuevo.', true);
