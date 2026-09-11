@@ -891,6 +891,61 @@
 
   /* modal */
   .modal-bg{ position:fixed; inset:0; background:rgba(4,6,9,.6); backdrop-filter:blur(2px); display:flex; align-items:center; justify-content:center; z-index:900; padding:20px;}
+
+  /* -------- animación DJ corriendo -------- */
+  #djRunnerOverlay{
+    position:fixed; inset:0; z-index:9999; pointer-events:none; overflow:hidden;
+    display:none; background:transparent;
+  }
+  #djRunnerOverlay.active{ display:block; }
+  .dj-runner{
+    position:absolute; bottom:0; font-size:72px; line-height:1;
+    animation:djCorre 1s cubic-bezier(.2,.8,.4,1) forwards;
+    filter:drop-shadow(0 0 12px rgba(228,16,42,.8));
+    transform-origin:bottom center;
+  }
+  @keyframes djCorre{
+    0%  { left:-120px; bottom:15%; transform:scaleX(1) rotate(0deg); font-size:72px; }
+    40% { left:30%;    bottom:18%; transform:scaleX(1) rotate(-8deg); font-size:90px; }
+    70% { left:55%;    bottom:30%; transform:scaleX(1) rotate(-18deg); font-size:120px; }
+    85% { left:44%;    bottom:40%; transform:scaleX(1) rotate(-25deg); font-size:160px; }
+    100%{ left:50%;    bottom:50%; transform:translate(-50%,-50%) scale(3) rotate(-5deg); font-size:160px; }
+  }
+  .dj-runner-flash{
+    position:fixed; inset:0; background:#fff; opacity:0; z-index:9998; pointer-events:none;
+    animation:djFlash .35s ease-out forwards;
+  }
+  @keyframes djFlash{ 0%{opacity:0;} 30%{opacity:.85;} 100%{opacity:0;} }
+  .dj-crash-ring{
+    position:fixed; top:50%; left:50%; width:20px; height:20px;
+    border:4px solid #E4102A; border-radius:50%; z-index:9998; pointer-events:none;
+    transform:translate(-50%,-50%) scale(0); opacity:1;
+    animation:djCrashRing .6s ease-out forwards;
+  }
+  @keyframes djCrashRing{ to{ transform:translate(-50%,-50%) scale(18); opacity:0; } }
+  #djRunnerOverlay .avisoModalWrap{
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0);
+    z-index:9999; width:min(480px,92vw); pointer-events:auto;
+    animation:djAvisoEntra .5s cubic-bezier(.34,1.56,.64,1) forwards;
+  }
+  @keyframes djAvisoEntra{
+    from{ transform:translate(-50%,-50%) scale(0) rotate(-8deg); opacity:0; }
+    to{   transform:translate(-50%,-50%) scale(1) rotate(0deg);  opacity:1; }
+  }
+  .dj-bg-flash{
+    position:fixed; inset:0; z-index:9997; pointer-events:none;
+    background:radial-gradient(circle at 50% 50%, rgba(228,16,42,.35) 0%, transparent 70%);
+    opacity:0; animation:djBgPulse .8s ease-out forwards;
+  }
+  @keyframes djBgPulse{ 0%{opacity:0;} 25%{opacity:1;} 100%{opacity:0;} }
+  .dj-particle{
+    position:fixed; font-size:24px; z-index:9998; pointer-events:none;
+    animation:djParticle .9s ease-out forwards;
+  }
+  @keyframes djParticle{
+    0%  { transform:translate(0,0) scale(1); opacity:1; }
+    100%{ transform:translate(var(--tx),var(--ty)) scale(0); opacity:0; }
+  }
   .modal{ width:100%; max-width:460px; padding:26px; }
   .modal h3{ font-size:19px; margin-bottom:6px; }
   .modal p.hint{ font-size:12.5px; color:var(--text-dim); margin-bottom:16px; line-height:1.5; }
@@ -1314,7 +1369,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v7.7</div>
+        <div class="sidebar-footer-version">World DJ Pool · v7.8</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -1742,7 +1797,10 @@
         <section class="view" id="view-usuarios">
           <div class="view-head">
             <div><h2>Usuarios</h2><div class="view-sub" id="usuariosViewSub">Cuentas del grupo y su nivel de acceso.</div></div>
-            <button class="refresh-btn" onclick="refrescarUsuarios(this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <input class="field" id="buscarUsuarioInput" type="text" placeholder="🔍 Buscar usuario…" oninput="filtrarTablaUsuarios(this.value)" style="padding:7px 14px; font-size:13px; width:190px; border-radius:8px;">
+              <button class="refresh-btn" onclick="refrescarUsuarios(this)"><svg class="refresh-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg>Actualizar</button>
+            </div>
           </div>
 
           <div class="module" style="padding:18px 20px; margin-bottom:16px;" id="panelSolicitudes">
@@ -3613,6 +3671,14 @@ async function refrescarComunidad(btn){
   if(btn) setTimeout(()=>btn.classList.remove('spinning'), 400);
 }
 
+function filtrarTablaUsuarios(texto){
+  const q = texto.toLowerCase().trim();
+  document.querySelectorAll('#tbodyUsuarios tr').forEach(tr=>{
+    const txt = tr.textContent.toLowerCase();
+    tr.style.display = (!q || txt.includes(q)) ? '' : 'none';
+  });
+}
+
 function renderUsuarios(){
   renderSolicitudes();
 
@@ -4000,10 +4066,88 @@ async function enviarAvisoManual(){
   const confirmado = window.confirm('¿Enviar aviso por correo sobre '+avisoSeleccionados.length+' elemento(s) a todos los DJs activos?');
   if(!confirmado) return;
   const items = avisoSeleccionados.map(s=>({hoja:s.hoja, id:s.id}));
+  cerrarModalAviso();
   const resp = await api('enviar_aviso_manual', {token: STATE.currentUser.token, items});
   if(!resp.ok){ toast(resp.error || 'No se pudo enviar el aviso.', true); return; }
-  toast('Aviso enviado a '+(resp.enviados!==undefined ? resp.enviados+' DJs' : 'la comunidad')+'.');
-  cerrarModalAviso();
+  const cuantos = resp.enviados!==undefined ? resp.enviados+' DJs' : 'la comunidad';
+  lanzarDjRunner('Aviso enviado a ' + cuantos + ' 🎉');
+}
+
+/* -------- animación DJ corriendo -------- */
+function lanzarDjRunner(mensaje){
+  const overlay = document.getElementById('djRunnerOverlay');
+  overlay.innerHTML = '';
+  overlay.classList.add('active');
+
+  // Fondo pulsante rojo
+  const bgFlash = document.createElement('div');
+  bgFlash.className = 'dj-bg-flash';
+  overlay.appendChild(bgFlash);
+
+  // El DJ corriendo (emoji animado)
+  const dj = document.createElement('div');
+  dj.className = 'dj-runner';
+  dj.textContent = '🏃‍♂️';
+  overlay.appendChild(dj);
+
+  // Al terminar la carrera: impacto
+  dj.addEventListener('animationend', ()=>{
+    // Flash de impacto
+    const flash = document.createElement('div');
+    flash.className = 'dj-runner-flash';
+    overlay.appendChild(flash);
+
+    // Onda expansiva
+    const ring = document.createElement('div');
+    ring.className = 'dj-crash-ring';
+    overlay.appendChild(ring);
+
+    // Partículas saliendo del impacto
+    const emojis = ['🎵','🎶','💥','⚡','🔥','🎧','✨','💫'];
+    for(let p=0; p<12; p++){
+      const part = document.createElement('div');
+      part.className = 'dj-particle';
+      part.textContent = emojis[p % emojis.length];
+      const angulo = (p / 12) * Math.PI * 2;
+      const dist = 120 + Math.random()*120;
+      part.style.setProperty('--tx', Math.cos(angulo)*dist+'px');
+      part.style.setProperty('--ty', Math.sin(angulo)*dist+'px');
+      part.style.left = '50%'; part.style.top = '50%';
+      part.style.marginLeft = '-12px'; part.style.marginTop = '-12px';
+      part.style.animationDelay = (p*0.04)+'s';
+      overlay.appendChild(part);
+    }
+
+    // Ocultar el DJ (ya impactó)
+    dj.style.display = 'none';
+
+    // Modal del aviso aparece con rebote
+    setTimeout(()=>{
+      const wrap = document.createElement('div');
+      wrap.className = 'avisoModalWrap';
+
+      const modal = document.createElement('div');
+      modal.className = 'module modal';
+      modal.style.cssText = 'max-width:460px; text-align:center; padding:32px 28px;';
+      modal.innerHTML = `
+        <div style="font-size:52px; margin-bottom:12px; animation:djAvisoEntra .4s ease both;">📨</div>
+        <h3 style="font-size:20px; margin-bottom:8px;">${escapeHtml(mensaje)}</h3>
+        <p style="color:var(--text-dim); font-size:13.5px; margin-bottom:22px;">El correo ya está llegando a los buzones de todos los DJs del grupo.</p>
+        <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="cerrarDjRunner()">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="margin-right:6px;"><path d="M7 5v14l12-7z"/></svg>
+          ¡Genial!
+        </button>`;
+      wrap.appendChild(modal);
+      overlay.appendChild(wrap);
+      wrap.style.pointerEvents = 'auto';
+    }, 350);
+  });
+}
+
+function cerrarDjRunner(){
+  const overlay = document.getElementById('djRunnerOverlay');
+  overlay.classList.remove('active');
+  setTimeout(()=>{ overlay.innerHTML=''; }, 300);
 }
 
 async function confirmarEliminarUsuario(id, usuario){
@@ -4262,5 +4406,6 @@ function renderAll(){
 
 cargarVideoBienvenida(); // se llama ya mismo, para que el video del login se vea desde antes de iniciar sesión
 </script>
+<div id="djRunnerOverlay"></div>
 </body>
 </html>
