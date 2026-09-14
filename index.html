@@ -893,6 +893,9 @@
   /* modal */
   .modal-bg{ position:fixed; inset:0; background:rgba(4,6,9,.6); backdrop-filter:blur(2px); display:flex; align-items:center; justify-content:center; z-index:900; padding:20px;}
 
+  @keyframes mantPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(228,16,42,.3); } 50%{ box-shadow:0 0 0 14px rgba(228,16,42,0); } }
+  @keyframes mantBar{ from{ background-position:200% 0; } to{ background-position:-200% 0; } }
+
   .export-col-check{
     display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:500;
     color:var(--text); cursor:pointer; padding:5px 10px; border-radius:7px;
@@ -1182,6 +1185,39 @@
 </div>
 
 <!-- ============================================================= BIENVENIDA DE TRANSICIÓN (tras iniciar sesión) ============================================================= -->
+<div id="mantenimientoOverlay" class="hidden" style="
+  position:fixed; inset:0; z-index:10000; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center; padding:32px;
+  background:radial-gradient(ellipse at 50% 40%, #1a0a0e 0%, #0a0a0b 100%);
+  overflow:hidden;">
+
+  <!-- Partículas de fondo decorativas -->
+  <div style="position:absolute; inset:0; pointer-events:none; overflow:hidden;">
+    <div style="position:absolute; width:400px; height:400px; border-radius:50%; background:radial-gradient(circle, rgba(228,16,42,.12) 0%, transparent 70%); top:-100px; left:-100px;"></div>
+    <div style="position:absolute; width:300px; height:300px; border-radius:50%; background:radial-gradient(circle, rgba(228,16,42,.08) 0%, transparent 70%); bottom:-80px; right:-80px;"></div>
+  </div>
+
+  <!-- Ícono animado -->
+  <div style="position:relative; margin-bottom:24px;">
+    <div style="width:90px; height:90px; border-radius:50%; background:rgba(228,16,42,.12); border:2px solid rgba(228,16,42,.3); display:flex; align-items:center; justify-content:center; margin:0 auto; animation:mantPulse 2s ease-in-out infinite;">
+      <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#E4102A" stroke-width="1.6">
+        <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+      </svg>
+    </div>
+  </div>
+
+  <div style="font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:#E4102A; margin-bottom:10px;">World DJ Pool</div>
+  <h1 style="font-size:clamp(22px,4vw,36px); font-weight:800; color:#FFFFFF; margin:0 0 10px; letter-spacing:-.02em;">En mantenimiento</h1>
+  <p style="font-size:15px; color:#8A8A90; max-width:400px; line-height:1.6; margin:0 0 16px;" id="mantMensajePublico">Estamos mejorando el sistema para ti.<br>Pronto estará disponible nuevamente.</p>
+
+  <!-- Barra de carga animada decorativa -->
+  <div style="width:min(320px,80vw); height:4px; background:rgba(255,255,255,.08); border-radius:4px; overflow:hidden; margin-bottom:28px;">
+    <div style="height:100%; background:linear-gradient(90deg, #E4102A, #FF6B7A, #E4102A); background-size:200% 100%; border-radius:4px; animation:mantBar 2s linear infinite;"></div>
+  </div>
+
+  <div style="font-size:12px; color:#5A5A60;">🎧 &nbsp; Regresa pronto — el material te espera</div>
+</div>
+
 <div id="welcomeTransition">
   <div class="welcome-trans-icons" id="welcomeFallIcons"></div>
   <div class="welcome-crowd-scene">
@@ -1381,7 +1417,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v8.0</div>
+        <div class="sidebar-footer-version">World DJ Pool · v8.1</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -1482,6 +1518,7 @@
             </div>
             <button class="btn btn-primary btn-sm" onclick="abrirModalAviso()">📧 Avisar por correo</button>
             <button class="btn btn-sm btn-hora-caliente admin-only" id="btnHoraCaliente" onclick="toggleHoraCaliente()">🔥 Activar Hora Caliente</button>
+            <button class="btn btn-sm admin-only" id="btnMantenimiento" onclick="toggleMantenimiento()" style="background:#6B21A8; color:#fff; border:none;">🔧 Activar mantenimiento</button>
             <button class="btn btn-primary btn-sm admin-only" onclick="abrirModalAnuncio()">📢 Enviar anuncio</button>
           </div>
 
@@ -2530,6 +2567,17 @@ async function handleLogin(e){
     return false;
   }
 
+  // El servidor confirmó que hay mantenimiento activo — mostrar la pantalla
+  if(resp.mantenimiento){
+    const overlay = document.getElementById('mantenimientoOverlay');
+    if(resp.mensaje){
+      const el = document.getElementById('mantMensajePublico');
+      if(el) el.innerHTML = resp.mensaje.replace(/\n/g,'<br>');
+    }
+    overlay.classList.remove('hidden');
+    return false;
+  }
+
   err.textContent = resp.error || 'Usuario o contraseña incorrectos.';
   err.style.display='block';
   return false;
@@ -2656,6 +2704,7 @@ async function enterApp(){
   startEnlacesTicker();
   startSyncTicker();
   revisarHoraCaliente();
+  revisarMantenimiento();
   revisarAnuncio();
   if(puedeGestionarSolicitudes()) cargarConectados();
   cargarVideoBienvenida();
@@ -4138,6 +4187,54 @@ async function revisarHoraCaliente(){
   if(resp.activa !== horaCalienteActiva) aplicarEstadoHoraCaliente(resp.activa);
 }
 
+/* ---------------- modo mantenimiento ---------------- */
+let mantenimientoActivo = false;
+
+async function revisarMantenimiento(){
+  const resp = await api('estado_mantenimiento', {});
+  if(!resp.ok) return;
+  if(resp.activo !== mantenimientoActivo) aplicarEstadoMantenimiento(resp.activo, resp.mensaje);
+}
+
+function aplicarEstadoMantenimiento(activo, mensaje){
+  mantenimientoActivo = activo;
+  const overlay = document.getElementById('mantenimientoOverlay');
+  // El Admin NUNCA ve la pantalla de mantenimiento — puede entrar siempre
+  if(!isAdmin()){
+    overlay.classList.toggle('hidden', !activo);
+  }
+  const btn = document.getElementById('btnMantenimiento');
+  if(btn){
+    btn.textContent = activo ? '🔧 Desactivar mantenimiento' : '🔧 Activar mantenimiento';
+    btn.style.background = activo ? '#991B1B' : '#6B21A8';
+  }
+  if(mensaje){
+    const el = document.getElementById('mantMensajePublico');
+    if(el) el.innerHTML = mensaje.replace(/\n/g,'<br>');
+  }
+}
+
+let mantMsgTimeout = null;
+async function toggleMantenimiento(){
+  if(mantenimientoActivo){
+    const resp = await api('desactivar_mantenimiento', {token: STATE.currentUser.token});
+    if(!resp.ok){ toast(resp.error||'No se pudo desactivar.', true); return; }
+    aplicarEstadoMantenimiento(false, '');
+    toast('Modo mantenimiento desactivado. El sistema ya es accesible.');
+  }else{
+    // Pedir mensaje personalizado
+    const msg = window.prompt(
+      '¿Quieres mostrar un mensaje personalizado en la pantalla de mantenimiento?\n(Opcional — déjalo en blanco para el mensaje por defecto)',
+      'Estamos mejorando el sistema para ti.\nPronto estará disponible nuevamente.'
+    );
+    if(msg === null) return; // canceló
+    const resp = await api('activar_mantenimiento', {token: STATE.currentUser.token, mensaje: msg});
+    if(!resp.ok){ toast(resp.error||'No se pudo activar.', true); return; }
+    aplicarEstadoMantenimiento(true, msg);
+    toast('Modo mantenimiento activado. Todos los usuarios verán la pantalla de mantenimiento.');
+  }
+}
+
 function aplicarEstadoHoraCaliente(activa){
   horaCalienteActiva = activa;
   document.getElementById('horaCalienteOverlay').classList.toggle('on', activa);
@@ -4517,6 +4614,7 @@ function startSyncTicker(){
     }
 
     await revisarHoraCaliente();
+    await revisarMantenimiento();
     if(document.getElementById('view-horacaliente').classList.contains('active')) renderHoraCalienteGrid();
     await revisarAnuncio();
     if(puedeGestionarSolicitudes()) await cargarConectados();
