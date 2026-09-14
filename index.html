@@ -893,7 +893,13 @@
   /* modal */
   .modal-bg{ position:fixed; inset:0; background:rgba(4,6,9,.6); backdrop-filter:blur(2px); display:flex; align-items:center; justify-content:center; z-index:900; padding:20px;}
 
-  /* -------- animación DJ corriendo -------- */
+  .export-col-check{
+    display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:500;
+    color:var(--text); cursor:pointer; padding:5px 10px; border-radius:7px;
+    border:1px solid var(--line); background:var(--panel); transition:background .15s, border-color .15s;
+  }
+  .export-col-check:has(input:checked){ background:rgba(var(--accent-rgb),.12); border-color:var(--red-vivid); color:var(--red-vivid); }
+  .export-col-check input{ accent-color:var(--red-vivid); width:14px; height:14px; }
   #djRunnerOverlay{
     position:fixed; inset:0; z-index:9999; pointer-events:none; overflow:hidden;
     display:none; background:transparent;
@@ -1375,7 +1381,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v7.9</div>
+        <div class="sidebar-footer-version">World DJ Pool · v8.0</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -1846,7 +1852,8 @@
                 Exportar PDF
               </button>
             </div>
-            <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; align-items:center;">
+
+            <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:14px; align-items:center;">
               <label style="font-size:13px; font-weight:600; color:var(--text-dim);">Filtrar por:</label>
               <select class="field" id="filtroExportEstado" style="padding:6px 12px; font-size:13px; width:auto;" onchange="renderTablaExport()">
                 <option value="todos">Todos los usuarios</option>
@@ -1862,9 +1869,23 @@
                 <option value="registro">Por fecha de registro</option>
               </select>
             </div>
+
+            <div style="margin-bottom:16px; padding:12px 14px; background:var(--panel-raised); border-radius:9px; border:1px solid var(--line);">
+              <div style="font-size:12px; font-weight:700; color:var(--text-dim); text-transform:uppercase; letter-spacing:.06em; margin-bottom:10px;">Columnas a incluir en el PDF</div>
+              <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                <label class="export-col-check"><input type="checkbox" id="col_usuario" checked onchange="renderTablaExport()"> Usuario</label>
+                <label class="export-col-check"><input type="checkbox" id="col_whatsapp" checked onchange="renderTablaExport()"> WhatsApp</label>
+                <label class="export-col-check"><input type="checkbox" id="col_correo" checked onchange="renderTablaExport()"> Correo</label>
+                <label class="export-col-check"><input type="checkbox" id="col_rol" onchange="renderTablaExport()"> Rol</label>
+                <label class="export-col-check"><input type="checkbox" id="col_estado" checked onchange="renderTablaExport()"> Estado</label>
+                <label class="export-col-check"><input type="checkbox" id="col_registro" onchange="renderTablaExport()"> Fecha de registro</label>
+                <label class="export-col-check"><input type="checkbox" id="col_acceso" checked onchange="renderTablaExport()"> Último acceso</label>
+              </div>
+            </div>
+
             <div class="module" style="padding:0; overflow:hidden; border:1px solid var(--line);">
               <table class="data-table" style="margin:0;">
-                <thead><tr><th>#</th><th>Usuario</th><th>WhatsApp</th><th>Correo</th><th>Estado</th><th>Último acceso</th></tr></thead>
+                <thead id="theadExport"><tr></tr></thead>
                 <tbody id="tbodyExport"></tbody>
               </table>
             </div>
@@ -3817,74 +3838,79 @@ async function refrescarSolicitudesVista(btn){
   renderTablaExport();
 }
 
+/* Definición central de columnas — agrega o quita aquí si se necesitan más en el futuro */
+const EXPORT_COLS = [
+  { id:'col_usuario',  label:'Usuario',           render: u=>`<b>${escapeHtml(u.usuario)}</b>`,                                                              pdfRender: u=>`<strong>${escapeHtml(u.usuario)}</strong>` },
+  { id:'col_whatsapp', label:'WhatsApp',           render: u=>escapeHtml(u.whatsapp||'—'),                                                                    pdfRender: u=>escapeHtml(u.whatsapp||'—') },
+  { id:'col_correo',   label:'Correo',             render: u=>`<span style="color:var(--text-dim);">${escapeHtml(u.correo)}</span>`,                          pdfRender: u=>escapeHtml(u.correo) },
+  { id:'col_rol',      label:'Rol',                render: u=>escapeHtml(u.rol),                                                                              pdfRender: u=>escapeHtml(u.rol) },
+  { id:'col_estado',   label:'Estado',             render: u=>`<span class="pill ${u.estado==='Activo'?'pill-green':u.estado==='Pendiente'?'pill-amber':'pill-red'}">${u.estado}</span>`, pdfRender: u=>`<span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;background:${u.estado==='Activo'?'#d1fae5;color:#065f46':u.estado==='Pendiente'?'#fef3c7;color:#92400e':'#fee2e2;color:#991b1b'}">${u.estado}</span>` },
+  { id:'col_registro', label:'Registro',           render: u=>escapeHtml(u.fecha||'—'),                                                                       pdfRender: u=>escapeHtml(u.fecha||'—') },
+  { id:'col_acceso',   label:'Último acceso',      render: u=>`<span style="color:${!u.ultimoAccesoRaw?'var(--red)':((new Date()-new Date(u.ultimoAccesoRaw))/86400000>=5?'var(--red)':'var(--text-dim)')}">${u.ultimoAcceso||'Nunca'}</span>`, pdfRender: u=>`<span style="color:${!u.ultimoAccesoRaw||((new Date()-new Date(u.ultimoAccesoRaw))/86400000>=5)?'#dc2626':'#374151'}">${u.ultimoAcceso||'Nunca'}</span>` }
+];
+
+function colsActivas(){
+  return EXPORT_COLS.filter(c=>{ const el=document.getElementById(c.id); return el && el.checked; });
+}
+
+function ordenarLista(lista, orden){
+  if(orden==='nombre') return [...lista].sort((a,b)=>a.usuario.localeCompare(b.usuario));
+  if(orden==='ultimoAcceso') return [...lista].sort((a,b)=>(b.ultimoAccesoRaw?new Date(b.ultimoAccesoRaw):new Date(0))-(a.ultimoAccesoRaw?new Date(a.ultimoAccesoRaw):new Date(0)));
+  if(orden==='sinAcceso')   return [...lista].sort((a,b)=>(a.ultimoAccesoRaw?new Date(a.ultimoAccesoRaw):new Date(0))-(b.ultimoAccesoRaw?new Date(b.ultimoAccesoRaw):new Date(0)));
+  if(orden==='registro')    return [...lista].sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  return lista;
+}
+
 function renderTablaExport(){
   const tbody = document.getElementById('tbodyExport');
-  if(!tbody) return;
+  const thead = document.getElementById('theadExport');
+  if(!tbody || !thead) return;
+
   const estado = document.getElementById('filtroExportEstado')?.value || 'todos';
-  const orden = document.getElementById('filtroExportOrden')?.value || 'nombre';
+  const orden  = document.getElementById('filtroExportOrden')?.value  || 'nombre';
+  const cols   = colsActivas();
 
-  let lista = estado==='todos' ? STATE.users : STATE.users.filter(u=>u.estado===estado);
+  let lista = ordenarLista(estado==='todos' ? STATE.users : STATE.users.filter(u=>u.estado===estado), orden);
 
-  if(orden==='nombre') lista = [...lista].sort((a,b)=>a.usuario.localeCompare(b.usuario));
-  else if(orden==='ultimoAcceso') lista = [...lista].sort((a,b)=>{
-    const fa = a.ultimoAccesoRaw ? new Date(a.ultimoAccesoRaw) : new Date(0);
-    const fb = b.ultimoAccesoRaw ? new Date(b.ultimoAccesoRaw) : new Date(0);
-    return fb - fa;
-  });
-  else if(orden==='sinAcceso') lista = [...lista].sort((a,b)=>{
-    const fa = a.ultimoAccesoRaw ? new Date(a.ultimoAccesoRaw) : new Date(0);
-    const fb = b.ultimoAccesoRaw ? new Date(b.ultimoAccesoRaw) : new Date(0);
-    return fa - fb;
-  });
-  else if(orden==='registro') lista = [...lista].sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  // Actualizar encabezados de la tabla preview
+  thead.innerHTML = '<tr><th>#</th>' + cols.map(c=>`<th>${c.label}</th>`).join('') + '</tr>';
 
-  if(lista.length===0){
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-faint); padding:20px;">Sin resultados para este filtro.</td></tr>`;
+  if(!cols.length){
+    tbody.innerHTML = `<tr><td style="text-align:center;color:var(--text-faint);padding:16px;">Selecciona al menos una columna.</td></tr>`;
+    return;
+  }
+  if(!lista.length){
+    tbody.innerHTML = `<tr><td colspan="${cols.length+1}" style="text-align:center;color:var(--text-faint);padding:20px;">Sin resultados para este filtro.</td></tr>`;
     return;
   }
   tbody.innerHTML = lista.map((u,i)=>`
     <tr>
       <td style="color:var(--text-faint);">${i+1}</td>
-      <td><b>${escapeHtml(u.usuario)}</b></td>
-      <td>${escapeHtml(u.whatsapp||'—')}</td>
-      <td style="color:var(--text-dim);">${escapeHtml(u.correo)}</td>
-      <td><span class="pill ${u.estado==='Activo'?'pill-green':u.estado==='Pendiente'?'pill-amber':'pill-red'}">${u.estado}</span></td>
-      <td style="color:${!u.ultimoAccesoRaw?'var(--red)':((new Date()-new Date(u.ultimoAccesoRaw))/86400000>=5?'var(--red)':'var(--text-dim)')}">${u.ultimoAcceso||'Nunca'}</td>
+      ${cols.map(c=>`<td>${c.render(u)}</td>`).join('')}
     </tr>`).join('');
 }
 
 function exportarUsuariosPDF(){
   const estado = document.getElementById('filtroExportEstado')?.value || 'todos';
-  const orden = document.getElementById('filtroExportOrden')?.value || 'nombre';
+  const orden  = document.getElementById('filtroExportOrden')?.value  || 'nombre';
+  const cols   = colsActivas();
 
-  let lista = estado==='todos' ? STATE.users : STATE.users.filter(u=>u.estado===estado);
+  if(!cols.length){ toast('Selecciona al menos una columna para exportar.', true); return; }
 
-  if(orden==='nombre') lista = [...lista].sort((a,b)=>a.usuario.localeCompare(b.usuario));
-  else if(orden==='ultimoAcceso') lista = [...lista].sort((a,b)=>{
-    const fa = a.ultimoAccesoRaw ? new Date(a.ultimoAccesoRaw) : new Date(0);
-    const fb = b.ultimoAccesoRaw ? new Date(b.ultimoAccesoRaw) : new Date(0);
-    return fb - fa;
-  });
-  else if(orden==='sinAcceso') lista = [...lista].sort((a,b)=>{
-    const fa = a.ultimoAccesoRaw ? new Date(a.ultimoAccesoRaw) : new Date(0);
-    const fb = b.ultimoAccesoRaw ? new Date(b.ultimoAccesoRaw) : new Date(0);
-    return fa - fb;
-  });
-  else if(orden==='registro') lista = [...lista].sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  let lista = ordenarLista(estado==='todos' ? STATE.users : STATE.users.filter(u=>u.estado===estado), orden);
 
   const estadoLabel = {todos:'Todos',Activo:'Activos',Pendiente:'Pendientes',Bloqueada:'Bloqueados',Vetada:'Vetados'}[estado]||estado;
-  const ordenLabel = {'nombre':'Por nombre','ultimoAcceso':'Último acceso (reciente)','sinAcceso':'Sin acceso reciente','registro':'Por registro'}[orden]||orden;
+  const ordenLabel  = {nombre:'Por nombre',ultimoAcceso:'Último acceso (reciente)',sinAcceso:'Sin acceso reciente',registro:'Por registro'}[orden]||orden;
+  const colsLabel   = cols.map(c=>c.label).join(', ');
   const fecha = new Date().toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'});
 
-  const filas = lista.map((u,i)=>`
+  const filasPdf = lista.map((u,i)=>`
     <tr>
       <td>${i+1}</td>
-      <td><strong>${escapeHtml(u.usuario)}</strong></td>
-      <td>${escapeHtml(u.whatsapp||'—')}</td>
-      <td>${escapeHtml(u.correo)}</td>
-      <td><span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;background:${u.estado==='Activo'?'#d1fae5;color:#065f46':u.estado==='Pendiente'?'#fef3c7;color:#92400e':'#fee2e2;color:#991b1b'}">${u.estado}</span></td>
-      <td style="color:${!u.ultimoAccesoRaw||((new Date()-new Date(u.ultimoAccesoRaw))/86400000>=5)?'#dc2626':'#374151'}">${u.ultimoAcceso||'Nunca'}</td>
+      ${cols.map(c=>`<td>${c.pdfRender(u)}</td>`).join('')}
     </tr>`).join('');
+
+  const theadPdf = '<tr><th>#</th>' + cols.map(c=>`<th>${c.label}</th>`).join('') + '</tr>';
 
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
     <title>Directorio World DJ Pool</title>
@@ -3894,9 +3920,9 @@ function exportarUsuariosPDF(){
       body{font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#111;margin:0;}
       .cabecera{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:3px solid #E4102A;margin-bottom:14px;}
       .cabecera h1{font-size:18px;font-weight:800;margin:0;color:#E4102A;letter-spacing:-.3px;}
-      .cabecera .meta{font-size:10px;color:#6b7280;text-align:right;}
-      .filtros{display:flex;gap:20px;font-size:10px;color:#374151;margin-bottom:12px;background:#f9fafb;padding:6px 10px;border-radius:5px;border:1px solid #e5e7eb;}
-      .filtros span{font-weight:700;color:#111;}
+      .meta{font-size:10px;color:#6b7280;text-align:right;}
+      .filtros{display:flex;gap:16px;flex-wrap:wrap;font-size:10px;color:#374151;margin-bottom:12px;background:#f9fafb;padding:6px 10px;border-radius:5px;border:1px solid #e5e7eb;}
+      .filtros b{color:#111;}
       table{width:100%;border-collapse:collapse;font-size:10.5px;}
       th{background:#1a1a1c;color:#fff;padding:7px 9px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
       td{padding:6px 9px;border-bottom:1px solid #f3f4f6;}
@@ -3911,17 +3937,21 @@ function exportarUsuariosPDF(){
         <div style="font-size:10px;color:#6b7280;margin-top:2px;">Directorio de DJs · ${fecha}</div>
       </div>
       <div class="meta">
-        Total en este reporte: <strong>${lista.length} DJs</strong><br>
-        Generado por: <strong>${escapeHtml(STATE.currentUser.usuario)}</strong>
+        Total: <b>${lista.length} DJs</b><br>
+        Generado por: <b>${escapeHtml(STATE.currentUser.usuario)}</b>
       </div>
     </div>
-    <div class="filtros">Filtro: <span>${estadoLabel}</span> &nbsp;·&nbsp; Orden: <span>${ordenLabel}</span></div>
+    <div class="filtros">
+      Filtro: <b>${estadoLabel}</b>
+      &nbsp;·&nbsp; Orden: <b>${ordenLabel}</b>
+      &nbsp;·&nbsp; Columnas: <b>${colsLabel}</b>
+    </div>
     <table>
-      <thead><tr><th>#</th><th>Usuario</th><th>WhatsApp</th><th>Correo</th><th>Estado</th><th>Último acceso</th></tr></thead>
-      <tbody>${filas}</tbody>
+      <thead>${theadPdf}</thead>
+      <tbody>${filasPdf}</tbody>
     </table>
     <div class="nota">⚠️ DJs en rojo llevan 5 o más días sin ingresar al sistema. Considera contactarlos o removerlos.</div>
-    <div class="pie">World DJ Pool © ${new Date().getFullYear()} · Creado por DJ JULTO · ${window.location.href}</div>
+    <div class="pie">World DJ Pool © ${new Date().getFullYear()} · Creado por DJ JULTO · djjulto.github.io/djworld</div>
     <script>window.onload=()=>window.print();<\/script>
   </body></html>`;
 
