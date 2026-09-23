@@ -107,38 +107,15 @@
   .field-row{margin-bottom:14px;}
   .field-error{color:var(--red); font-size:12.5px; margin-top:6px; display:none;}
 
-  .auth-field-row{ display:flex; align-items:center; gap:12px; margin-bottom:16px; position:relative; }
+  .auth-field-row{ display:flex; align-items:center; gap:12px; margin-bottom:16px; }
   .auth-field-icon{
-    width:40px; height:40px; border-radius:8px; background:linear-gradient(155deg,#2A2A2E,#141416); color:#8A8A90;
-    display:flex; align-items:center; justify-content:center; flex-shrink:0; position:relative;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.06), inset 0 -1px 2px rgba(0,0,0,.6), 0 1px 2px rgba(0,0,0,.4);
+    width:40px; height:40px; border-radius:10px; background:var(--red-soft); color:var(--red-vivid);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
   }
-  .auth-field-icon::after{
-    content:''; position:absolute; top:4px; right:4px; width:5px; height:5px; border-radius:50%;
-    background:#2DD4BF; box-shadow:0 0 5px #2DD4BF; opacity:.85;
-    animation:cdjLedBlink 2.4s ease-in-out infinite;
-  }
-  @keyframes cdjLedBlink{ 0%,100%{ opacity:.85; } 50%{ opacity:.3; } }
-  .auth-field-row input.field{
-    border-radius:8px; background:#0E0E10; padding:12px 16px; color:#E4E4E6;
-    border:1px solid rgba(255,255,255,.08); box-shadow:inset 0 2px 4px rgba(0,0,0,.5);
-  }
-  .auth-field-row input.field:focus{ border-color:#2DD4BF; box-shadow:inset 0 2px 4px rgba(0,0,0,.5), 0 0 0 3px rgba(45,212,191,.18); }
-  .auth-field-row input.field::placeholder{ color:#5A5A60; }
-  .auth-remember-row{ display:flex; align-items:center; justify-content:space-between; font-size:12.5px; color:#8A8A90; margin-bottom:20px; }
+  .auth-field-row input.field{ border-radius:10px; background:var(--panel-raised); padding:12px 16px; }
+  .auth-remember-row{ display:flex; align-items:center; justify-content:space-between; font-size:12.5px; color:var(--text-dim); margin-bottom:20px; }
   .auth-remember-row label{ display:flex; align-items:center; gap:6px; cursor:pointer; }
-  .btn-pill{ border-radius:8px !important; }
-  .cdj-play-btn{
-    background:linear-gradient(180deg, #22C55E, #15803D) !important;
-    box-shadow:0 0 0 1px rgba(0,0,0,.3), 0 4px 12px -2px rgba(34,197,94,.5), inset 0 1px 0 rgba(255,255,255,.25) !important;
-    animation:cdjPlayPulse 2.2s ease-in-out infinite;
-  }
-  .cdj-play-btn:hover{ background:linear-gradient(180deg, #34D65F, #16A34A) !important; }
-  .cdj-play-btn:active{ transform:scale(.97); }
-  @keyframes cdjPlayPulse{
-    0%,100%{ box-shadow:0 0 0 1px rgba(0,0,0,.3), 0 4px 12px -2px rgba(34,197,94,.5), inset 0 1px 0 rgba(255,255,255,.25); }
-    50%{ box-shadow:0 0 0 1px rgba(0,0,0,.3), 0 4px 22px 0px rgba(34,197,94,.85), inset 0 1px 0 rgba(255,255,255,.25); }
-  }
+  .btn-pill{ border-radius:10px !important; }
 
   .cdj-jogwheel-deco{
     position:absolute; width:280px; height:280px; border-radius:50%; z-index:0; pointer-events:none;
@@ -187,32 +164,11 @@
     padding:0; position:relative; overflow:hidden;
   }
   .auth-wrap{
-    display:grid; grid-template-columns:1fr 1fr; width:100%; min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    width:100%; min-height:100vh; background:var(--bg); padding:24px;
   }
-  @media (max-width:820px){ .auth-wrap{ grid-template-columns:1fr; } .auth-visual{ display:none; } }
-  .auth-visual{
-    position:relative; z-index:0;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    overflow:hidden; background:#0A0A0B;
-  }
-  .auth-visual-video{
-    position:absolute; inset:-4px; z-index:0; width:calc(100% + 8px); height:calc(100% + 8px);
-    border:none; pointer-events:none;
-  }
-  .auth-visual::after{
-    content:''; position:absolute; inset:0; z-index:0;
-    background:linear-gradient(180deg, rgba(10,8,9,.5) 0%, rgba(10,8,9,.65) 60%, rgba(10,8,9,.85) 100%);
-  }
-  .auth-visual > *:not(.auth-visual-video){ position:relative; z-index:1; }
-
-  .auth-visual .vinyl-stage{ transform:rotateX(8deg) rotateY(-6deg) scale(1.1); opacity:.95; }
-  @media (max-width:820px){ .auth-visual .vinyl-stage{ transform:scale(.85); } }
-
   .auth-panel{
-    position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; padding:40px 20px;
-    background:
-      repeating-linear-gradient(100deg, rgba(255,255,255,.025) 0px, rgba(255,255,255,.025) 1px, transparent 1px, transparent 3px),
-      linear-gradient(155deg, #3A3A3E 0%, #232326 45%, #18181A 100%);
+    width:100%; max-width:420px; display:flex; align-items:center; justify-content:center;
   }
   .cdj-screw{
     position:absolute; width:13px; height:13px; border-radius:50%; z-index:5;
@@ -363,17 +319,10 @@
   .auth-copy p{ font-size:13.5px; color:rgba(255,255,255,.6); margin-top:10px; line-height:1.5; }
 
   .auth-panel-inner{
-    width:100%; max-width:400px; padding:26px 24px; display:flex; flex-direction:column; position:relative;
-    background:linear-gradient(180deg, #101012 0%, #1B1B1E 100%);
-    border-radius:14px; z-index:1;
-    box-shadow:inset 0 2px 6px rgba(0,0,0,.65), inset 0 -1px 0 rgba(255,255,255,.05), 0 10px 26px -12px rgba(0,0,0,.6);
-    border:1px solid rgba(0,0,0,.6);
+    width:100%; max-width:400px; padding:32px 28px; display:flex; flex-direction:column; position:relative;
+    background:var(--panel); border-radius:14px; border:1px solid var(--line);
+    box-shadow:0 8px 24px -8px rgba(0,0,0,.18);
   }
-  .auth-panel-inner .auth-kicker{ color:#FF6B7A; }
-  .auth-panel-inner .auth-heading{ color:#F2F2F3; }
-  .auth-panel-inner .field-label{ color:#9A9AA0; }
-  .auth-panel-inner p{ color:#8A8A90 !important; }
-  .auth-panel-inner a{ color:#FF8A96; }
   .radio-dial{
     background:#04191c; border-radius:8px; padding:16px 20px; margin-bottom:24px;
     border:2px solid #050506; position:relative; overflow:hidden;
@@ -1018,48 +967,9 @@
 <!-- ============================================================= AUTH SCREEN ============================================================= -->
 <div id="auth-screen">
   <div class="auth-wrap fade-in">
-    <div class="auth-visual">
-      <iframe class="auth-visual-video" id="authVisualVideo" frameborder="0" scrolling="no" style="border:none; pointer-events:none;"></iframe>
-      <div class="rack-brand">WORLD DJ POOL</div>
-      <div class="vinyl-stage" onclick="scratchVinilo()" title="Tócalo">
-        <div class="sound-ring sound-ring-1"></div>
-        <div class="sound-ring sound-ring-2"></div>
-        <div class="sound-ring sound-ring-3"></div>
-        <div class="vinyl-drop-wrap">
-          <div class="vinyl">
-            <div class="vinyl-label"><span>WDP</span></div>
-            <div class="vinyl-hole"></div>
-          </div>
-        </div>
-        <div class="tonearm"><div class="pivot"></div><div class="arm"></div><div class="head"></div></div>
-      </div>
-      <div class="scratch-hint">🎧 Tócalo</div>
-      <div class="auth-copy">
-        <h1>Un solo lugar para todo el material.</h1>
-        <p>Enlaces, samples, packs, FX y drops del grupo, organizados y disponibles para cada DJ autorizado.</p>
-      </div>
-    </div>
-
     <div class="auth-panel">
-     <div class="cdj-jogwheel-deco"></div>
-     <div class="cdj-pitch-fader"></div>
-     <div class="cdj-screw cdj-screw-tl"></div>
-     <div class="cdj-screw cdj-screw-tr"></div>
-     <div class="cdj-screw cdj-screw-bl"></div>
-     <div class="cdj-screw cdj-screw-br"></div>
      <div class="auth-panel-inner">
 
-      <div class="radio-dial">
-        <div class="radio-static" id="radioStatic"></div>
-        <div class="radio-display">
-          <div>
-            <div class="radio-freq-wrap"><span class="radio-freq" id="radioFreq">128.0</span><span class="radio-freq-unit">BPM</span></div>
-            <div class="radio-station" id="radioStation">Track 01 · Acceso</div>
-          </div>
-          <div class="radio-eq"><i></i><i></i><i></i><i></i></div>
-        </div>
-        <div class="radio-scale"><div class="radio-needle" id="radioNeedle" style="left:15%;"></div></div>
-      </div>
 
       <!-- STEP 0: choose -->
       <div id="pane-landing">
@@ -1078,7 +988,7 @@
               <input class="field" type="password" id="loginPass" placeholder="Contraseña" required>
             </div>
             <div class="field-error" id="errLogin" style="margin:-8px 0 14px 56px;">Usuario o contraseña incorrectos.</div>
-            <button class="btn btn-primary btn-pill cdj-play-btn" style="width:100%; justify-content:center;" type="submit"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="margin-right:2px;"><path d="M7 5v14l12-7z"/></svg>Iniciar sesión</button>
+            <button class="btn btn-primary btn-pill" style="width:100%; justify-content:center;" type="submit">Iniciar sesión</button>
           </form>
           <button class="btn btn-ghost" style="width:100%; justify-content:center; margin-top:12px;" type="button" onclick="setAuthTab('acceso')">¿No tienes cuenta? Solicitar acceso</button>
           <div style="text-align:center; margin-top:14px;"><a href="#" onclick="abrirModalRecuperar(event)" style="font-size:12.5px; color:var(--text-dim);">¿Olvidaste tu contraseña?</a></div>
@@ -1417,7 +1327,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v8.2</div>
+        <div class="sidebar-footer-version">World DJ Pool · v8.3</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -1467,71 +1377,65 @@
           <div class="floating-notes" id="notasBienvenidaAdmin"></div>
 
           <div style="position:relative; z-index:1;">
-          <div class="welcome-banner">
-            <iframe class="welcome-banner-video" id="welcomeBannerVideo" frameborder="0" scrolling="no" style="border:none; pointer-events:none;"></iframe>
-            <button class="icon-btn admin-only" id="btnSubirVideoBienvenida" title="Subir video de fondo" onclick="document.getElementById('inputVideoBienvenida').click()" style="position:absolute; top:14px; right:14px; z-index:2; background:rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.25); color:#fff;">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-            </button>
-            <input type="file" id="inputVideoBienvenida" accept="video/mp4,video/webm" style="display:none;" onchange="subirVideoBienvenida(this)">
-            <div id="videoUploadStatus" class="hidden" style="position:absolute; left:14px; right:14px; bottom:14px; z-index:3;">
-              <div style="font-size:11.5px; color:#fff; font-weight:600; margin-bottom:5px; text-shadow:0 1px 3px rgba(0,0,0,.6);" id="videoUploadStatusTxt">Subiendo… 0%</div>
-              <div style="height:6px; border-radius:3px; background:rgba(255,255,255,.25); overflow:hidden;">
-                <div id="videoUploadProgressBar" style="height:100%; width:0%; background:#22C55E; border-radius:3px; transition:width .15s ease;"></div>
-              </div>
-            </div>
-            <div>
-              <span class="welcome-kicker">World DJ Pool · Edición de hoy</span>
-              <h2>¡Bienvenido de nuevo, <span id="welcomeName">Administrador</span>!</h2>
-              <p>Este es el estado general del grupo hoy. Todo lo que subas aquí se refleja al instante para tus DJs.</p>
-            </div>
-            <span class="eq-mini welcome-banner-eq"><i></i><i></i><i></i></span>
-          </div>
-
-          <div class="stat-grid">
-            <div class="module stat-module"><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+          <!-- Stats -->
+          <div class="stat-grid" style="margin-bottom:16px;">
+            <div class="module stat-module">
               <div class="stat-num" id="statTotalDjs">0</div>
               <div class="stat-label">DJs registrados</div>
               <div class="stat-bar"><i style="width:100%; background:var(--text);"></i></div>
             </div>
-            <div class="module stat-module"><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+            <div class="module stat-module">
               <div class="stat-num" id="statPendientes">0</div>
               <div class="stat-label">Pendientes de aprobación</div>
               <div class="stat-bar"><i style="width:60%; background:var(--amber);"></i></div>
             </div>
-            <div class="module stat-module"><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+            <div class="module stat-module">
               <div class="stat-num" id="statRecursos">0</div>
               <div class="stat-label">Recursos en el catálogo</div>
               <div class="stat-bar"><i style="width:100%; background:var(--green);"></i></div>
             </div>
-            <div class="module stat-module"><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+            <div class="module stat-module">
               <div class="stat-num" id="statHoy">0</div>
               <div class="stat-label">Acciones hoy</div>
               <div class="stat-bar"><i style="width:35%; background:var(--red-vivid);"></i></div>
             </div>
           </div>
 
-          <div class="module community-strip">
+          <!-- Comunidad y conectados -->
+          <div class="module" style="padding:18px 20px; margin-bottom:16px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
             <div class="community-avatars" id="communityAvatars"></div>
-            <div style="flex:1;">
+            <div style="flex:1; min-width:120px;">
               <div style="font-weight:600; font-size:13.5px;">La comunidad</div>
               <div class="community-more" id="communityCount">Cargando DJs…</div>
             </div>
-            <button class="btn btn-primary btn-sm" onclick="abrirModalAviso()">📧 Avisar por correo</button>
-            <button class="btn btn-sm btn-hora-caliente admin-only" id="btnHoraCaliente" onclick="toggleHoraCaliente()">🔥 Activar Hora Caliente</button>
-            <button class="btn btn-sm admin-only" id="btnMantenimiento" onclick="toggleMantenimiento()" style="background:#6B21A8; color:#fff; border:none;">🔧 Activar mantenimiento</button>
-            <button class="btn btn-primary btn-sm admin-only" onclick="abrirModalAnuncio()">📢 Enviar anuncio</button>
-          </div>
-
-          <div class="module" style="padding:16px 20px; margin:16px 0 0;">
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
               <span class="eq-mini" style="color:var(--green); height:14px;"><i></i><i></i><i></i></span>
-              <b style="font-size:13.5px;">Conectados ahora</b>
+              <span style="font-size:13px; font-weight:600;">Conectados:</span>
               <span class="pill pill-green" id="conectadosCount">0</span>
             </div>
-            <div id="conectadosLista" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
+          </div>
+          <div id="conectadosLista" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; padding:0 4px;"></div>
+
+          <!-- Acciones del Administrador/Pro -->
+          <div class="module gestion-usuarios" style="padding:20px; margin-bottom:16px;">
+            <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-faint); margin-bottom:14px;">Acciones rápidas</div>
+            <div style="display:flex; flex-wrap:wrap; gap:10px;">
+              <button class="btn btn-primary" onclick="abrirModalAviso()">📧 Avisar por correo</button>
+              <button class="btn btn-primary admin-only" onclick="abrirModalAnuncio()">📢 Enviar anuncio</button>
+              <button class="btn btn-sm btn-hora-caliente admin-only" id="btnHoraCaliente" onclick="toggleHoraCaliente()" style="font-size:14px; padding:10px 18px;">🔥 Activar Hora Caliente</button>
+              <button class="btn btn-sm admin-only" id="btnMantenimiento" onclick="toggleMantenimiento()" style="background:#6B21A8; color:#fff; border:none; font-size:14px; padding:10px 18px;">🔧 Activar mantenimiento</button>
+              <button class="btn btn-sm admin-only" id="btnSubirVideoBienvenida" title="Subir video de fondo" onclick="document.getElementById('inputVideoBienvenida').click()" style="font-size:14px; padding:10px 18px;">🎬 Cambiar video</button>
+              <input type="file" id="inputVideoBienvenida" accept="video/mp4,video/webm" style="display:none;" onchange="subirVideoBienvenida(this)">
+            </div>
+            <div id="videoUploadStatus" class="hidden" style="margin-top:12px;">
+              <div style="font-size:12px; color:var(--text-dim); font-weight:600; margin-bottom:5px;" id="videoUploadStatusTxt">Subiendo… 0%</div>
+              <div style="height:6px; border-radius:3px; background:var(--line); overflow:hidden;">
+                <div id="videoUploadProgressBar" style="height:100%; width:0%; background:#22C55E; border-radius:3px; transition:width .15s ease;"></div>
+              </div>
+            </div>
           </div>
 
-          <div class="view-sub" style="margin:26px 0 14px; font-weight:600; color:var(--text);">Accede rápido al catálogo</div>
+          <div class="view-sub" style="margin:10px 0 14px; font-weight:600; color:var(--text);">Accede rápido al catálogo</div>
           <div class="quick-grid">
             <div class="quick-card" onclick="showView('enlaces')">
               <div class="quick-icon" id="qIconEnlaces"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M10 13a5 5 0 007 0l2-2a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-2 2a5 5 0 007 7l1-1"/></svg></div>
