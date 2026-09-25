@@ -146,20 +146,31 @@
   @media (max-width:900px){ .cdj-jogwheel-deco, .cdj-pitch-fader{ display:none; } }
 
   /* ---------- visibilidad por rol (clases en body) ---------- */
-  /* Por defecto todo oculto, se muestra solo cuando el body tiene la clase correcta */
-  .admin-only    { display:none !important; }
+  /* Por defecto ocultos hasta que el body tenga la clase del rol correcto */
+  .admin-only       { display:none !important; }
   .gestion-usuarios { display:none !important; }
   .catalogo-editor  { display:none !important; }
   .rol-basico-only  { display:none !important; }
 
-  body.rol-admin  .admin-only     { display:'' !important; }
-  body.rol-gestor .gestion-usuarios{ display:revert !important; }
-  body.rol-editor .catalogo-editor { display:'' !important; }
-  body.rol-basico .rol-basico-only { display:'' !important; }
-  /* Excepciones específicas de display tipo flex/grid que necesitamos preservar */
-  body.rol-gestor .module.gestion-usuarios{ display:block !important; }
-  body.rol-gestor .gestion-usuarios[style*="flex"]{ display:flex !important; }
-  body.rol-gestor .nav-group.gestion-usuarios{ display:block !important; }
+  /* Admin ve todo */
+  body.rol-admin .admin-only                        { display:revert !important; }
+  body.rol-admin .gestion-usuarios                  { display:revert !important; }
+  body.rol-admin .catalogo-editor                   { display:revert !important; }
+  body.rol-admin .module.gestion-usuarios           { display:block  !important; }
+  body.rol-admin .gestion-usuarios[style*="flex"]   { display:flex   !important; }
+  body.rol-admin .nav-group.gestion-usuarios        { display:block  !important; }
+  body.rol-admin .section.gestion-usuarios          { display:block  !important; }
+
+  /* Pro ve gestion y catalogo-editor pero no admin-only */
+  body.rol-editor:not(.rol-admin) .catalogo-editor          { display:revert !important; }
+  body.rol-gestor:not(.rol-admin) .gestion-usuarios         { display:revert !important; }
+  body.rol-gestor:not(.rol-admin) .module.gestion-usuarios  { display:block  !important; }
+  body.rol-gestor:not(.rol-admin) .gestion-usuarios[style*="flex"] { display:flex !important; }
+  body.rol-gestor:not(.rol-admin) .nav-group.gestion-usuarios{ display:block  !important; }
+  body.rol-gestor:not(.rol-admin) .section.gestion-usuarios { display:block  !important; }
+
+  /* Básico ve su propio contenido */
+  body.rol-basico .rol-basico-only { display:revert !important; }
 
   /* ---------- module card ---------- */
   .module{
@@ -1343,7 +1354,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v8.4</div>
+        <div class="sidebar-footer-version">World DJ Pool · v8.5</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
