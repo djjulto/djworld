@@ -145,6 +145,8 @@
   @keyframes cdjPitchMove{ 0%,100%{ top:20%; } 50%{ top:65%; } }
   @media (max-width:900px){ .cdj-jogwheel-deco, .cdj-pitch-fader{ display:none; } }
 
+  @keyframes loadingSlide{ 0%{width:0%;margin-left:0;} 50%{width:60%;margin-left:20%;} 100%{width:0%;margin-left:100%;} }
+
   /* ---------- visibilidad por rol (clases en body) ---------- */
   /* Por defecto ocultos hasta que el body tenga la clase del rol correcto */
   .admin-only       { display:none !important; }
@@ -427,7 +429,82 @@
 
   /* ================= APP SHELL ================= */
   #app-screen{ display:none; min-height:100vh; }
-  .shell{ display:grid; grid-template-columns:236px 1fr; min-height:100vh; position:relative; z-index:1; }
+  /* ===== LAYOUT HORIZONTAL ===== */
+  .shell{ display:flex; flex-direction:column; min-height:100vh; position:relative; z-index:1; }
+  .main{ display:flex; flex-direction:column; flex:1; min-width:0; }
+  .content{ padding:24px 28px 60px; flex:1; }
+
+  /* ===== NAVBAR HORIZONTAL ===== */
+  .sidebar{
+    background:#0F0F12; border-bottom:1px solid rgba(255,255,255,.08);
+    display:flex; flex-direction:column; position:sticky; top:0; z-index:500;
+    box-shadow:0 2px 16px -4px rgba(0,0,0,.4);
+  }
+
+  /* Fila superior: logo + usuario + acciones */
+  .nav-top-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 20px; height:52px; border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .nav-brand{
+    font-weight:800; font-size:15px; letter-spacing:.04em; color:#FFFFFF;
+    display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none;
+  }
+  .nav-brand span{ color:var(--red-vivid); }
+
+  /* Fila inferior: items de navegación */
+  .nav-items-row{
+    display:flex; align-items:center; overflow-x:auto; scrollbar-width:none; gap:2px; padding:0 12px; height:44px;
+  }
+  .nav-items-row::-webkit-scrollbar{ display:none; }
+
+  .nav-group{ display:contents; }
+  .nav-group-label{ display:none; } /* oculto en horizontal */
+
+  .nav-item{
+    display:flex; align-items:center; gap:7px; padding:6px 11px; border-radius:7px; white-space:nowrap;
+    color:#8A8A90; font-size:12.5px; font-weight:500; border:1px solid transparent; position:relative;
+    transition:background .15s ease, color .15s ease; cursor:pointer; background:none; flex-shrink:0;
+  }
+  .nav-icon-wrap{
+    width:22px; height:22px; border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    transition:all .2s ease;
+  }
+  .nav-item svg{ width:14px; height:14px; flex-shrink:0; opacity:.8; }
+  .nav-item:hover{ color:#FFFFFF; background:rgba(255,255,255,.07); }
+  .nav-item.active{ color:#FFFFFF; font-weight:700; background:rgba(228,16,42,.12); border-color:rgba(228,16,42,.25); }
+  .nav-item.active .nav-icon-wrap{ transform:none; border-radius:6px; }
+  .nav-item.active svg{ opacity:1; }
+  .nav-item.active::before{ display:none; } /* quitar la línea lateral que era del sidebar vertical */
+
+  /* Colores activos por sección */
+  .nav-item[data-view="bienvenida"].active,.nav-item[data-view="inicio"].active{ background:rgba(228,16,42,.12); border-color:rgba(228,16,42,.3); color:#FF6B7A; }
+  .nav-item[data-view="enlaces"].active{ background:rgba(255,159,67,.1); border-color:rgba(255,159,67,.3); color:#FF9F43; }
+  .nav-item[data-view="samples"].active{ background:rgba(163,230,53,.1); border-color:rgba(163,230,53,.3); color:#A3E635; }
+  .nav-item[data-view="packs"].active{ background:rgba(56,189,248,.1); border-color:rgba(56,189,248,.3); color:#38BDF8; }
+  .nav-item[data-view="fx"].active{ background:rgba(192,132,252,.1); border-color:rgba(192,132,252,.3); color:#C084FC; }
+  .nav-item[data-view="drops"].active{ background:rgba(45,212,191,.1); border-color:rgba(45,212,191,.3); color:#2DD4BF; }
+  .nav-item[data-view="libreria"].active{ background:rgba(251,191,36,.1); border-color:rgba(251,191,36,.3); color:#FBBF24; }
+  .nav-item[data-view="comunidad"].active{ background:rgba(244,114,182,.1); border-color:rgba(244,114,182,.3); color:#F472B6; }
+  .nav-item[data-view="sugerencias"].active{ background:rgba(34,211,238,.1); border-color:rgba(34,211,238,.3); color:#22D3EE; }
+  .nav-item[data-view="manual"].active{ background:rgba(129,140,248,.1); border-color:rgba(129,140,248,.3); color:#818CF8; }
+  .nav-item[data-view="usuarios"].active{ background:rgba(132,204,22,.1); border-color:rgba(132,204,22,.3); color:#84CC16; }
+  .nav-item[data-view="solicitudes"].active{ background:rgba(245,158,11,.1); border-color:rgba(245,158,11,.3); color:#F59E0B; }
+  .nav-item[data-view="actividad"].active{ background:rgba(251,113,133,.1); border-color:rgba(251,113,133,.3); color:#FB7185; }
+  .nav-item[data-view="descargas"].active{ background:rgba(96,165,250,.1); border-color:rgba(96,165,250,.3); color:#60A5FA; }
+  .nav-item[data-view="horacaliente"].active{ background:rgba(228,16,42,.12); border-color:rgba(228,16,42,.3); color:#FF6B7A; }
+
+  .nav-badge{
+    min-width:16px; height:16px; padding:0 4px; border-radius:8px; background:var(--red-vivid); color:#FFFFFF;
+    font-size:9px; font-weight:800; align-items:center; justify-content:center;
+    margin-left:2px; display:none; flex-shrink:0;
+  }
+  .nav-badge.on{ display:flex; }
+
+  /* Separador visual entre grupos */
+  .nav-separator{
+    width:1px; height:20px; background:rgba(255,255,255,.1); margin:0 6px; flex-shrink:0;
+  }
   .bottom-nav{
     display:none; position:fixed; left:10px; right:10px; bottom:14px; z-index:600;
     height:62px; background:#15151A; border:1px solid rgba(255,255,255,.08); border-radius:26px;
@@ -1191,6 +1268,18 @@
 </div>
 
 <!-- ============================================================= APP SHELL ============================================================= -->
+<!-- PANTALLA DE CARGA -->
+<div id="loadingScreen" class="hidden" style="
+  position:fixed; inset:0; z-index:8000; background:var(--bg);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px;">
+  <div style="font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--red-vivid);">World DJ Pool</div>
+  <div style="font-size:22px; font-weight:800; color:var(--text);">Cargando datos</div>
+  <div style="width:200px; height:3px; background:var(--line); border-radius:3px; overflow:hidden;">
+    <div id="loadingBar" style="height:100%; width:0%; background:var(--red-vivid); border-radius:3px; animation:loadingSlide 1.4s ease-in-out infinite;"></div>
+  </div>
+  <div style="font-size:12px; color:var(--text-faint);">Conectando con la base de datos…</div>
+</div>
+
 <div id="app-screen">
   <div class="mobile-backdrop" id="mobileBackdrop" onclick="toggleMobileMenu()"></div>
 
@@ -1235,92 +1324,73 @@
 
   <div class="shell">
     <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-badge">
-          <svg class="brand-globe" viewBox="0 0 60 60" width="46" height="46">
-            <circle cx="30" cy="30" r="25" fill="none" stroke="#E4102A" stroke-width="1.3" opacity=".6"/>
-            <ellipse cx="30" cy="30" rx="25" ry="9" fill="none" stroke="#E4102A" stroke-width="1" opacity=".45"/>
-            <ellipse cx="30" cy="30" rx="9" ry="25" fill="none" stroke="#E4102A" stroke-width="1" opacity=".45"/>
-            <line x1="5" y1="30" x2="55" y2="30" stroke="#E4102A" stroke-width="1" opacity=".45"/>
-          </svg>
-          <svg class="brand-dj" viewBox="0 0 60 60" width="46" height="46">
-            <path d="M12 48 Q30 32 48 48 L50 52 Q30 36 10 52 Z" fill="#FFFFFF"/>
-            <circle cx="30" cy="24" r="10" fill="#FFFFFF"/>
-            <path d="M18 22 Q30 8 42 22" stroke="#E4102A" stroke-width="3" fill="none" stroke-linecap="round"/>
-            <circle cx="18" cy="26" r="3.6" fill="#E4102A"/>
-            <circle cx="42" cy="26" r="3.6" fill="#E4102A"/>
-          </svg>
+      <!-- Fila superior: logo + usuario + controles -->
+      <div class="nav-top-row">
+        <div class="nav-brand" onclick="showView(puedeEditarCatalogo()?'bienvenida':'inicio')">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#E4102A" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg>
+          WORLD <span>DJ</span> POOL
         </div>
-        <div>
-          <div class="brand-name" id="brandNameAnimated" onclick="explosionTitulo()" title="Tócalo">WORLD DJ POOL</div>
-          <div class="brand-sub">Sistema para DJs</div>
+        <div class="topbar-right">
+          <div class="live-chip"><span class="live-dot"></span><span id="conexionLabel">En vivo</span></div>
+          <button class="icon-btn" onclick="toggleDarkMode()" title="Modo oscuro/claro"><svg id="moonIcon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/></svg><svg id="sunIcon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" style="display:none;"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
+          <button class="icon-btn" id="syncIcon" title="Estado de conexión"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 0115-6.7M21 12a9 9 0 01-15 6.7"/><path d="M3 4v5h5M21 20v-5h-5"/></svg></button>
+          <div class="user-chip">
+            <div class="user-avatar" id="userInitial" onclick="showView(puedeEditarCatalogo()?'bienvenida':'inicio')">D</div>
+            <div class="user-info">
+              <div class="user-name" id="userNameTop">Usuario</div>
+              <div class="user-role" id="userRoleTop">Rol</div>
+            </div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="cerrarSesion()" style="font-size:12px; padding:6px 12px;">Salir</button>
         </div>
       </div>
 
-      <div class="nav-group catalogo-editor">
-        <div class="nav-title">Panel</div>
+      <!-- Fila inferior: navegación horizontal -->
+      <div class="nav-items-row">
+        <!-- Inicio -->
         <div class="nav-item" data-view="bienvenida" onclick="showView('bienvenida')">
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/></svg></span>
-          Bienvenida
+          Inicio
         </div>
-      </div>
-
-      <div class="nav-group rol-basico-only">
-        <div class="nav-title">Panel</div>
-        <div class="nav-item active" data-view="inicio" onclick="showView('inicio')">
+        <div class="nav-item rol-basico-only" data-view="inicio" onclick="showView('inicio')">
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/></svg></span>
-          Bienvenida
+          Inicio
         </div>
-      </div>
 
-      <div class="nav-group gestion-usuarios">
-        <div class="nav-title">&nbsp;</div>
-        <div class="nav-item" data-view="actividad" onclick="showView('actividad')">
-          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l2 7 4-14 2 7h6"/></svg></span>
-          Actividad
-        </div>
-        <div class="nav-item" data-view="descargas" onclick="showView('descargas')">
-          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg></span>
-          Descargas
-        </div>
-      </div>
+        <div class="nav-separator"></div>
 
-      <div class="nav-group">
-        <div class="nav-title">Catálogo</div>
-        <div class="nav-item" data-view="horacaliente" onclick="showView('horacaliente')" id="navHoraCaliente" style="display:none; background:rgba(228,16,42,.16);">
-          <span class="nav-icon-wrap">🔥</span>
-          Hora Caliente
+        <!-- Catálogo -->
+        <div class="nav-item" data-view="horacaliente" onclick="showView('horacaliente')" id="navHoraCaliente" style="display:none;">
+          <span class="nav-icon-wrap">🔥</span>Hora Caliente
         </div>
         <div class="nav-item" data-view="enlaces" onclick="showView('enlaces')">
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 007 0l2-2a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-2 2a5 5 0 007 7l1-1"/></svg></span>
-          Enlaces
-          <span class="nav-badge" id="enlacesBadge"></span>
+          Enlaces<span class="nav-badge" id="enlacesBadge"></span>
         </div>
         <div class="nav-item" data-view="samples" onclick="showView('samples')">
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h2l2-7 3 14 3-11 2 4h5"/></svg></span>
-          Samples
-          <span class="nav-badge" id="samplesBadge"></span>
+          Samples<span class="nav-badge" id="samplesBadge"></span>
         </div>
         <div class="nav-item" data-view="packs" onclick="showView('packs')">
-          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></span>
-          Packs mensuales
-          <span class="nav-badge" id="packsBadge"></span>
+          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg></span>
+          Packs<span class="nav-badge" id="packsBadge"></span>
         </div>
         <div class="nav-item" data-view="fx" onclick="showView('fx')">
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/></svg></span>
-          FX
-          <span class="nav-badge" id="fxBadge"></span>
+          FX<span class="nav-badge" id="fxBadge"></span>
         </div>
         <div class="nav-item" data-view="drops" onclick="showView('drops')">
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg></span>
-          Drops
-          <span class="nav-badge" id="dropsBadge"></span>
+          Drops<span class="nav-badge" id="dropsBadge"></span>
         </div>
         <div class="nav-item" data-view="libreria" onclick="showView('libreria')">
-          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4v16M4 4h13a3 3 0 013 3v13H7a3 3 0 01-3-3z"/><path d="M8 8h8M8 12h8"/></svg></span>
-          Librería
-          <span class="nav-badge" id="libreriaBadge"></span>
+          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4v16M4 4h13a3 3 0 013 3v13H7a3 3 0 01-3-3z"/></svg></span>
+          Librería<span class="nav-badge" id="libreriaBadge"></span>
         </div>
+
+        <div class="nav-separator"></div>
+
+        <!-- Comunidad -->
         <div class="nav-item" data-view="comunidad" onclick="showView('comunidad')">
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M2 20c0-3 2.5-5 6-5s6 2 6 5"/><path d="M10 20c0-3 2.5-5 6-5s6 2 6 5"/></svg></span>
           Comunidad
@@ -1330,62 +1400,32 @@
           Sugerencias
         </div>
         <div class="nav-item" data-view="manual" onclick="showView('manual')">
-          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4.5A2.5 2.5 0 016.5 2H20v17H6.5A2.5 2.5 0 004 16.5z"/><path d="M4 16.5A2.5 2.5 0 006.5 19H20v3H6.5A2.5 2.5 0 014 19.5z"/></svg></span>
+          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4.5A2.5 2.5 0 016.5 2H20v17H6.5A2.5 2.5 0 014 16.5z"/></svg></span>
           Manual
         </div>
-      </div>
 
-      <div class="nav-group gestion-usuarios">
-        <div class="nav-title">Administración</div>
-        <div class="nav-item" data-view="usuarios" onclick="showView('usuarios')">
-          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.3 3-5 7-5s7 1.7 7 5"/><circle cx="17" cy="8" r="2.6"/><path d="M17.5 13c2.5.3 4.5 1.8 4.5 4"/></svg></span>
-          Usuarios
-          <span class="nav-badge" id="usuariosBadge"></span>
+        <!-- Gestión (solo Admin/Pro) -->
+        <div class="nav-separator gestion-usuarios"></div>
+        <div class="nav-item gestion-usuarios" data-view="actividad" onclick="showView('actividad')">
+          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l2 7 4-14 2 7h6"/></svg></span>
+          Actividad
         </div>
-        <div class="nav-item" data-view="solicitudes" onclick="showView('solicitudes')">
+        <div class="nav-item gestion-usuarios" data-view="descargas" onclick="showView('descargas')">
+          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg></span>
+          Descargas
+        </div>
+        <div class="nav-item gestion-usuarios" data-view="usuarios" onclick="showView('usuarios')">
+          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.3 3-5 7-5s7 1.7 7 5"/></svg></span>
+          Usuarios<span class="nav-badge" id="usuariosBadge"></span>
+        </div>
+        <div class="nav-item gestion-usuarios" data-view="solicitudes" onclick="showView('solicitudes')">
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></span>
-          Solicitudes
-          <span class="nav-badge" id="solicitudesBadge"></span>
+          Solicitudes<span class="nav-badge" id="solicitudesBadge"></span>
         </div>
-      </div>
-
-      <div class="sidebar-footer">
-        <a class="sidebar-insta-link" href="https://www.instagram.com/djjulto/" target="_blank" rel="noopener">
-          <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
-          Síguenos: @djjulto
-        </a>
-        <div class="sidebar-footer-version">World DJ Pool · v8.6</div>
-        <div class="sidebar-footer-line">Creado por DJ JULTO</div>
-        <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
     </aside>
 
     <div class="main">
-      <div class="topbar">
-        <button class="mobile-menu-btn" onclick="toggleMobileMenu()" title="Menú">
-          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-        </button>
-        <div class="topbar-title" id="viewTitle">Bienvenida</div>
-        <div class="topbar-right">
-          <div class="live-chip"><span class="eq-mini" style="color:var(--red);"><i></i><i></i><i></i></span> En vivo</div>
-          <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleModoOscuro()" title="Modo oscuro">
-            <svg id="themeIcon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.5A8.5 8.5 0 1111.5 3a7 7 0 009.5 9.5z"/></svg>
-          </button>
-          <button class="cloud-btn" id="cloudBtn" onclick="abrirConexion()" title="Conexión con la base de datos">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 18a4.5 4.5 0 01-.5-8.98A5.5 5.5 0 0117 8.06 4 4 0 0117.5 18H7z"/></svg>
-            <span class="cloud-dot" id="cloudDot"></span>
-          </button>
-          <div class="user-chip">
-            <div class="user-avatar" id="userInitial">A</div>
-            <div>
-              <div class="user-name" id="userNameTop">Administrador</div>
-              <div class="user-role" id="userRoleTop">Administrador</div>
-            </div>
-          </div>
-          <button class="btn btn-ghost btn-sm" onclick="cerrarSesion()">Cerrar sesión</button>
-        </div>
-      </div>
-
       <div class="content">
         <div class="cargando-overlay" id="cargandoOverlay">
           <span class="eq-mini" style="color:var(--red-vivid); height:20px;"><i></i><i></i><i></i></span>
@@ -2628,11 +2668,19 @@ async function enterApp(){
   setTxt('userInitial', u.usuario.charAt(0).toUpperCase());
   applyRoleUI();
   showView(puedeEditarCatalogo() ? 'bienvenida' : 'inicio');
-  toast('Sesión iniciada como '+u.usuario+'.');
+
+  // Mostrar pantalla de carga mientras se conecta con la base de datos
+  const loadingEl = document.getElementById('loadingScreen');
+  if(loadingEl) loadingEl.classList.remove('hidden');
 
   await verificarConexion();
   await cargarDatosIniciales();
   renderAll();
+
+  // Datos cargados — quitar la pantalla de carga
+  if(loadingEl) loadingEl.classList.add('hidden');
+
+  toast('Sesión iniciada como '+u.usuario+'.');
   if(esBasico()) startNotificacionesEnlaces();
   startEnlacesTicker();
   startSyncTicker();
@@ -2769,7 +2817,7 @@ function showView(name){
   document.getElementById('view-'+name).classList.add('fade-in');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.view===name));
   const titles = {bienvenida:'Bienvenida', inicio:'Bienvenida', enlaces:'Enlaces', samples:'Samples', packs:'Packs mensuales', fx:'FX', drops:'Drops', libreria:'Librería', comunidad:'Comunidad', sugerencias:'Sugerencias', manual:'Manual de usuario', usuarios:'Usuarios', actividad:'Actividad', descargas:'Descargas', horacaliente:'🔥 Hora Caliente'};
-  document.getElementById('viewTitle').textContent = titles[name];
+  const vtEl = document.getElementById('viewTitle'); if(vtEl) vtEl.textContent = titles[name];
   if(name==='enlaces') ocultarAvisoEnlaces();
   if(name==='comunidad') cargarComunidad();
   if(name==='sugerencias' && puedeGestionarSolicitudes()) cargarSugerencias();
