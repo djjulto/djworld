@@ -2966,7 +2966,7 @@ async function refrescarCatalogo(key, btn){
   if(resp.ok && resp.items){
     STATE[key] = resp.items.map(it=>normalizarItem(it,key));
     renderCatalog(key);
-    renderStats();
+    renderStats(); renderStatsBasico();
     toast('Actualizado.');
   }else{
     toast(resp.error || 'No se pudo actualizar.', true);
@@ -2983,7 +2983,7 @@ async function refrescarEnlaces(btn){
     if(resp.ok && resp.items){
       STATE.enlaces = resp.items.map(it=>normalizarItem(it,'enlaces'));
       renderCatalog('enlaces');
-      renderStats();
+      renderStats(); renderStatsBasico();
     }else{
       toast(resp.error || 'No se pudo actualizar.', true);
     }
@@ -3000,7 +3000,7 @@ async function refrescarUsuarios(btn){
       id:u.ID, usuario:u.Usuario, correo:u.Correo, whatsapp:u.WhatsApp, rol:u.Rol, estado:u.Estado, fecha: formatFechaSegura(u.FechaRegistro), ultimoAcceso: formatFechaHoraSegura(u.UltimoAcceso), ultimoAccesoRaw: u.UltimoAcceso
     }));
     renderUsuarios();
-    renderStats();
+    renderStats(); renderStatsBasico();
     toast('Usuarios actualizados.');
   }else{
     toast(resp.error || 'No se pudo actualizar.', true);
@@ -3253,7 +3253,7 @@ async function addItem(e, key){
   cfg.fields.forEach(f=>{ const el = document.getElementById(key+'_'+f); if(el) el.value=''; });
   toggleForm(key);
   renderCatalog(key);
-  renderStats();
+  renderStats(); renderStatsBasico();
 
   const grid = document.getElementById('grid-'+key);
   const nuevaTarjeta = grid ? grid.firstElementChild : null;
@@ -3278,7 +3278,7 @@ async function deleteItem(key, id){
   if(!resp.ok){ toast(resp.error || 'No se pudo eliminar.', true); return; }
   STATE[key] = STATE[key].filter(it=>it.id!==id);
   renderCatalog(key);
-  renderStats();
+  renderStats(); renderStatsBasico();
 }
 
 const filtrosCatalogo = {
@@ -3376,6 +3376,7 @@ async function renderEnlacesBasico(){
   document.getElementById('count-enlaces').textContent = enlacesBasicoCache.length + ' enlaces';
   pintarEstadoCaja('qIconEnlacesB', enlacesBasicoCache.length>0);
   pintarEnlacesBasico();
+  renderStatsBasico(); // actualizar el dashboard del básico con el conteo real
 }
 
 function pintarEnlacesBasico(){
@@ -4234,7 +4235,7 @@ async function aceptarSolicitud(id){
   u.estado='Activo';
   pushActivity(STATE.currentUser.usuario, 'aceptó una solicitud de acceso', u.usuario);
   renderUsuarios();
-  renderStats();
+  renderStats(); renderStatsBasico();
   toast(u.usuario+' ya puede iniciar sesión como '+u.rol+'.');
 }
 
@@ -4246,7 +4247,7 @@ async function rechazarSolicitud(id){
   u.estado='Rechazada';
   pushActivity(STATE.currentUser.usuario, 'rechazó una solicitud de acceso', u.usuario);
   renderUsuarios();
-  renderStats();
+  renderStats(); renderStatsBasico();
   toast('Se rechazó la solicitud de '+u.usuario+'.');
 }
 
@@ -4682,7 +4683,7 @@ async function confirmarEliminarUsuario(id, usuario){
   STATE.users = STATE.users.filter(x=>x.id!==id);
   pushActivity(STATE.currentUser.usuario, 'eliminó la cuenta de', usuario);
   renderUsuarios();
-  renderStats();
+  renderStats(); renderStatsBasico();
   toast('Cuenta de '+usuario+' eliminada.');
 }
 
@@ -4695,7 +4696,7 @@ async function confirmarBanearUsuario(id, usuario){
   if(u) u.estado = 'Vetada';
   pushActivity(STATE.currentUser.usuario, 'baneó la cuenta de', usuario);
   renderUsuarios();
-  renderStats();
+  renderStats(); renderStatsBasico();
   toast('Cuenta de '+usuario+' baneada.');
 }
 
@@ -4724,7 +4725,7 @@ function pushActivity(usuario, accion, detalle){
   STATE.actividad.unshift({usuario, accion, detalle, hace:nowLabel()});
   if(STATE.actividad.length>40) STATE.actividad.pop();
   renderActivity();
-  renderStats();
+  renderStats(); renderStatsBasico();
 }
 
 let syncTimer = null;
@@ -4837,7 +4838,7 @@ function startSyncTicker(){
     if(puedeGestionarSolicitudes()) await cargarConectados();
     await cargarVideoBienvenida();
 
-    renderStats();
+    renderStats(); renderStatsBasico();
   }, REFRESCO_MS);
 }
 
@@ -4926,7 +4927,7 @@ function renderAll(){
   ['enlaces','samples','packs','fx','drops','libreria'].forEach(renderCatalog);
   renderUsuarios();
   renderActivity();
-  renderStats();
+  renderStats(); renderStatsBasico();
   renderStatsBasico();
 }
 
@@ -4982,25 +4983,28 @@ cargarVideoBienvenida(); // se llama ya mismo, para que el video del login se ve
 
 // Actualizar KPIs del básico cuando carguen los datos
 function renderStatsBasico(){
-  const cats = STATE.catalogs || {};
-  const nEnlaces = (cats.enlaces||[]).length;
-  const nSamples = (cats.samples||[]).length;
-  const nPacks = (cats.packs||[]).length;
-  const nFx = (cats.fx||[]).length;
-  const nDrops = (cats.drops||[]).length;
-  const nLib = (cats.libreria||[]).length;
+  // Los datos viven directamente en STATE.samples, STATE.packs, etc.
+  // Para el básico, los enlaces vienen de enlacesBasicoCache (vista restringida)
+  const nEnlaces = esBasico()
+    ? (typeof enlacesBasicoCache !== 'undefined' ? enlacesBasicoCache.length : 0)
+    : (STATE.enlaces||[]).length;
+  const nSamples = (STATE.samples||[]).length;
+  const nPacks   = (STATE.packs||[]).length;
+  const nFx      = (STATE.fx||[]).length;
+  const nDrops   = (STATE.drops||[]).length;
+  const nLib     = (STATE.libreria||[]).length;
 
   const set = (id, v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
-  set('bKpiEnlaces', nEnlaces);
-  set('bKpiSamples', nSamples);
-  set('bKpiPacks', nPacks);
-  set('bKpiFxDrops', nFx+nDrops);
-  set('bqcEnlaces', nEnlaces>0 ? nEnlaces+' páginas' : 'Páginas de descarga');
-  set('bqcSamples', nSamples+' recursos');
-  set('bqcPacks', nPacks+' recursos');
-  set('bqcFx', nFx+' recursos');
-  set('bqcDrops', nDrops+' recursos');
-  set('bqcLibreria', nLib+' recursos');
+  set('bKpiEnlaces',  nEnlaces);
+  set('bKpiSamples',  nSamples);
+  set('bKpiPacks',    nPacks);
+  set('bKpiFxDrops',  nFx + nDrops);
+  set('bqcEnlaces',   nEnlaces > 0 ? nEnlaces+' página'+(nEnlaces!==1?'s':'') : 'Páginas de descarga');
+  set('bqcSamples',   nSamples+' recurso'+(nSamples!==1?'s':''));
+  set('bqcPacks',     nPacks+' recurso'+(nPacks!==1?'s':''));
+  set('bqcFx',        nFx+' recurso'+(nFx!==1?'s':''));
+  set('bqcDrops',     nDrops+' recurso'+(nDrops!==1?'s':''));
+  set('bqcLibreria',  nLib+' recurso'+(nLib!==1?'s':''));
 }
 
 (function initNetworkCanvas(){
