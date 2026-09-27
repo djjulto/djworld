@@ -1354,7 +1354,7 @@
           <span class="sidebar-insta-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#FFFFFF" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#FFFFFF" stroke="none"/></svg></span>
           Síguenos: @djjulto
         </a>
-        <div class="sidebar-footer-version">World DJ Pool · v8.5</div>
+        <div class="sidebar-footer-version">World DJ Pool · v8.6</div>
         <div class="sidebar-footer-line">Creado por DJ JULTO</div>
         <div class="sidebar-footer-line">© <span id="footerYear"></span> World DJ Pool. Todos los derechos reservados.</div>
       </div>
@@ -2620,11 +2620,12 @@ async function enterApp(){
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app-screen').style.display='block';
   const u = STATE.currentUser;
-  document.getElementById('welcomeName').textContent = u.usuario;
-  document.getElementById('welcomeNameBasico').textContent = u.usuario;
-  document.getElementById('userNameTop').textContent = u.usuario;
-  document.getElementById('userRoleTop').textContent = u.rol;
-  document.getElementById('userInitial').textContent = u.usuario.charAt(0).toUpperCase();
+  const setTxt = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  setTxt('welcomeName', u.usuario);
+  setTxt('welcomeNameBasico', u.usuario);
+  setTxt('userNameTop', u.usuario);
+  setTxt('userRoleTop', u.rol);
+  setTxt('userInitial', u.usuario.charAt(0).toUpperCase());
   applyRoleUI();
   showView(puedeEditarCatalogo() ? 'bienvenida' : 'inicio');
   toast('Sesión iniciada como '+u.usuario+'.');
