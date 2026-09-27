@@ -1428,8 +1428,8 @@
       <!-- Fila inferior: navegación horizontal -->
       <div class="nav-items-row">
 
-        <!-- Inicio -->
-        <div class="nav-item" data-view="bienvenida" onclick="showView('bienvenida')">
+        <!-- Inicio: Admin/Pro van a 'bienvenida', Básico va a 'inicio' -->
+        <div class="nav-item catalogo-editor" data-view="bienvenida" onclick="showView('bienvenida')">
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/></svg></span>
           Inicio
         </div>
@@ -1706,77 +1706,112 @@
 
         </section>
 
-        <!-- ===== BIENVENIDA BÁSICO/PRO ===== -->        <!-- ===== BIENVENIDA BÁSICO/PRO ===== -->
+        <!-- ===== BIENVENIDA BÁSICO/PRO ===== -->
         <section class="view" id="view-inicio" style="position:relative; overflow:hidden;">
-          <div class="inicio-vinyl-decor">
-            <div class="vinyl" style="width:100%; height:100%; animation-duration:14s;">
-              <div class="vinyl-label"><span>WDP</span></div>
-              <div class="vinyl-hole"></div>
-            </div>
-          </div>
-          <div class="floating-notes" id="notasBienvenidaBasico"></div>
 
-          <div style="position:relative; z-index:1;">
-          <div class="view-head">
-            <div>
-              <h2>Hola, <span id="welcomeNameBasico">DJ</span></h2>
-              <div class="view-sub">Así funciona World DJ Pool.</div>
-            </div>
-          </div>
+          <!-- Canvas red (mismo fondo que Admin) -->
+          <canvas id="networkCanvasBasico" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.3;mix-blend-mode:screen;"></canvas>
 
-          <div class="module" style="padding:20px 22px; margin-bottom:22px;">
-            <h3 style="font-size:15.5px; font-family:Arial, Helvetica, sans-serif; font-weight:600; margin-bottom:8px;">¿Qué puedes hacer aquí?</h3>
-            <p style="font-size:13.5px; color:var(--text-dim); line-height:1.6;">
-              Este es el catálogo del grupo: enlaces a páginas de descarga, samples, packs mensuales, FX y drops que sube el Administrador. Tu cuenta solo puede ver y descargar — no puedes agregar ni eliminar nada. Explora cada sección desde el menú de la izquierda o con las tarjetas de abajo.
-            </p>
-          </div>
+          <div style="position:relative;z-index:1;">
 
-          <div class="view-sub" style="margin:0 0 14px; font-weight:600; color:var(--text);">Ir directo a...</div>
-          <div class="quick-grid" style="margin-bottom:26px;">
-            <div class="quick-card" onclick="showView('enlaces')">
-              <div class="quick-icon" id="qIconEnlacesB"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M10 13a5 5 0 007 0l2-2a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-2 2a5 5 0 007 7l1-1"/></svg></div>
-              <div class="quick-info"><div class="quick-label">Enlaces</div><div class="quick-count">Páginas de descarga</div></div>
-              <div class="quick-arrow">→</div>
+            <!-- HEADER -->
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+              <div>
+                <div style="font-size:22px;font-weight:800;letter-spacing:-.02em;">Hola, <span id="welcomeNameBasico" style="color:var(--red-vivid);">DJ</span> 🎧</div>
+                <div style="font-size:13px;color:var(--text-dim);margin-top:3px;">Bienvenido a World DJ Pool — tu catálogo de música.</div>
+              </div>
             </div>
-            <div class="quick-card" onclick="showView('samples')">
-              <div class="quick-icon" id="qIconSamplesB"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M3 12h2l2-7 3 14 3-11 2 4h5"/></svg></div>
-              <div class="quick-info"><div class="quick-label">Samples</div><div class="quick-count" id="qcSamplesB">0 recursos</div></div>
-              <div class="quick-arrow">→</div>
-            </div>
-            <div class="quick-card" onclick="showView('packs')">
-              <div class="quick-icon" id="qIconPacksB"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></div>
-              <div class="quick-info"><div class="quick-label">Packs mensuales</div><div class="quick-count" id="qcPacksB">0 recursos</div></div>
-              <div class="quick-arrow">→</div>
-            </div>
-            <div class="quick-card" onclick="showView('fx')">
-              <div class="quick-icon" id="qIconFxB"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/></svg></div>
-              <div class="quick-info"><div class="quick-label">FX</div><div class="quick-count" id="qcFxB">0 recursos</div></div>
-              <div class="quick-arrow">→</div>
-            </div>
-            <div class="quick-card" onclick="showView('drops')">
-              <div class="quick-icon" id="qIconDropsB"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg></div>
-              <div class="quick-info"><div class="quick-label">Drops</div><div class="quick-count" id="qcDropsB">0 recursos</div></div>
-              <div class="quick-arrow">→</div>
-            </div>
-            <div class="quick-card" onclick="showView('libreria')">
-              <div class="quick-icon" id="qIconLibreriaB"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M4 4v16M4 4h13a3 3 0 013 3v13H7a3 3 0 01-3-3z"/><path d="M8 8h8M8 12h8"/></svg></div>
-              <div class="quick-info"><div class="quick-label">Librería</div><div class="quick-count" id="qcLibreriaB">0 recursos</div></div>
-              <div class="quick-arrow">→</div>
-            </div>
-          </div>
 
-          <div class="view-sub" style="margin:0 0 14px; font-weight:600; color:var(--text);">Modo aprendizaje: cómo descargar</div>
-          <div class="module wizard-card">
-            <div class="wizard-dots" id="wizardDots"></div>
-            <div class="wizard-stage" id="wizardStage"></div>
-            <div class="wizard-nav">
-              <button class="btn btn-ghost btn-sm" id="wizardPrevBtn" onclick="wizardPrev()">Anterior</button>
-              <button class="btn btn-primary btn-sm" id="wizardNextBtn" onclick="wizardNext()">Siguiente</button>
+            <!-- INFO RÁPIDA -->
+            <div class="dash-kpi-grid" style="margin-bottom:20px;">
+              <div class="dash-kpi-card">
+                <div class="dash-kpi-icon" style="background:rgba(255,159,67,.15);color:#FF9F43;">
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 007 0l2-2a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-2 2a5 5 0 007 7l1-1"/></svg>
+                </div>
+                <div class="dash-kpi-val" id="bKpiEnlaces">0</div>
+                <div class="dash-kpi-label">Enlaces</div>
+                <div class="dash-kpi-bar"><div class="dash-kpi-bar-fill" style="width:70%;background:#FF9F43;"></div></div>
+              </div>
+              <div class="dash-kpi-card">
+                <div class="dash-kpi-icon" style="background:rgba(163,230,53,.15);color:#A3E635;">
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h2l2-7 3 14 3-11 2 4h5"/></svg>
+                </div>
+                <div class="dash-kpi-val" id="bKpiSamples">0</div>
+                <div class="dash-kpi-label">Samples</div>
+                <div class="dash-kpi-bar"><div class="dash-kpi-bar-fill" style="width:50%;background:#A3E635;"></div></div>
+              </div>
+              <div class="dash-kpi-card">
+                <div class="dash-kpi-icon" style="background:rgba(56,189,248,.15);color:#38BDF8;">
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg>
+                </div>
+                <div class="dash-kpi-val" id="bKpiPacks">0</div>
+                <div class="dash-kpi-label">Packs</div>
+                <div class="dash-kpi-bar"><div class="dash-kpi-bar-fill" style="width:40%;background:#38BDF8;"></div></div>
+              </div>
+              <div class="dash-kpi-card">
+                <div class="dash-kpi-icon" style="background:rgba(45,212,191,.15);color:#2DD4BF;">
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/></svg>
+                </div>
+                <div class="dash-kpi-val" id="bKpiFxDrops">0</div>
+                <div class="dash-kpi-label">FX + Drops</div>
+                <div class="dash-kpi-bar"><div class="dash-kpi-bar-fill" style="width:30%;background:#2DD4BF;"></div></div>
+              </div>
             </div>
-          </div>
-          </div>
+
+            <!-- CATÁLOGOS -->
+            <div class="view-sub" style="margin:0 0 14px;font-weight:600;color:var(--text);">Ir directo al catálogo</div>
+            <div class="dash-cat-grid" style="margin-bottom:24px;">
+              <div class="dash-cat-card" onclick="showView('enlaces')" data-color="#FF9F43">
+                <div class="dash-cat-orb" style="--c:#FF9F43;"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 13a5 5 0 007 0l2-2a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-2 2a5 5 0 007 7l1-1"/></svg></div>
+                <div class="dash-cat-info"><div class="dash-cat-name">Enlaces</div><div class="dash-cat-count" id="bqcEnlaces">Páginas de descarga</div></div>
+                <div class="dash-cat-pulse" style="--c:#FF9F43;"></div>
+                <div class="dash-cat-arrow">→</div>
+              </div>
+              <div class="dash-cat-card" onclick="showView('samples')" data-color="#A3E635">
+                <div class="dash-cat-orb" style="--c:#A3E635;"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h2l2-7 3 14 3-11 2 4h5"/></svg></div>
+                <div class="dash-cat-info"><div class="dash-cat-name">Samples</div><div class="dash-cat-count" id="bqcSamples">0 recursos</div></div>
+                <div class="dash-cat-pulse" style="--c:#A3E635;"></div>
+                <div class="dash-cat-arrow">→</div>
+              </div>
+              <div class="dash-cat-card" onclick="showView('packs')" data-color="#38BDF8">
+                <div class="dash-cat-orb" style="--c:#38BDF8;"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg></div>
+                <div class="dash-cat-info"><div class="dash-cat-name">Packs mensuales</div><div class="dash-cat-count" id="bqcPacks">0 recursos</div></div>
+                <div class="dash-cat-pulse" style="--c:#38BDF8;"></div>
+                <div class="dash-cat-arrow">→</div>
+              </div>
+              <div class="dash-cat-card" onclick="showView('fx')" data-color="#C084FC">
+                <div class="dash-cat-orb" style="--c:#C084FC;"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/></svg></div>
+                <div class="dash-cat-info"><div class="dash-cat-name">FX</div><div class="dash-cat-count" id="bqcFx">0 recursos</div></div>
+                <div class="dash-cat-pulse" style="--c:#C084FC;"></div>
+                <div class="dash-cat-arrow">→</div>
+              </div>
+              <div class="dash-cat-card" onclick="showView('drops')" data-color="#2DD4BF">
+                <div class="dash-cat-orb" style="--c:#2DD4BF;"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg></div>
+                <div class="dash-cat-info"><div class="dash-cat-name">Drops</div><div class="dash-cat-count" id="bqcDrops">0 recursos</div></div>
+                <div class="dash-cat-pulse" style="--c:#2DD4BF;"></div>
+                <div class="dash-cat-arrow">→</div>
+              </div>
+              <div class="dash-cat-card" onclick="showView('libreria')" data-color="#FBBF24">
+                <div class="dash-cat-orb" style="--c:#FBBF24;"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4v16M4 4h13a3 3 0 013 3v13H7a3 3 0 01-3-3z"/></svg></div>
+                <div class="dash-cat-info"><div class="dash-cat-name">Librería</div><div class="dash-cat-count" id="bqcLibreria">0 recursos</div></div>
+                <div class="dash-cat-pulse" style="--c:#FBBF24;"></div>
+                <div class="dash-cat-arrow">→</div>
+              </div>
+            </div>
+
+            <!-- MODO APRENDIZAJE -->
+            <div class="view-sub" style="margin:0 0 14px;font-weight:600;color:var(--text);">¿Cómo descargar?</div>
+            <div class="module wizard-card">
+              <div class="wizard-dots" id="wizardDots"></div>
+              <div class="wizard-stage" id="wizardStage"></div>
+              <div class="wizard-nav">
+                <button class="btn btn-ghost btn-sm" id="wizardPrevBtn" onclick="wizardPrev()">Anterior</button>
+                <button class="btn btn-primary btn-sm" id="wizardNextBtn" onclick="wizardNext()">Siguiente</button>
+              </div>
+            </div>
+
+          </div><!-- /z-index:1 -->
         </section>
-
         <!-- ===== ENLACES ===== -->
         <section class="view" id="view-enlaces">
           <div class="view-head">
@@ -4892,11 +4927,82 @@ function renderAll(){
   renderUsuarios();
   renderActivity();
   renderStats();
+  renderStatsBasico();
 }
 
 cargarVideoBienvenida(); // se llama ya mismo, para que el video del login se vea desde antes de iniciar sesión
 
-// ===== CANVAS RED ANIMADA (dashboard) =====
+// ===== CANVAS RED — vista básico =====
+(function initNetworkCanvasBasico(){
+  const canvas = document.getElementById('networkCanvasBasico');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, nodes=[], raf;
+
+  function resize(){
+    const p = canvas.parentElement;
+    W = canvas.width = p.offsetWidth;
+    H = canvas.height = Math.max(p.offsetHeight, 500);
+  }
+
+  function randomNode(){
+    const colors = ['#FF9F43','#A3E635','#38BDF8','#C084FC','#2DD4BF','#FBBF24','#F472B6','#E4102A'];
+    return { x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5)*.4, vy:(Math.random()-.5)*.4,
+      r:2+Math.random()*2.5, color:colors[Math.floor(Math.random()*colors.length)] };
+  }
+
+  function init(){ resize(); nodes=Array.from({length:50},randomNode); if(raf) cancelAnimationFrame(raf); loop(); }
+
+  function loop(){
+    raf=requestAnimationFrame(loop); ctx.clearRect(0,0,W,H);
+    for(let i=0;i<nodes.length;i++) for(let j=i+1;j<nodes.length;j++){
+      const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y, d=Math.sqrt(dx*dx+dy*dy);
+      if(d<120){ ctx.strokeStyle=`rgba(180,180,200,${(1-d/120)*.22})`; ctx.lineWidth=.7; ctx.beginPath(); ctx.moveTo(nodes[i].x,nodes[i].y); ctx.lineTo(nodes[j].x,nodes[j].y); ctx.stroke(); }
+    }
+    nodes.forEach(n=>{
+      n.x+=n.vx; n.y+=n.vy; if(n.x<0||n.x>W) n.vx*=-1; if(n.y<0||n.y>H) n.vy*=-1;
+      const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r*3);
+      g.addColorStop(0,n.color+'88'); g.addColorStop(1,'transparent');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(n.x,n.y,n.r*3,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle=n.color; ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2); ctx.fill();
+    });
+  }
+
+  function check(){
+    const sec=document.getElementById('view-inicio');
+    if(sec && sec.classList.contains('active')){ if(!raf) init(); }
+    else { if(raf){ cancelAnimationFrame(raf); raf=null; } }
+  }
+
+  const sec=document.getElementById('view-inicio');
+  if(sec) new MutationObserver(check).observe(sec,{attributes:true,attributeFilter:['class']});
+  window.addEventListener('resize',()=>{ if(raf) resize(); });
+  setTimeout(check, 500);
+})();
+
+// Actualizar KPIs del básico cuando carguen los datos
+function renderStatsBasico(){
+  const cats = STATE.catalogs || {};
+  const nEnlaces = (cats.enlaces||[]).length;
+  const nSamples = (cats.samples||[]).length;
+  const nPacks = (cats.packs||[]).length;
+  const nFx = (cats.fx||[]).length;
+  const nDrops = (cats.drops||[]).length;
+  const nLib = (cats.libreria||[]).length;
+
+  const set = (id, v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+  set('bKpiEnlaces', nEnlaces);
+  set('bKpiSamples', nSamples);
+  set('bKpiPacks', nPacks);
+  set('bKpiFxDrops', nFx+nDrops);
+  set('bqcEnlaces', nEnlaces>0 ? nEnlaces+' páginas' : 'Páginas de descarga');
+  set('bqcSamples', nSamples+' recursos');
+  set('bqcPacks', nPacks+' recursos');
+  set('bqcFx', nFx+' recursos');
+  set('bqcDrops', nDrops+' recursos');
+  set('bqcLibreria', nLib+' recursos');
+}
+
 (function initNetworkCanvas(){
   const canvas = document.getElementById('networkCanvas');
   if(!canvas) return;
