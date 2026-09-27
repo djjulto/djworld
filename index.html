@@ -147,6 +147,65 @@
 
   @keyframes loadingSlide{ 0%{width:0%;margin-left:0;} 50%{width:60%;margin-left:20%;} 100%{width:0%;margin-left:100%;} }
 
+  /* ===== DASHBOARD KPI CARDS ===== */
+  .dash-kpi-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px; }
+  @media(max-width:900px){ .dash-kpi-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media(max-width:500px){ .dash-kpi-grid{ grid-template-columns:1fr 1fr; } }
+  .dash-kpi-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:18px 16px;
+    display:flex; flex-direction:column; gap:6px; cursor:default;
+    transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    position:relative; overflow:hidden;
+  }
+  .dash-kpi-card::before{
+    content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 110% -10%, rgba(255,255,255,.04) 0%, transparent 60%);
+  }
+  .dash-kpi-card:hover{ transform:translateY(-3px); border-color:rgba(255,255,255,.18); box-shadow:0 12px 32px -8px rgba(0,0,0,.35); }
+  .dash-kpi-icon{ width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin-bottom:4px; }
+  .dash-kpi-val{ font-size:30px; font-weight:800; font-variant-numeric:tabular-nums; line-height:1; }
+  .dash-kpi-label{ font-size:12px; color:var(--text-dim); font-weight:500; }
+  .dash-kpi-bar{ height:3px; background:rgba(255,255,255,.08); border-radius:2px; overflow:hidden; margin-top:6px; }
+  .dash-kpi-bar-fill{ height:100%; border-radius:2px; transition:width .6s ease; }
+
+  /* ===== DASHBOARD CATÁLOGOS TIPO RED ===== */
+  .dash-cat-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:12px;
+  }
+  @media(max-width:1100px){ .dash-cat-grid{ grid-template-columns:repeat(3,1fr); } }
+  @media(max-width:700px){ .dash-cat-grid{ grid-template-columns:repeat(2,1fr); } }
+  .dash-cat-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:16px 14px; display:flex; align-items:center; gap:12px;
+    cursor:pointer; position:relative; overflow:hidden;
+    transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+  }
+  .dash-cat-card:hover{ transform:translateY(-3px) scale(1.02); box-shadow:0 14px 36px -8px rgba(0,0,0,.4); }
+  .dash-cat-card:hover{ border-color:rgba(var(--c-rgb, 255,255,255),.4); }
+  .dash-cat-orb{
+    width:46px; height:46px; border-radius:12px; flex-shrink:0;
+    background:color-mix(in srgb, var(--c) 18%, transparent);
+    color:var(--c); display:flex; align-items:center; justify-content:center;
+    position:relative; z-index:1;
+    box-shadow:0 0 0 1px color-mix(in srgb, var(--c) 30%, transparent);
+    transition:box-shadow .2s ease;
+  }
+  .dash-cat-card:hover .dash-cat-orb{ box-shadow:0 0 18px -2px var(--c), 0 0 0 1px color-mix(in srgb, var(--c) 40%, transparent); }
+  .dash-cat-info{ flex:1; min-width:0; }
+  .dash-cat-name{ font-size:13.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .dash-cat-count{ font-size:11.5px; color:var(--text-dim); margin-top:2px; }
+  .dash-cat-arrow{ font-size:16px; color:var(--text-faint); transition:transform .18s ease, color .18s ease; flex-shrink:0; }
+  .dash-cat-card:hover .dash-cat-arrow{ transform:translateX(3px); color:var(--c); }
+  .dash-cat-pulse{
+    position:absolute; width:80px; height:80px; border-radius:50%;
+    background:radial-gradient(circle, color-mix(in srgb, var(--c) 12%, transparent) 0%, transparent 70%);
+    top:-20px; right:-20px; pointer-events:none; opacity:0;
+    transition:opacity .2s ease;
+  }
+  .dash-cat-card:hover .dash-cat-pulse{ opacity:1; }
+
+  /* NETWORK CANVAS fade on dark */
+  #networkCanvas{ mix-blend-mode:screen; }
+
   /* ---------- visibilidad por rol (clases en body) ---------- */
   /* Por defecto ocultos hasta que el body tenga la clase del rol correcto */
   .admin-only       { display:none !important; }
@@ -438,7 +497,7 @@
   .sidebar{
     background:#0F0F12; border-bottom:1px solid rgba(255,255,255,.08);
     display:flex; flex-direction:column; position:sticky; top:0; z-index:500;
-    box-shadow:0 2px 16px -4px rgba(0,0,0,.4);
+    box-shadow:0 2px 16px -4px rgba(0,0,0,.4); overflow:visible;
   }
 
   /* Fila superior: logo + usuario + acciones */
@@ -454,7 +513,7 @@
 
   /* Fila inferior: items de navegación */
   .nav-items-row{
-    display:flex; align-items:center; overflow-x:auto; scrollbar-width:none; gap:2px; padding:0 12px; height:44px;
+    display:flex; align-items:center; overflow-x:auto; overflow-y:visible; scrollbar-width:none; gap:2px; padding:0 12px; height:44px;
   }
   .nav-items-row::-webkit-scrollbar{ display:none; }
 
@@ -505,6 +564,27 @@
   .nav-separator{
     width:1px; height:20px; background:rgba(255,255,255,.1); margin:0 6px; flex-shrink:0;
   }
+
+  /* ===== DESPLEGABLES NAVBAR ===== */
+  .nav-dropdown{ position:relative; flex-shrink:0; }
+  .nav-dropdown-trigger{ cursor:pointer; }
+  .dropdown-chevron{ margin-left:3px; opacity:.6; flex-shrink:0; transition:transform .2s ease; }
+  .nav-dropdown.open .dropdown-chevron{ transform:rotate(180deg); }
+  .nav-dropdown.open > .nav-dropdown-trigger{ color:#FFFFFF; background:rgba(255,255,255,.08); }
+
+  .nav-dropdown-menu{
+    display:none; position:fixed; top:96px; left:auto;
+    background:#17171A; border:1px solid rgba(255,255,255,.14); border-radius:10px;
+    box-shadow:0 20px 56px -8px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.06); padding:6px; min-width:170px; z-index:9999;
+    animation:dropFadeIn .15s ease;
+  }
+  @keyframes dropFadeIn{ from{opacity:0;transform:translateY(-6px);} to{opacity:1;transform:translateY(0);} }
+  .nav-dropdown.open .nav-dropdown-menu{ display:block; }
+
+  .nav-dropdown-item{
+    width:100%; border-radius:7px; margin-bottom:2px; white-space:nowrap;
+  }
+  .nav-dropdown-item:last-child{ margin-bottom:0; }
   .bottom-nav{
     display:none; position:fixed; left:10px; right:10px; bottom:14px; z-index:600;
     height:62px; background:#15151A; border:1px solid rgba(255,255,255,.08); border-radius:26px;
@@ -1347,6 +1427,7 @@
 
       <!-- Fila inferior: navegación horizontal -->
       <div class="nav-items-row">
+
         <!-- Inicio -->
         <div class="nav-item" data-view="bienvenida" onclick="showView('bienvenida')">
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/></svg></span>
@@ -1356,41 +1437,51 @@
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/></svg></span>
           Inicio
         </div>
-
-        <div class="nav-separator"></div>
-
-        <!-- Catálogo -->
         <div class="nav-item" data-view="horacaliente" onclick="showView('horacaliente')" id="navHoraCaliente" style="display:none;">
           <span class="nav-icon-wrap">🔥</span>Hora Caliente
         </div>
+
+        <!-- Enlaces -->
         <div class="nav-item" data-view="enlaces" onclick="showView('enlaces')">
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 007 0l2-2a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-2 2a5 5 0 007 7l1-1"/></svg></span>
           Enlaces<span class="nav-badge" id="enlacesBadge"></span>
         </div>
-        <div class="nav-item" data-view="samples" onclick="showView('samples')">
-          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h2l2-7 3 14 3-11 2 4h5"/></svg></span>
-          Samples<span class="nav-badge" id="samplesBadge"></span>
+
+        <!-- Desplegable: Recursos -->
+        <div class="nav-dropdown" id="dropdownRecursos">
+          <div class="nav-item nav-dropdown-trigger" onclick="toggleDropdown('dropdownRecursos')">
+            <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
+            Recursos
+            <span class="nav-badge" id="recursosBadge"></span>
+            <svg class="dropdown-chevron" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="nav-dropdown-menu">
+            <div class="nav-item nav-dropdown-item" data-view="samples" onclick="showView('samples');closeDropdowns()">
+              <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h2l2-7 3 14 3-11 2 4h5"/></svg></span>
+              Samples<span class="nav-badge" id="samplesBadge"></span>
+            </div>
+            <div class="nav-item nav-dropdown-item" data-view="packs" onclick="showView('packs');closeDropdowns()">
+              <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg></span>
+              Packs<span class="nav-badge" id="packsBadge"></span>
+            </div>
+            <div class="nav-item nav-dropdown-item" data-view="fx" onclick="showView('fx');closeDropdowns()">
+              <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/></svg></span>
+              FX<span class="nav-badge" id="fxBadge"></span>
+            </div>
+            <div class="nav-item nav-dropdown-item" data-view="drops" onclick="showView('drops');closeDropdowns()">
+              <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg></span>
+              Drops<span class="nav-badge" id="dropsBadge"></span>
+            </div>
+          </div>
         </div>
-        <div class="nav-item" data-view="packs" onclick="showView('packs')">
-          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg></span>
-          Packs<span class="nav-badge" id="packsBadge"></span>
-        </div>
-        <div class="nav-item" data-view="fx" onclick="showView('fx')">
-          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/></svg></span>
-          FX<span class="nav-badge" id="fxBadge"></span>
-        </div>
-        <div class="nav-item" data-view="drops" onclick="showView('drops')">
-          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg></span>
-          Drops<span class="nav-badge" id="dropsBadge"></span>
-        </div>
+
+        <!-- Librería -->
         <div class="nav-item" data-view="libreria" onclick="showView('libreria')">
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4v16M4 4h13a3 3 0 013 3v13H7a3 3 0 01-3-3z"/></svg></span>
           Librería<span class="nav-badge" id="libreriaBadge"></span>
         </div>
 
-        <div class="nav-separator"></div>
-
-        <!-- Comunidad -->
+        <!-- Comunidad, Sugerencias, Manual -->
         <div class="nav-item" data-view="comunidad" onclick="showView('comunidad')">
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M2 20c0-3 2.5-5 6-5s6 2 6 5"/><path d="M10 20c0-3 2.5-5 6-5s6 2 6 5"/></svg></span>
           Comunidad
@@ -1404,24 +1495,34 @@
           Manual
         </div>
 
-        <!-- Gestión (solo Admin/Pro) -->
-        <div class="nav-separator gestion-usuarios"></div>
-        <div class="nav-item gestion-usuarios" data-view="actividad" onclick="showView('actividad')">
-          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l2 7 4-14 2 7h6"/></svg></span>
-          Actividad
+        <!-- Desplegable: Controles (solo Admin/Pro) -->
+        <div class="nav-dropdown gestion-usuarios" id="dropdownControles">
+          <div class="nav-item nav-dropdown-trigger" onclick="toggleDropdown('dropdownControles')">
+            <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></span>
+            Controles
+            <span class="nav-badge" id="controlesBadge"></span>
+            <svg class="dropdown-chevron" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="nav-dropdown-menu">
+            <div class="nav-item nav-dropdown-item" data-view="actividad" onclick="showView('actividad');closeDropdowns()">
+              <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l2 7 4-14 2 7h6"/></svg></span>
+              Actividad
+            </div>
+            <div class="nav-item nav-dropdown-item" data-view="descargas" onclick="showView('descargas');closeDropdowns()">
+              <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg></span>
+              Descargas
+            </div>
+            <div class="nav-item nav-dropdown-item" data-view="usuarios" onclick="showView('usuarios');closeDropdowns()">
+              <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.3 3-5 7-5s7 1.7 7 5"/></svg></span>
+              Usuarios<span class="nav-badge" id="usuariosBadge"></span>
+            </div>
+            <div class="nav-item nav-dropdown-item" data-view="solicitudes" onclick="showView('solicitudes');closeDropdowns()">
+              <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></span>
+              Solicitudes<span class="nav-badge" id="solicitudesBadge"></span>
+            </div>
+          </div>
         </div>
-        <div class="nav-item gestion-usuarios" data-view="descargas" onclick="showView('descargas')">
-          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 19h16"/></svg></span>
-          Descargas
-        </div>
-        <div class="nav-item gestion-usuarios" data-view="usuarios" onclick="showView('usuarios')">
-          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.3 3-5 7-5s7 1.7 7 5"/></svg></span>
-          Usuarios<span class="nav-badge" id="usuariosBadge"></span>
-        </div>
-        <div class="nav-item gestion-usuarios" data-view="solicitudes" onclick="showView('solicitudes')">
-          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></span>
-          Solicitudes<span class="nav-badge" id="solicitudesBadge"></span>
-        </div>
+
       </div>
     </aside>
 
@@ -1435,116 +1536,177 @@
 
         <!-- ===== BIENVENIDA ===== -->
         <section class="view active" id="view-bienvenida" style="position:relative; overflow:hidden;">
-          <div class="inicio-vinyl-decor">
-            <div class="vinyl" style="width:100%; height:100%; animation-duration:14s;">
-              <div class="vinyl-label"><span>WDP</span></div>
-              <div class="vinyl-hole"></div>
-            </div>
-          </div>
-          <div class="floating-notes" id="notasBienvenidaAdmin"></div>
 
-          <div style="position:relative; z-index:1;">
-          <!-- Stats -->
-          <div class="stat-grid" style="margin-bottom:16px;">
-            <div class="module stat-module">
-              <div class="stat-num" id="statTotalDjs">0</div>
-              <div class="stat-label">DJs registrados</div>
-              <div class="stat-bar"><i style="width:100%; background:var(--text);"></i></div>
-            </div>
-            <div class="module stat-module">
-              <div class="stat-num" id="statPendientes">0</div>
-              <div class="stat-label">Pendientes de aprobación</div>
-              <div class="stat-bar"><i style="width:60%; background:var(--amber);"></i></div>
-            </div>
-            <div class="module stat-module">
-              <div class="stat-num" id="statRecursos">0</div>
-              <div class="stat-label">Recursos en el catálogo</div>
-              <div class="stat-bar"><i style="width:100%; background:var(--green);"></i></div>
-            </div>
-            <div class="module stat-module">
-              <div class="stat-num" id="statHoy">0</div>
-              <div class="stat-label">Acciones hoy</div>
-              <div class="stat-bar"><i style="width:35%; background:var(--red-vivid);"></i></div>
-            </div>
-          </div>
+          <!-- ===== CANVAS FONDO "RED" ===== -->
+          <canvas id="networkCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.35;"></canvas>
 
-          <!-- Comunidad — visible para todos -->
-          <div class="module" style="padding:18px 20px; margin-bottom:16px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
-            <div class="community-avatars" id="communityAvatars"></div>
-            <div style="flex:1; min-width:120px;">
-              <div style="font-weight:600; font-size:13.5px;">La comunidad</div>
-              <div class="community-more" id="communityCount">Cargando DJs…</div>
-            </div>
-            <!-- Conectados solo para Admin/Pro -->
-            <div class="gestion-usuarios" style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-              <span class="eq-mini" style="color:var(--green); height:14px;"><i></i><i></i><i></i></span>
-              <span style="font-size:13px; font-weight:600;">Conectados:</span>
-              <span class="pill pill-green" id="conectadosCount">0</span>
-            </div>
-          </div>
-          <div id="conectadosLista" class="gestion-usuarios" style="flex-wrap:wrap; gap:6px; margin-bottom:16px; padding:0 4px;"></div>
+          <div style="position:relative;z-index:1;">
 
-          <!-- Acciones del Administrador/Pro -->
-          <div class="module gestion-usuarios" style="padding:20px; margin-bottom:16px;">
-            <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-faint); margin-bottom:14px;">Acciones rápidas</div>
-            <div style="display:flex; flex-wrap:wrap; gap:10px;">
-              <button class="btn btn-primary" onclick="abrirModalAviso()">📧 Avisar por correo</button>
-              <button class="btn btn-primary admin-only" onclick="abrirModalAnuncio()">📢 Enviar anuncio</button>
-              <button class="btn btn-sm btn-hora-caliente admin-only" id="btnHoraCaliente" onclick="toggleHoraCaliente()" style="font-size:14px; padding:10px 18px;">🔥 Activar Hora Caliente</button>
-              <button class="btn btn-sm admin-only" id="btnMantenimiento" onclick="toggleMantenimiento()" style="background:#6B21A8; color:#fff; border:none; font-size:14px; padding:10px 18px;">🔧 Activar mantenimiento</button>
-              <button class="btn btn-sm admin-only" id="btnSubirVideoBienvenida" title="Subir video de fondo" onclick="document.getElementById('inputVideoBienvenida').click()" style="font-size:14px; padding:10px 18px;">🎬 Cambiar video</button>
-              <input type="file" id="inputVideoBienvenida" accept="video/mp4,video/webm" style="display:none;" onchange="subirVideoBienvenida(this)">
-            </div>
-            <div id="videoUploadStatus" class="hidden" style="margin-top:12px;">
-              <div style="font-size:12px; color:var(--text-dim); font-weight:600; margin-bottom:5px;" id="videoUploadStatusTxt">Subiendo… 0%</div>
-              <div style="height:6px; border-radius:3px; background:var(--line); overflow:hidden;">
-                <div id="videoUploadProgressBar" style="height:100%; width:0%; background:#22C55E; border-radius:3px; transition:width .15s ease;"></div>
+            <!-- HEADER DASHBOARD -->
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+              <div>
+                <div style="font-size:22px;font-weight:800;letter-spacing:-.02em;">Dashboard <span style="color:var(--red-vivid);">World DJ Pool</span></div>
+                <div style="font-size:13px;color:var(--text-dim);margin-top:2px;" id="dashDate"></div>
+              </div>
+              <div class="gestion-usuarios" style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn btn-primary" style="font-size:12.5px;padding:8px 14px;" onclick="abrirModalAviso()">📧 Avisar</button>
+                <button class="btn btn-primary admin-only" style="font-size:12.5px;padding:8px 14px;" onclick="abrirModalAnuncio()">📢 Anuncio</button>
+                <button class="btn btn-sm btn-hora-caliente admin-only" id="btnHoraCaliente" onclick="toggleHoraCaliente()" style="font-size:12.5px;padding:8px 14px;">🔥 Hora Caliente</button>
+                <button class="btn btn-sm admin-only" id="btnMantenimiento" onclick="toggleMantenimiento()" style="background:#6B21A8;color:#fff;border:none;font-size:12.5px;padding:8px 14px;">🔧 Mantenimiento</button>
+                <button class="btn btn-sm admin-only" id="btnSubirVideoBienvenida" onclick="document.getElementById('inputVideoBienvenida').click()" style="font-size:12.5px;padding:8px 14px;">🎬 Video</button>
+                <input type="file" id="inputVideoBienvenida" accept="video/mp4,video/webm" style="display:none;" onchange="subirVideoBienvenida(this)">
               </div>
             </div>
-          </div>
+            <div id="videoUploadStatus" class="hidden" style="margin-bottom:14px;">
+              <div style="font-size:12px;color:var(--text-dim);font-weight:600;margin-bottom:5px;" id="videoUploadStatusTxt">Subiendo… 0%</div>
+              <div style="height:6px;border-radius:3px;background:var(--line);overflow:hidden;">
+                <div id="videoUploadProgressBar" style="height:100%;width:0%;background:#22C55E;border-radius:3px;transition:width .15s ease;"></div>
+              </div>
+            </div>
 
-          <div class="view-sub" style="margin:10px 0 14px; font-weight:600; color:var(--text);">Accede rápido al catálogo</div>
-          <div class="quick-grid">
-            <div class="quick-card" onclick="showView('enlaces')">
-              <div class="quick-icon" id="qIconEnlaces"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M10 13a5 5 0 007 0l2-2a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-2 2a5 5 0 007 7l1-1"/></svg></div>
-              <div class="quick-info"><div class="quick-label">Enlaces</div><div class="quick-count" id="quickCountEnlaces">0 recursos</div></div>
-              <div class="quick-arrow">→</div>
+            <!-- KPI CARDS -->
+            <div class="dash-kpi-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
+              <div class="dash-kpi-card" onclick="showView('usuarios')" style="cursor:pointer;">
+                <div class="dash-kpi-icon" style="background:rgba(228,16,42,.15);color:#E4102A;">
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.3 3-5 7-5s7 1.7 7 5"/><circle cx="17" cy="8" r="2.6"/><path d="M17.5 13c2.5.3 4.5 1.8 4.5 4"/></svg>
+                </div>
+                <div class="dash-kpi-val" id="statTotalDjs">0</div>
+                <div class="dash-kpi-label">DJs registrados</div>
+                <div class="dash-kpi-bar"><div class="dash-kpi-bar-fill" id="kpiBarDjs" style="width:80%;background:#E4102A;"></div></div>
+              </div>
+              <div class="dash-kpi-card" onclick="showView('solicitudes')" style="cursor:pointer;">
+                <div class="dash-kpi-icon" style="background:rgba(245,158,11,.15);color:#F59E0B;">
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                </div>
+                <div class="dash-kpi-val" id="statPendientes">0</div>
+                <div class="dash-kpi-label">Pendientes</div>
+                <div class="dash-kpi-bar"><div class="dash-kpi-bar-fill" id="kpiBarPend" style="width:30%;background:#F59E0B;"></div></div>
+              </div>
+              <div class="dash-kpi-card">
+                <div class="dash-kpi-icon" style="background:rgba(34,197,94,.15);color:#22C55E;">
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                </div>
+                <div class="dash-kpi-val" id="statRecursos">0</div>
+                <div class="dash-kpi-label">Recursos</div>
+                <div class="dash-kpi-bar"><div class="dash-kpi-bar-fill" id="kpiBarRec" style="width:65%;background:#22C55E;"></div></div>
+              </div>
+              <div class="dash-kpi-card">
+                <div class="dash-kpi-icon" style="background:rgba(56,189,248,.15);color:#38BDF8;">
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l2 7 4-14 2 7h6"/></svg>
+                </div>
+                <div class="dash-kpi-val" id="statHoy">0</div>
+                <div class="dash-kpi-label">Acciones hoy</div>
+                <div class="dash-kpi-bar"><div class="dash-kpi-bar-fill" id="kpiBarHoy" style="width:20%;background:#38BDF8;"></div></div>
+              </div>
             </div>
-            <div class="quick-card" onclick="showView('samples')">
-              <div class="quick-icon" id="qIconSamples"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M3 12h2l2-7 3 14 3-11 2 4h5"/></svg></div>
-              <div class="quick-info"><div class="quick-label">Samples</div><div class="quick-count" id="quickCountSamples">0 recursos</div></div>
-              <div class="quick-arrow">→</div>
+
+            <!-- ROW: Comunidad + Conectados -->
+            <div style="display:grid;grid-template-columns:1fr auto;gap:14px;margin-bottom:20px;align-items:start;">
+              <div class="module" style="padding:18px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+                <div class="community-avatars" id="communityAvatars"></div>
+                <div style="flex:1;min-width:120px;">
+                  <div style="font-weight:600;font-size:13.5px;">La comunidad</div>
+                  <div class="community-more" id="communityCount">1 DJ activo en la comunidad</div>
+                </div>
+                <div class="gestion-usuarios" style="display:flex;align-items:center;gap:6px;">
+                  <span class="eq-mini" style="color:var(--green);height:14px;"><i></i><i></i><i></i></span>
+                  <span style="font-size:13px;font-weight:600;">Conectados:</span>
+                  <span class="pill pill-green" id="conectadosCount">0</span>
+                </div>
+              </div>
             </div>
-            <div class="quick-card" onclick="showView('packs')">
-              <div class="quick-icon" id="qIconPacks"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></div>
-              <div class="quick-info"><div class="quick-label">Packs mensuales</div><div class="quick-count" id="quickCountPacks">0 recursos</div></div>
-              <div class="quick-arrow">→</div>
+            <div id="conectadosLista" class="gestion-usuarios" style="flex-wrap:wrap;gap:6px;margin-bottom:20px;padding:0 4px;"></div>
+
+            <!-- CATÁLOGOS TIPO RED -->
+            <div class="view-sub" style="margin:0 0 14px;font-weight:600;color:var(--text);">Accede rápido al catálogo</div>
+            <div class="dash-cat-grid">
+              <div class="dash-cat-card" onclick="showView('enlaces')" data-color="#FF9F43">
+                <div class="dash-cat-orb" style="--c:#FF9F43;">
+                  <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 13a5 5 0 007 0l2-2a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-2 2a5 5 0 007 7l1-1"/></svg>
+                </div>
+                <div class="dash-cat-info">
+                  <div class="dash-cat-name">Enlaces</div>
+                  <div class="dash-cat-count" id="quickCountEnlaces">0 recursos</div>
+                </div>
+                <div class="dash-cat-pulse" style="--c:#FF9F43;"></div>
+                <div class="dash-cat-arrow">→</div>
+              </div>
+              <div class="dash-cat-card" onclick="showView('samples')" data-color="#A3E635">
+                <div class="dash-cat-orb" style="--c:#A3E635;">
+                  <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h2l2-7 3 14 3-11 2 4h5"/></svg>
+                </div>
+                <div class="dash-cat-info">
+                  <div class="dash-cat-name">Samples</div>
+                  <div class="dash-cat-count" id="quickCountSamples">0 recursos</div>
+                </div>
+                <div class="dash-cat-pulse" style="--c:#A3E635;"></div>
+                <div class="dash-cat-arrow">→</div>
+              </div>
+              <div class="dash-cat-card" onclick="showView('packs')" data-color="#38BDF8">
+                <div class="dash-cat-orb" style="--c:#38BDF8;">
+                  <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg>
+                </div>
+                <div class="dash-cat-info">
+                  <div class="dash-cat-name">Packs mensuales</div>
+                  <div class="dash-cat-count" id="quickCountPacks">0 recursos</div>
+                </div>
+                <div class="dash-cat-pulse" style="--c:#38BDF8;"></div>
+                <div class="dash-cat-arrow">→</div>
+              </div>
+              <div class="dash-cat-card" onclick="showView('fx')" data-color="#C084FC">
+                <div class="dash-cat-orb" style="--c:#C084FC;">
+                  <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/></svg>
+                </div>
+                <div class="dash-cat-info">
+                  <div class="dash-cat-name">FX</div>
+                  <div class="dash-cat-count" id="quickCountFx">0 recursos</div>
+                </div>
+                <div class="dash-cat-pulse" style="--c:#C084FC;"></div>
+                <div class="dash-cat-arrow">→</div>
+              </div>
+              <div class="dash-cat-card" onclick="showView('drops')" data-color="#2DD4BF">
+                <div class="dash-cat-orb" style="--c:#2DD4BF;">
+                  <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg>
+                </div>
+                <div class="dash-cat-info">
+                  <div class="dash-cat-name">Drops</div>
+                  <div class="dash-cat-count" id="quickCountDrops">0 recursos</div>
+                </div>
+                <div class="dash-cat-pulse" style="--c:#2DD4BF;"></div>
+                <div class="dash-cat-arrow">→</div>
+              </div>
+              <div class="dash-cat-card" onclick="showView('libreria')" data-color="#FBBF24">
+                <div class="dash-cat-orb" style="--c:#FBBF24;">
+                  <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4v16M4 4h13a3 3 0 013 3v13H7a3 3 0 01-3-3z"/></svg>
+                </div>
+                <div class="dash-cat-info">
+                  <div class="dash-cat-name">Librería</div>
+                  <div class="dash-cat-count" id="quickCountLibreria">0 recursos</div>
+                </div>
+                <div class="dash-cat-pulse" style="--c:#FBBF24;"></div>
+                <div class="dash-cat-arrow">→</div>
+              </div>
+              <div class="dash-cat-card gestion-usuarios" onclick="showView('usuarios')" data-color="#84CC16">
+                <div class="dash-cat-orb" style="--c:#84CC16;">
+                  <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.3 3-5 7-5s7 1.7 7 5"/><circle cx="17" cy="8" r="2.6"/><path d="M17.5 13c2.5.3 4.5 1.8 4.5 4"/></svg>
+                </div>
+                <div class="dash-cat-info">
+                  <div class="dash-cat-name">Usuarios</div>
+                  <div class="dash-cat-count" id="quickCountUsuarios">Sin solicitudes pendientes</div>
+                </div>
+                <div class="dash-cat-pulse" style="--c:#84CC16;"></div>
+                <div class="dash-cat-arrow">→</div>
+              </div>
             </div>
-            <div class="quick-card" onclick="showView('fx')">
-              <div class="quick-icon" id="qIconFx"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/></svg></div>
-              <div class="quick-info"><div class="quick-label">FX</div><div class="quick-count" id="quickCountFx">0 recursos</div></div>
-              <div class="quick-arrow">→</div>
-            </div>
-            <div class="quick-card" onclick="showView('drops')">
-              <div class="quick-icon" id="qIconDrops"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/></svg></div>
-              <div class="quick-info"><div class="quick-label">Drops</div><div class="quick-count" id="quickCountDrops">0 recursos</div></div>
-              <div class="quick-arrow">→</div>
-            </div>
-            <div class="quick-card" onclick="showView('libreria')">
-              <div class="quick-icon" id="qIconLibreria"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><path d="M4 4v16M4 4h13a3 3 0 013 3v13H7a3 3 0 01-3-3z"/><path d="M8 8h8M8 12h8"/></svg></div>
-              <div class="quick-info"><div class="quick-label">Librería</div><div class="quick-count" id="quickCountLibreria">0 recursos</div></div>
-              <div class="quick-arrow">→</div>
-            </div>
-            <div class="quick-card" onclick="showView('usuarios')">
-              <div class="quick-icon" id="qIconUsuarios"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.3 3-5 7-5s7 1.7 7 5"/><circle cx="17" cy="8" r="2.6"/><path d="M17.5 13c2.5.3 4.5 1.8 4.5 4"/></svg></div>
-              <div class="quick-info"><div class="quick-label">Usuarios</div><div class="quick-count" id="quickCountUsuarios">0 solicitudes pendientes</div></div>
-              <div class="quick-arrow">→</div>
-            </div>
-          </div>
-          </div>
+
+          </div><!-- /z-index:1 -->
+
+          <!-- Notas flotantes (accesorio visual) -->
+          <div class="floating-notes" id="notasBienvenidaAdmin"></div>
+
         </section>
 
-        <!-- ===== BIENVENIDA BÁSICO/PRO ===== -->
+        <!-- ===== BIENVENIDA BÁSICO/PRO ===== -->        <!-- ===== BIENVENIDA BÁSICO/PRO ===== -->
         <section class="view" id="view-inicio" style="position:relative; overflow:hidden;">
           <div class="inicio-vinyl-decor">
             <div class="vinyl" style="width:100%; height:100%; animation-duration:14s;">
@@ -2811,6 +2973,32 @@ async function refrescarUsuarios(btn){
   if(btn) setTimeout(()=>btn.classList.remove('spinning'), 400);
 }
 
+// ===== DESPLEGABLES NAVBAR =====
+function toggleDropdown(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const isOpen = el.classList.contains('open');
+  closeDropdowns();
+  if(!isOpen){
+    el.classList.add('open');
+    // Posicionar el menú con fixed relativo al trigger
+    const trigger = el.querySelector('.nav-dropdown-trigger');
+    const menu = el.querySelector('.nav-dropdown-menu');
+    if(trigger && menu){
+      const rect = trigger.getBoundingClientRect();
+      menu.style.left = rect.left + 'px';
+      menu.style.top = (rect.bottom + 5) + 'px';
+    }
+  }
+}
+function closeDropdowns(){
+  document.querySelectorAll('.nav-dropdown.open').forEach(d => d.classList.remove('open'));
+}
+// Cerrar al hacer clic fuera
+document.addEventListener('click', function(e){
+  if(!e.target.closest('.nav-dropdown')) closeDropdowns();
+});
+
 function showView(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
@@ -3436,16 +3624,30 @@ function renderBadges(){
     el.classList.toggle('on', n>0);
   });
 
+  // Badge agregado de Recursos (suma de samples+packs+fx+drops)
+  const recursosBadge = document.getElementById('recursosBadge');
+  if(recursosBadge){
+    const totalRecursos = (contadoresNuevos.samples||0)+(contadoresNuevos.packs||0)+(contadoresNuevos.fx||0)+(contadoresNuevos.drops||0);
+    recursosBadge.textContent = totalRecursos>9 ? '9+' : String(totalRecursos);
+    recursosBadge.classList.toggle('on', totalRecursos>0);
+  }
+
   const usuariosBadge = document.getElementById('usuariosBadge');
   if(usuariosBadge){
     usuariosBadge.textContent = '';
     usuariosBadge.classList.remove('on');
   }
+  const pendientes = STATE.users.filter(u=>u.estado==='Pendiente').length;
   const solicitudesBadge = document.getElementById('solicitudesBadge');
   if(solicitudesBadge){
-    const pendientes = STATE.users.filter(u=>u.estado==='Pendiente').length;
     solicitudesBadge.textContent = pendientes>9 ? '9+' : String(pendientes);
     solicitudesBadge.classList.toggle('on', pendientes>0);
+  }
+  // Badge de Controles = solicitudes pendientes
+  const controlesBadge = document.getElementById('controlesBadge');
+  if(controlesBadge){
+    controlesBadge.textContent = pendientes>9 ? '9+' : String(pendientes);
+    controlesBadge.classList.toggle('on', pendientes>0);
   }
 }
 
@@ -4693,6 +4895,112 @@ function renderAll(){
 }
 
 cargarVideoBienvenida(); // se llama ya mismo, para que el video del login se vea desde antes de iniciar sesión
+
+// ===== CANVAS RED ANIMADA (dashboard) =====
+(function initNetworkCanvas(){
+  const canvas = document.getElementById('networkCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  let W, H, nodes=[], raf;
+
+  function resize(){
+    const parent = canvas.parentElement;
+    W = canvas.width = parent.offsetWidth;
+    H = canvas.height = Math.max(parent.offsetHeight, 500);
+  }
+
+  function randomNode(){
+    const colors = ['#E4102A','#FF9F43','#A3E635','#38BDF8','#C084FC','#2DD4BF','#FBBF24','#F472B6'];
+    return {
+      x: Math.random()*W, y: Math.random()*H,
+      vx: (Math.random()-.5)*0.4, vy: (Math.random()-.5)*0.4,
+      r: 2 + Math.random()*2.5,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      pulse: Math.random()*Math.PI*2
+    };
+  }
+
+  function init(){
+    resize();
+    nodes = Array.from({length: 55}, randomNode);
+    if(raf) cancelAnimationFrame(raf);
+    loop();
+  }
+
+  function loop(){
+    raf = requestAnimationFrame(loop);
+    ctx.clearRect(0,0,W,H);
+    const t = Date.now()*0.001;
+
+    // líneas de conexión
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<120){
+          const alpha = (1-dist/120)*0.25;
+          ctx.strokeStyle = `rgba(180,180,200,${alpha})`;
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x,nodes[i].y);
+          ctx.lineTo(nodes[j].x,nodes[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // nodos con pulso
+    nodes.forEach(n=>{
+      n.pulse += 0.02;
+      n.x += n.vx; n.y += n.vy;
+      if(n.x<0||n.x>W) n.vx*=-1;
+      if(n.y<0||n.y>H) n.vy*=-1;
+
+      const glow = ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r*3);
+      glow.addColorStop(0, n.color+'99');
+      glow.addColorStop(1, 'transparent');
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(n.x,n.y,n.r*3,0,Math.PI*2);
+      ctx.fill();
+
+      ctx.fillStyle = n.color;
+      ctx.beginPath();
+      ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      ctx.fill();
+    });
+  }
+
+  // Arrancar cuando el dashboard esté visible
+  function checkVisible(){
+    const section = document.getElementById('view-bienvenida');
+    if(section && section.classList.contains('active')){
+      if(!raf) init();
+    } else {
+      if(raf){ cancelAnimationFrame(raf); raf=null; }
+    }
+  }
+
+  // Observer para activar/desactivar según la vista
+  const obs = new MutationObserver(checkVisible);
+  const sec = document.getElementById('view-bienvenida');
+  if(sec) obs.observe(sec, {attributes:true, attributeFilter:['class']});
+
+  window.addEventListener('resize', ()=>{ if(raf) resize(); });
+
+  // Arrancar si ya está activo
+  setTimeout(checkVisible, 500);
+})();
+
+// Fecha en el dashboard
+(function setDashDate(){
+  const el = document.getElementById('dashDate');
+  if(!el) return;
+  const d = new Date();
+  el.textContent = d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+})();
+
 </script>
 <div id="djRunnerOverlay"></div>
 </body>
