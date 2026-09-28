@@ -206,6 +206,48 @@
   /* NETWORK CANVAS fade on dark */
   #networkCanvas{ mix-blend-mode:screen; }
 
+  /* ===== BEAT MAKER ===== */
+  .bm-shell{ background:#0a0a0f; border-radius:18px; padding:24px 20px; border:1px solid rgba(255,255,255,.08); }
+  .bm-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:12px; }
+  .bm-title{ font-size:20px; font-weight:800; letter-spacing:-.02em; color:#FFFFFF; }
+  .bm-title span{ color:#E4102A; }
+  .bm-controls{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .bm-bpm-wrap{ display:flex; align-items:center; gap:6px; background:#13131a; border:1px solid #222; border-radius:10px; padding:6px 10px; }
+  .bm-bpm-label{ font-size:10px; color:#666; font-weight:700; letter-spacing:.1em; text-transform:uppercase; }
+  .bm-bpm-val{ font-size:20px; font-weight:800; min-width:44px; text-align:center; color:#fff; }
+  .bm-bpm-btn{ width:26px; height:26px; border-radius:6px; border:1px solid #2a2a38; background:#1a1a26; color:#aaa; cursor:pointer; font-size:15px; display:flex; align-items:center; justify-content:center; transition:.1s; }
+  .bm-bpm-btn:hover{ background:#E4102A; border-color:#E4102A; color:#fff; }
+  .bm-btn-play{ padding:9px 20px; border-radius:10px; border:none; background:#E4102A; color:#fff; font-size:13.5px; font-weight:700; cursor:pointer; transition:.15s; white-space:nowrap; }
+  .bm-btn-play:hover{ background:#ff2a3a; }
+  .bm-btn-play.bm-playing{ background:#22C55E; }
+  .bm-btn-stop,.bm-btn-clear{ padding:9px 14px; border-radius:10px; border:1px solid #2a2a38; background:#13131a; color:#888; font-size:13px; cursor:pointer; transition:.15s; white-space:nowrap; }
+  .bm-btn-stop:hover,.bm-btn-clear:hover{ border-color:#E4102A; color:#E4102A; }
+  .bm-steps-ind{ display:flex; gap:3px; margin-bottom:10px; }
+  .bm-dot{ width:8px; height:8px; border-radius:50%; background:#1e1e2a; transition:background .05s; flex-shrink:0; }
+  .bm-dot.bm-active{ background:#E4102A; }
+  .bm-grid{ display:flex; flex-direction:column; gap:4px; margin-bottom:12px; }
+  .bm-row{ display:flex; align-items:center; gap:5px; }
+  .bm-row-label{ width:80px; flex-shrink:0; font-size:11px; font-weight:600; color:#888; text-align:right; padding-right:8px; user-select:none; line-height:1.3; }
+  .bm-row-emoji{ font-size:13px; display:block; }
+  .bm-steps{ display:flex; gap:2px; flex:1; }
+  .bm-beat{ flex:1; height:28px; border-radius:5px; border:1px solid #1a1a26; background:#0e0e18; cursor:pointer; transition:background .08s,border-color .08s,transform .05s; min-width:0; }
+  .bm-beat:hover{ border-color:#333; }
+  .bm-beat.bm-on{ background:var(--bc); border-color:var(--bc); }
+  .bm-beat.bm-cur{ border-color:#FFFFFF !important; transform:scaleY(1.15); }
+  .bm-beat.bm-on.bm-cur{ opacity:.8; }
+  .bm-gsep{ width:3px; flex-shrink:0; }
+  .bm-vol-row{ display:flex; align-items:center; gap:5px; }
+  .bm-vol-lbl{ width:80px; flex-shrink:0; font-size:9.5px; color:#444; text-align:right; padding-right:8px; }
+  .bm-vol-sl{ flex:1; height:3px; accent-color:#E4102A; cursor:pointer; }
+  .bm-pattern-row{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:12px; }
+  .bm-pat-lbl{ font-size:10.5px; color:#555; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+  .bm-pat-btn{ padding:5px 12px; border-radius:7px; border:1px solid #1e1e28; background:#0e0e18; color:#666; font-size:12px; cursor:pointer; transition:.12s; }
+  .bm-pat-btn:hover,.bm-pat-btn.bm-pat-active{ border-color:#E4102A; color:#E4102A; background:rgba(228,16,42,.1); }
+  .bm-swing-row{ display:flex; align-items:center; gap:10px; margin-top:10px; }
+  .bm-swing-lbl{ font-size:10.5px; color:#555; font-weight:700; letter-spacing:.08em; text-transform:uppercase; width:80px; text-align:right; }
+  .bm-swing-val{ font-size:12px; color:#666; min-width:32px; }
+  .bm-hint{ margin-top:10px; font-size:11px; color:#444; text-align:center; }
+
   /* ---------- visibilidad por rol (clases en body) ---------- */
   /* Por defecto ocultos hasta que el body tenga la clase del rol correcto */
   .admin-only       { display:none !important; }
@@ -547,6 +589,7 @@
   .nav-item[data-view="comunidad"].active{ background:rgba(244,114,182,.1); border-color:rgba(244,114,182,.3); color:#F472B6; }
   .nav-item[data-view="sugerencias"].active{ background:rgba(34,211,238,.1); border-color:rgba(34,211,238,.3); color:#22D3EE; }
   .nav-item[data-view="manual"].active{ background:rgba(129,140,248,.1); border-color:rgba(129,140,248,.3); color:#818CF8; }
+  .nav-item[data-view="beatmaker"].active{ background:rgba(228,16,42,.12); border-color:rgba(228,16,42,.35); color:#FF6B7A; }
   .nav-item[data-view="usuarios"].active{ background:rgba(132,204,22,.1); border-color:rgba(132,204,22,.3); color:#84CC16; }
   .nav-item[data-view="solicitudes"].active{ background:rgba(245,158,11,.1); border-color:rgba(245,158,11,.3); color:#F59E0B; }
   .nav-item[data-view="actividad"].active{ background:rgba(251,113,133,.1); border-color:rgba(251,113,133,.3); color:#FB7185; }
@@ -1490,6 +1533,10 @@
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 01-11.9 7.8L4 21l1.7-5.1A8.5 8.5 0 1121 11.5z"/></svg></span>
           Sugerencias
         </div>
+        <div class="nav-item" data-view="beatmaker" onclick="showView('beatmaker')">
+          <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="8" width="4" height="8" rx="1"/><rect x="8" y="5" width="4" height="14" rx="1"/><rect x="14" y="10" width="4" height="6" rx="1"/><rect x="20" y="7" width="2" height="10" rx="1"/></svg></span>
+          Beat Maker
+        </div>
         <div class="nav-item" data-view="manual" onclick="showView('manual')">
           <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4.5A2.5 2.5 0 016.5 2H20v17H6.5A2.5 2.5 0 014 16.5z"/></svg></span>
           Manual
@@ -1985,6 +2032,55 @@
           <div class="gestion-usuarios">
             <div class="view-sub" style="margin-bottom:12px; font-weight:600; color:var(--text);">Sugerencias recibidas</div>
             <div id="listaSugerencias"></div>
+          </div>
+        </section>
+
+        <!-- ===== BEAT MAKER ===== -->
+        <section class="view" id="view-beatmaker">
+          <div class="view-head">
+            <div>
+              <h2>Beat Maker</h2>
+              <div class="view-sub">Crea tu propio beat con batería, loops y más. Ajusta el BPM y el swing a tu gusto.</div>
+            </div>
+          </div>
+
+          <div class="bm-shell">
+            <div class="bm-header">
+              <div class="bm-title">CREA TU <span>BEAT</span></div>
+              <div class="bm-controls">
+                <div class="bm-bpm-wrap">
+                  <span class="bm-bpm-label">BPM</span>
+                  <button class="bm-bpm-btn" id="bmBpmDown">−</button>
+                  <span class="bm-bpm-val" id="bmBpmDisp">120</span>
+                  <button class="bm-bpm-btn" id="bmBpmUp">+</button>
+                </div>
+                <button class="bm-btn-play" id="bmBtnPlay">▶ Play</button>
+                <button class="bm-btn-stop" id="bmBtnStop">■ Stop</button>
+                <button class="bm-btn-clear" id="bmBtnClear">Limpiar</button>
+              </div>
+            </div>
+
+            <div class="bm-steps-ind" id="bmStepsInd"></div>
+            <div class="bm-grid" id="bmBeatGrid"></div>
+
+            <div class="bm-pattern-row">
+              <span class="bm-pat-lbl">Patrones</span>
+              <button class="bm-pat-btn" data-bp="trap">Trap</button>
+              <button class="bm-pat-btn" data-bp="house">House</button>
+              <button class="bm-pat-btn" data-bp="reggaeton">Reggaetón</button>
+              <button class="bm-pat-btn" data-bp="boom">Boom Bap</button>
+              <button class="bm-pat-btn" data-bp="cumbia">Cumbia</button>
+              <button class="bm-pat-btn" data-bp="techno">Techno</button>
+              <button class="bm-pat-btn" data-bp="latin">Latin</button>
+            </div>
+
+            <div class="bm-swing-row">
+              <span class="bm-swing-lbl">Swing</span>
+              <input type="range" class="bm-vol-sl" id="bmSwingSlider" min="0" max="66" value="0" step="1" style="flex:1;">
+              <span class="bm-swing-val" id="bmSwingVal">0%</span>
+            </div>
+
+            <div class="bm-hint">Espacio = Play / Stop · Clic en cada celda para activar</div>
           </div>
         </section>
 
@@ -4932,6 +5028,205 @@ function renderAll(){
 }
 
 cargarVideoBienvenida(); // se llama ya mismo, para que el video del login se vea desde antes de iniciar sesión
+
+// =====================================================
+// BEAT MAKER
+// =====================================================
+(function(){
+  const BM_TRACKS=[
+    {name:'Kick',emoji:'🥁',color:'#E4102A',type:'kick'},
+    {name:'Snare',emoji:'🔊',color:'#FF9F43',type:'snare'},
+    {name:'Hi-Hat',emoji:'🎩',color:'#FBBF24',type:'hihat'},
+    {name:'Open HH',emoji:'🔔',color:'#A3E635',type:'openhat'},
+    {name:'Clap',emoji:'👏',color:'#38BDF8',type:'clap'},
+    {name:'Tom',emoji:'🥁',color:'#C084FC',type:'tom'},
+    {name:'Crash',emoji:'💥',color:'#F472B6',type:'crash'},
+    {name:'Perc',emoji:'🪘',color:'#2DD4BF',type:'perc'},
+    {name:'Bass',emoji:'🎵',color:'#818CF8',type:'bass'},
+    {name:'Loop',emoji:'🔄',color:'#FB923C',type:'loop'},
+  ];
+  const BM_STEPS=16;
+  let bmBpm=120,bmPlaying=false,bmCurStep=0,bmRaf=null,bmNextTime=0,bmSwing=0;
+  let bmCtx=null,bmVolumes=BM_TRACKS.map(()=>0.8);
+  let bmGrid=BM_TRACKS.map(()=>Array(BM_STEPS).fill(false));
+
+  function bmGetCtx(){
+    if(!bmCtx) bmCtx=new(window.AudioContext||window.webkitAudioContext)();
+    if(bmCtx.state==='suspended') bmCtx.resume();
+    return bmCtx;
+  }
+  function bmNoise(ctx,dur){
+    const buf=ctx.createBuffer(1,ctx.sampleRate*dur,ctx.sampleRate);
+    const d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+    return buf;
+  }
+  function bmPlay(type,vol,time){
+    const ctx=bmGetCtx(); time=time||ctx.currentTime;
+    const g=ctx.createGain(); g.connect(ctx.destination); g.gain.setValueAtTime(vol,time);
+    if(type==='kick'){
+      const o=ctx.createOscillator(),e=ctx.createGain(); o.connect(e); e.connect(g);
+      o.frequency.setValueAtTime(150,time); o.frequency.exponentialRampToValueAtTime(0.01,time+0.4);
+      e.gain.setValueAtTime(1,time); e.gain.exponentialRampToValueAtTime(0.01,time+0.4);
+      o.start(time); o.stop(time+0.4);
+    } else if(type==='snare'){
+      const s=ctx.createBufferSource(),e=ctx.createGain(); s.buffer=bmNoise(ctx,0.2); s.connect(e); e.connect(g);
+      const o=ctx.createOscillator(),oe=ctx.createGain(); o.connect(oe); oe.connect(g);
+      o.frequency.setValueAtTime(180,time); oe.gain.setValueAtTime(0.5,time); oe.gain.exponentialRampToValueAtTime(0.01,time+0.15);
+      e.gain.setValueAtTime(0.6,time); e.gain.exponentialRampToValueAtTime(0.01,time+0.15);
+      s.start(time); o.start(time); o.stop(time+0.15);
+    } else if(type==='hihat'){
+      const s=ctx.createBufferSource(),e=ctx.createGain(); s.buffer=bmNoise(ctx,0.05); s.connect(e); e.connect(g);
+      const f=ctx.createBiquadFilter(); f.type='highpass'; f.frequency.value=8000; s.connect(f); f.connect(e);
+      e.gain.setValueAtTime(0.3,time); e.gain.exponentialRampToValueAtTime(0.01,time+0.05); s.start(time);
+    } else if(type==='openhat'){
+      const s=ctx.createBufferSource(),e=ctx.createGain(); s.buffer=bmNoise(ctx,0.35); s.connect(e); e.connect(g);
+      const f=ctx.createBiquadFilter(); f.type='highpass'; f.frequency.value=7000; s.connect(f); f.connect(e);
+      e.gain.setValueAtTime(0.4,time); e.gain.exponentialRampToValueAtTime(0.01,time+0.35); s.start(time);
+    } else if(type==='clap'){
+      [0,0.01,0.02].forEach(d=>{
+        const s=ctx.createBufferSource(),e=ctx.createGain(); s.buffer=bmNoise(ctx,0.12); s.connect(e); e.connect(g);
+        e.gain.setValueAtTime(0.5,time+d); e.gain.exponentialRampToValueAtTime(0.01,time+d+0.12); s.start(time+d);
+      });
+    } else if(type==='tom'){
+      const o=ctx.createOscillator(),e=ctx.createGain(); o.connect(e); e.connect(g);
+      o.frequency.setValueAtTime(100,time); o.frequency.exponentialRampToValueAtTime(40,time+0.3);
+      e.gain.setValueAtTime(0.8,time); e.gain.exponentialRampToValueAtTime(0.01,time+0.3);
+      o.start(time); o.stop(time+0.3);
+    } else if(type==='crash'){
+      const s=ctx.createBufferSource(),e=ctx.createGain(); s.buffer=bmNoise(ctx,1.2); s.connect(e); e.connect(g);
+      const f=ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=5000; f.Q.value=0.5; s.connect(f); f.connect(e);
+      e.gain.setValueAtTime(0.5,time); e.gain.exponentialRampToValueAtTime(0.01,time+1.2); s.start(time);
+    } else if(type==='perc'){
+      const o=ctx.createOscillator(),e=ctx.createGain(); o.type='triangle'; o.connect(e); e.connect(g);
+      o.frequency.setValueAtTime(600,time); o.frequency.exponentialRampToValueAtTime(200,time+0.08);
+      e.gain.setValueAtTime(0.7,time); e.gain.exponentialRampToValueAtTime(0.01,time+0.08);
+      o.start(time); o.stop(time+0.1);
+    } else if(type==='bass'){
+      const o=ctx.createOscillator(),e=ctx.createGain(); o.type='sawtooth'; o.connect(e); e.connect(g);
+      o.frequency.setValueAtTime(55,time); e.gain.setValueAtTime(0.6,time); e.gain.exponentialRampToValueAtTime(0.01,time+0.35);
+      o.start(time); o.stop(time+0.35);
+    } else if(type==='loop'){
+      const o=ctx.createOscillator(),e=ctx.createGain(); o.type='sine'; o.connect(e); e.connect(g);
+      o.frequency.setValueAtTime(220,time); o.frequency.setValueAtTime(330,time+0.05); o.frequency.setValueAtTime(440,time+0.1);
+      e.gain.setValueAtTime(0.5,time); e.gain.exponentialRampToValueAtTime(0.01,time+0.25);
+      o.start(time); o.stop(time+0.25);
+    }
+  }
+  function bmBuildGrid(){
+    const gridEl=document.getElementById('bmBeatGrid'),indEl=document.getElementById('bmStepsInd');
+    if(!gridEl||!indEl) return;
+    indEl.innerHTML='';
+    for(let s=0;s<BM_STEPS;s++){const d=document.createElement('div');d.className='bm-dot';indEl.appendChild(d);}
+    gridEl.innerHTML='';
+    BM_TRACKS.forEach((t,ti)=>{
+      const row=document.createElement('div');row.className='bm-row';
+      const lbl=document.createElement('div');lbl.className='bm-row-label';
+      lbl.innerHTML=`<span class="bm-row-emoji">${t.emoji}</span>${t.name}`;
+      row.appendChild(lbl);
+      const steps=document.createElement('div');steps.className='bm-steps';
+      for(let s=0;s<BM_STEPS;s++){
+        if(s>0&&s%4===0){const sep=document.createElement('div');sep.className='bm-gsep';steps.appendChild(sep);}
+        const b=document.createElement('div');b.className='bm-beat';
+        b.style.setProperty('--bc',t.color);
+        if(bmGrid[ti][s]) b.classList.add('bm-on');
+        b.dataset.ti=ti;b.dataset.s=s;
+        b.addEventListener('click',()=>{
+          bmGrid[ti][s]=!bmGrid[ti][s];
+          b.classList.toggle('bm-on',bmGrid[ti][s]);
+          if(bmGrid[ti][s]) bmPlay(t.type,bmVolumes[ti]);
+        });
+        steps.appendChild(b);
+      }
+      row.appendChild(steps);gridEl.appendChild(row);
+      const vrow=document.createElement('div');vrow.className='bm-vol-row';
+      const vl=document.createElement('div');vl.className='bm-vol-lbl';vl.textContent='vol';
+      const vs=document.createElement('input');vs.type='range';vs.className='bm-vol-sl';
+      vs.min=0;vs.max=1;vs.step=0.01;vs.value=bmVolumes[ti];
+      vs.addEventListener('input',()=>{bmVolumes[ti]=parseFloat(vs.value);});
+      vrow.appendChild(vl);vrow.appendChild(vs);gridEl.appendChild(vrow);
+    });
+  }
+  function bmUpdateUI(s){
+    document.querySelectorAll('.bm-dot').forEach((d,i)=>d.classList.toggle('bm-active',i===s));
+    document.querySelectorAll('.bm-beat').forEach(b=>b.classList.toggle('bm-cur',parseInt(b.dataset.s)===s));
+  }
+  function bmSchedule(step,time){
+    BM_TRACKS.forEach((t,ti)=>{if(bmGrid[ti][step]) bmPlay(t.type,bmVolumes[ti],time);});
+  }
+  function bmTick(){
+    const ctx=bmGetCtx(),spb=(60/bmBpm)/4;
+    while(bmNextTime<ctx.currentTime+0.06){
+      const swOff=(bmCurStep%2===1)?(bmSwing/100)*spb*0.66:0;
+      const t=bmNextTime+swOff;
+      bmSchedule(bmCurStep,t);
+      const snap=bmCurStep;
+      setTimeout(()=>{if(bmPlaying) bmUpdateUI(snap);},Math.max(0,(t-ctx.currentTime)*1000));
+      bmCurStep=(bmCurStep+1)%BM_STEPS;
+      bmNextTime+=spb;
+    }
+    bmRaf=requestAnimationFrame(bmTick);
+  }
+  function bmStartPlay(){
+    bmGetCtx();bmPlaying=true;bmCurStep=0;bmNextTime=bmCtx.currentTime+0.05;
+    const btn=document.getElementById('bmBtnPlay');
+    if(btn){btn.textContent='⏸ Pause';btn.classList.add('bm-playing');}
+    bmTick();
+  }
+  function bmStopPlay(){
+    bmPlaying=false;if(bmRaf){cancelAnimationFrame(bmRaf);bmRaf=null;}
+    bmUpdateUI(-1);
+    const btn=document.getElementById('bmBtnPlay');
+    if(btn){btn.textContent='▶ Play';btn.classList.remove('bm-playing');}
+  }
+  const BM_PATTERNS={
+    trap:   {0:[1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],2:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],5:[0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0],8:[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},
+    house:  {0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],2:[0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],4:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],8:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0]},
+    reggaeton:{0:[1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,0],1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],2:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],4:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0]},
+    boom:   {0:[1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],2:[1,0,0,1,0,1,0,0,1,0,0,1,0,1,0,0],5:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0]},
+    cumbia: {0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],1:[0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],2:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],5:[1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,0]},
+    techno: {0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],2:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],6:[0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],8:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0]},
+    latin:  {0:[1,0,0,1,0,0,1,0,1,0,0,1,0,0,1,0],1:[0,0,1,0,1,0,0,1,0,0,1,0,1,0,0,0],2:[1,0,1,1,0,1,0,1,1,0,1,1,0,1,0,1],5:[1,0,0,0,1,1,0,0,1,0,0,0,1,1,0,0]},
+  };
+  function bmLoadPattern(name){
+    const p=BM_PATTERNS[name];
+    bmGrid=BM_TRACKS.map((_,ti)=>p[ti]?p[ti].map(v=>!!v):Array(BM_STEPS).fill(false));
+    bmBuildGrid();
+    if(!bmPlaying) bmStartPlay();
+  }
+  let bmInited=false;
+  function bmInit(){
+    if(bmInited) return; bmInited=true;
+    bmBuildGrid();
+    const btnPlay=document.getElementById('bmBtnPlay'),btnStop=document.getElementById('bmBtnStop'),btnClear=document.getElementById('bmBtnClear');
+    const bpmDown=document.getElementById('bmBpmDown'),bpmUp=document.getElementById('bmBpmUp'),swSlider=document.getElementById('bmSwingSlider');
+    if(!btnPlay) return;
+    btnPlay.addEventListener('click',()=>{if(bmPlaying) bmStopPlay(); else bmStartPlay();});
+    btnStop.addEventListener('click',bmStopPlay);
+    btnClear.addEventListener('click',()=>{bmGrid=BM_TRACKS.map(()=>Array(BM_STEPS).fill(false));bmBuildGrid();});
+    bpmDown.addEventListener('click',()=>{bmBpm=Math.max(60,bmBpm-5);document.getElementById('bmBpmDisp').textContent=bmBpm;});
+    bpmUp.addEventListener('click',()=>{bmBpm=Math.min(220,bmBpm+5);document.getElementById('bmBpmDisp').textContent=bmBpm;});
+    swSlider.addEventListener('input',function(){bmSwing=parseInt(this.value);document.getElementById('bmSwingVal').textContent=bmSwing+'%';});
+    document.querySelectorAll('.bm-pat-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        document.querySelectorAll('.bm-pat-btn').forEach(b=>b.classList.remove('bm-pat-active'));
+        btn.classList.add('bm-pat-active');
+        bmLoadPattern(btn.dataset.bp);
+      });
+    });
+    document.addEventListener('keydown',e=>{
+      const ae=document.activeElement,isInput=ae&&(ae.tagName==='INPUT'||ae.tagName==='TEXTAREA'||ae.tagName==='SELECT');
+      if(e.code==='Space'&&!isInput){
+        const sec=document.getElementById('view-beatmaker');
+        if(sec&&sec.classList.contains('active')){e.preventDefault();if(bmPlaying) bmStopPlay(); else bmStartPlay();}
+      }
+    });
+  }
+  const bmSec=document.getElementById('view-beatmaker');
+  if(bmSec){
+    new MutationObserver(()=>{if(bmSec.classList.contains('active')) bmInit();}).observe(bmSec,{attributes:true,attributeFilter:['class']});
+  }
+})();
 
 // ===== CANVAS RED — vista básico =====
 (function initNetworkCanvasBasico(){
